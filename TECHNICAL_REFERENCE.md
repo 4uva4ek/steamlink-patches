@@ -2,6 +2,15 @@
 
 Implementation notes, compatibility details, validation status, and build instructions for Steam Link GalaxyXR Patches. For installation and patch selection, see the [README](README.md).
 
+## Steam Link 2.0.20 / 5001812 and 2.0.21 / 5001968
+
+Both exact bases expose the same 17-patch recommended set and 22 standalone
+patches as 2.0.20/5001712. Native addresses, complete-function guards and shader
+callers were derived independently for each build. Both use the verified
+2-projection helper, mouse-only SDL routing and array-shaped HMD extension
+configuration. The 2 blue-noise experiments remain default-off and outside the
+bundle. See the [adaptation and validation record](diagnostics/steamlink-legacy-1812-1968/README.md).
+
 ## Steam Link 2.0.23 / 5002363
 
 The new exact base supports the 7 modern individual patches and **Galaxy XR recommended set (2.0.23/5002363)**, with independently verified native addresses and stock Java startup. Device identity remains optional. The 14 legacy patches stay excluded. See the [5002363 audit](diagnostics/steamlink-5002363/README.md) for source APK provenance, exact addresses, mutation/option tests, APK patching and remaining runtime gaps.
@@ -15,7 +24,7 @@ working terminal-quad fix is unchanged. See the [retirement record](diagnostics/
 
 Steam Link VR (`com.valvesoftware.steamlinkvr`) was not built for Android XR. These patches adapt it to run on the Samsung Galaxy XR headset by injecting the missing OpenXR permissions and features, bundling the Galaxy XR XR-bridge native library, providing an optional standalone face-bridge layer for face-tracking, fixing broken permission flows, tuning the rendering pipeline, and optionally allowing the patched APK to coexist with the original install.
 
-Target APK: `com.valvesoftware.steamlinkvr`. Exact compatibility metadata and guarded adaptations include v2.0.20/5001712, v2.0.22/5002244, and v2.0.23/5002363. The permission-free high-resolution fix accepts exactly those 3 builds; 5001712 and 5002244 have verified layouts, while 5002363 is a decoded-base adaptation with pending headset validation. Reconstruction, quad-view, permission-matrix, warm-up/omit, and DFR re-arm experiments are retired.
+Target APK: `com.valvesoftware.steamlinkvr`. Exact compatibility metadata and guarded adaptations include v2.0.20/5001712, v2.0.20/5001812, v2.0.21/5001968, v2.0.22/5002244, and v2.0.23/5002363. The permission-free high-resolution fix accepts exactly those 5 builds; 5001712 and 5002244 have verified layouts, while 5002363 is a decoded-base adaptation with pending headset validation. Reconstruction, quad-view, permission-matrix, warm-up/omit, and DFR re-arm experiments are retired.
 
 Use Morphe Manager 1.22 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is global, so 3 exact-build dependency bundles provide version-aware recommendations while every individual patch remains default-off. Both legacy bundles (2.0.20/5001712 and 2.0.22/5002244) select the same [17-patch set](PATCH_CATALOG.md#recommendation-bundles), including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches. 2.0.23/5002363 selects only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, and Visual Delay Fix (60 ms). The full GXR face bridge is restricted to the 2 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
 
@@ -23,9 +32,9 @@ Use Morphe Manager 1.22 or newer with compatibility checks enabled for build-spe
 
 For exact 2.0.23/5002363, the recommended set preserves stock launcher, splash, XR start mode and runtime permission handling. The battery patch alone inserts a battery-settings helper call after stock `SteamLink.onCreate` calls its superclass, before parameter registers are reused. Face/tongue bridges and high resolution no longer pull in startup permission requests or splash changes; high resolution no longer forces unmanaged Full Space.
 
-For the legacy bundles, **2.0.22/5002244** and **2.0.20/5001712**, leave **HMD identity** on **Recommended for this build** or explicitly choose **Meta Quest Pro**. The spoof reports `Oculus Quest Pro` while retaining Galaxy XR tracking/controller routing. Existing saved explicit Samsung, Stock, or Pico choices are respected, so change those if necessary. On 2.0.23/5002363, Device identity remains optional and resolves to the Galaxy XR identity.
+For the legacy bundles, **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, leave **HMD identity** on **Recommended for this build** or explicitly choose **Meta Quest Pro**. The spoof reports `Oculus Quest Pro` while retaining Galaxy XR tracking/controller routing. Existing saved explicit Samsung, Stock, or Pico choices are respected, so change those if necessary. On 2.0.23/5002363, Device identity remains optional and resolves to the Galaxy XR identity.
 
-Bundle selection does not broaden native compatibility: the high-resolution edit safely skips instead of guessing a native layout, and unsupported builds remain unchanged. Both 5001712 and 5002244 have the complete legacy set available.
+Bundle selection does not broaden native compatibility: the high-resolution edit safely skips instead of guessing a native layout, and unsupported builds remain unchanged. All 4 exact legacy targets have the complete legacy set available.
 
 **The standalone Video dither patch remains retired.** The existing OLED patch now offers optional Comparison dithering (Off, Low, Standard), a Neutral calibration profile, and sRGB8/RGB10/experimental FP16 output. Defaults are Final balanced, 8-bit sRGB, and dithering Off. RGB10 and FP16 remain optional. See the [controlled comparison guide](PATCH_CATALOG.md#controlled-oled-comparison).
 
@@ -115,6 +124,23 @@ This section is generated from the patch catalog during releases.
 <!-- PATCHES_END -->
 
 ## Building from source
+
+On Windows, verify JVM tests and build the Android bundle with automatic cleanup:
+
+```powershell
+.\Verify-Build.ps1
+.\Verify-Build.ps1 -Tasks ':patches:test', ':patches:auditDecodedSteamLinkPatches'
+```
+
+Each run uses a fresh workspace. Bundles remain under
+`build/verification/<run>/artifacts/patches/libs`, alongside retained test reports,
+the Gradle log and a cleanup receipt. Compiler files and decoded audit derivatives
+are removed after Gradle exits, including on failure. Pass `-KeepBuildOutputs` to
+retain intermediates. Exact fixtures, tools, caches and existing outputs are
+preserved. See [verification and disk cleanup](diagnostics/build-verification/README.md).
+
+Direct Gradle commands remain available and keep their usual output locations;
+they do not perform the wrapper's automatic cleanup:
 
 ```
 ./gradlew buildAndroid
