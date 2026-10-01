@@ -63,6 +63,8 @@ Or `No issues.` Findings sorted file → line ascending.
 
 ## Chaining patterns
 
+For Steam Link patch/test changes in this repository, include fresh-checkout input availability in the investigator/reviewer task. Use the [Morphe skill](../morphe-patches/SKILL.md) CI guidance: local ignored decoded APKs are not GitHub inputs, and absent-input audits must be distinguished from mandatory portable tests.
+
 **Locate → fix → verify** (most common):
 1. `cavecrew-investigator` returns site list.
 2. Main thread picks 1-2 sites, hands paths to `cavecrew-builder`.

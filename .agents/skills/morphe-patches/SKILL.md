@@ -1,3 +1,8 @@
+---
+name: morphe-patches
+description: Author, edit, debug and validate Steam Link Morphe patches in this repository, including exact-build guards and fresh-checkout test inputs.
+---
+
 # morphe-patches skill
 
 Use when authoring, editing, or debugging patches in this project.
@@ -82,6 +87,17 @@ the repository-root `AGENTS.md`. Never replace the existing compatibility list w
 - `BinaryPatchHelper.vaddrToFileOffset(...)` — virtual address → file offset in ELF
 
 ## Build commands
+
+Before accepting new tests, check whether each file input is tracked (`git ls-files -- <path>`) or explicitly provisioned by `.github/workflows/release.yml`. The workflow's ordinary `:patches:test` has no decoded APK provisioning. A local cached-compiler pass with ignored inputs present does not test that environment.
+
+Keep tracked resource/hash checks, metadata tests and malformed-input rejection runnable without proprietary decoded APKs. For real-byte audits, use `org.junit.Assume.assumeTrue` with an explicit `BLOCKED` reason only when the exact decoded input is absent. Do not skip missing canonical payloads, invalid present inputs or assertion failures. Synthetic invalid bytes can prove rejection, never real-base compatibility.
+
+Run fixture-dependent tests once with retained inputs and once from a fresh/isolated working directory where they are absent, using only tracked runtime resources and explicit classpaths. Check JUnit executed/skipped/failure counts. The 2026-10-01 failure in run `36907870366` was 5 `FovealCanvasPatchTest` failures caused by an ignored 5001812 scene; `buildAndroid` had already passed. Fix that input boundary rather than changing production guards or disabling the test task.
+
+Report cached compilation, full Gradle/Android packaging, real APK audits and GitHub CI separately. Confirm the corrected commit's workflow result before claiming CI success.
+
+Byte-pinned JSON/text resources need deterministic checkout bytes. Set an explicit `.gitattributes` rule (the foveal canvas manifest uses `text eol=lf`) and check `git ls-files --eol` plus the resource SHA-256 after checkout. Windows `core.autocrlf` can otherwise invalidate a correct Linux manifest pin. Preserve the canonical hash and installer guard; do not accept multiple line-ending hashes to hide the mismatch.
+
 ```powershell
 .\gradlew.bat build              # full build
 .\gradlew.bat assembleExtension  # rebuild extension DEX only

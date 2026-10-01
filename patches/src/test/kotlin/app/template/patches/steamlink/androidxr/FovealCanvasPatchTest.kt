@@ -55,11 +55,11 @@ class FovealCanvasPatchTest {
     }
 
     @Test
-    fun `unknown renderer fails before creating resource directories`() = withFixtureRoot { root ->
-        val scene = sceneFile(root)
-        val bytes = scene.readBytes()
-        bytes[0x10a570] = (bytes[0x10a570].toInt() xor 1).toByte()
-        scene.writeBytes(bytes)
+    fun `unknown renderer fails before creating resource directories`() = withTemporaryRoot { root ->
+        // Deliberately invalid bytes exercise rejection without Valve's local-only input.
+        // This fixture is not evidence of compatibility with a real renderer.
+        val bytes = ByteArray(FOVEAL_CANVAS_SCENE_SIZE)
+        val scene = sceneFile(root).apply { parentFile.mkdirs(); writeBytes(bytes) }
         assertFailsWith<PatchException> {
             installFovealCanvasResources(root, "2.0.20", "5001812", byteArrayOf(1), byteArrayOf(2))
         }
@@ -94,6 +94,20 @@ class FovealCanvasPatchTest {
             assertContentEquals(oldLayerBytes, oldLayer.readBytes())
             assertFalse(root.walkTopDown().any { it.name.endsWith(".tmp") })
         }
+
+    @Test
+    fun `bundled payload validates and rejects tampering without decoded inputs`() {
+        val (helper, manifest) = payload()
+        validateFovealCanvasPayload(helper, manifest)
+        val alteredHelper = helper.copyOf().apply { this[lastIndex] = (last().toInt() xor 1).toByte() }
+        assertFailsWith<PatchException> {
+            validateFovealCanvasPayload(alteredHelper, manifest)
+        }
+        val alteredManifest = manifest.copyOf().apply { this[0] = (this[0].toInt() xor 1).toByte() }
+        assertFailsWith<PatchException> {
+            validateFovealCanvasPayload(helper, alteredManifest)
+        }
+    }
 
     @Test
     fun `tampered payload fails atomically before any installation`() = withFixtureRoot { root ->
@@ -133,16 +147,18 @@ class FovealCanvasPatchTest {
         }
 
     private fun payload(): Pair<ByteArray, ByteArray> {
-        // The main build replaces the fail-closed placeholder with its fresh native hash.
-        assumeTrue("Native helper has not yet been built and pinned",
-            FOVEAL_CANVAS_HELPER_SHA256 != "PENDING_NATIVE_BUILD")
+        // Canonical payloads are tracked build inputs, so absence/tampering must fail CI.
         return projectionModeResource(FOVEAL_CANVAS_LIBRARY) to projectionModeResource(FOVEAL_CANVAS_MANIFEST)
     }
 
     private fun originalScene(): ByteArray {
         val relative = "decoded-apk-android-steamlinkvr-release-base-2.0.20-5001812/lib/arm64-v8a/libvrlink_scene.so"
-        return listOf(File(relative), File("../$relative")).firstOrNull(File::isFile)
-            ?.readBytes() ?: error("Missing retained exact 2.0.20/5001812 decoded scene")
+        val scene = listOf(File(relative), File("../$relative")).firstOrNull(File::isFile)
+        // Fresh GitHub checkouts do not contain the ignored proprietary decoded APK.
+        // Skip only missing-input audits; a present but invalid input still fails validation.
+        assumeTrue("Real decoded-input audit BLOCKED: missing exact 2.0.20/5001812 scene; no synthetic replacement",
+            scene != null)
+        return requireNotNull(scene).readBytes()
     }
 
     private fun sceneFile(root: File) = File(root, "lib/arm64-v8a/libvrlink_scene.so")

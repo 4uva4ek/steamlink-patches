@@ -382,3 +382,24 @@ Results: all 59 targets absent; 0 missing or altered retained files (with archiv
   decoded inputs, fixture APKs, SDKs, cached compilers/tools, compact receipts and
   unrelated build children. Original APK and scene hashes were rechecked unchanged.
   Remove only the reviewed allowlist when deletion is permitted; never root `build/`.
+
+### 2026-10-01 — Foveal canvas CI test correction
+
+- Fixed fresh-checkout test input handling and pinned JSON checkout line endings.
+  Retained compact failed-run/local/isolated receipts and reproduction context in
+  `diagnostics/steamlink-foveal-canvas/`. Updated `AGENTS.md` and the Morphe/cavecrew
+  skills. Cached compilation/JUnit passed 137 tests with retained inputs; isolated
+  tracked-source checks passed 125 with 12 explicit missing-input assumptions.
+  Both skill validators passed. No corrected GitHub run, installation or runtime
+  result claimed; canonical scene/payload guards and the existing MPP are preserved.
+- **Cleanup deferred:** automatic approval review rejected native PowerShell removal
+  with **blocked by policy** before execution; no alternate route attempted.
+  Removed 0 files / 0 bytes. The 2 task-owned targets retain **289 files / 3,176,281 bytes**:
+  `build/foveal-ci-work` (248 files / 2,694,185 bytes) and
+  `C:/Users/Angelo/AppData/Local/Temp/steamlink-foveal-ci-e2a50cd68eac43b59e22e8a0595b48ef`
+  (41 files / 482,096 bytes). This is separate from the earlier deferred canvas
+  experiment outputs. See `diagnostics/steamlink-foveal-canvas/ci-cleanup.json`.
+- Preserve original/decoded APK inputs, canonical sources/resources, current MPP,
+  compact receipts and shared tooling. Regenerate via the cached audit compiler and
+  the isolated `git archive`/JUnit procedure documented in the CI receipt. Remove
+  only these exact owned outputs after fresh safety checks when policy permits.

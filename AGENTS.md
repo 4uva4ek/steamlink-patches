@@ -33,6 +33,14 @@ AppTarget(
 - Keep generated catalogs and tests synchronized with source compatibility. Report Gradle/static validation separately from actual Morphe APK patching, installation, ADB, headset, and SteamVR runtime proof.
 - Analysis reconstructions and malformed/hybrid APK extractions are evidence sources, not installable or byte-for-byte pristine APKs. Do not claim an end-to-end patching result without a pristine source APK.
 
+## CI test inputs
+
+- Ordinary `:patches:test` runs on a fresh checkout. Check every new test input with `git ls-files` and workflow provisioning; ignored decoded APKs, local captures and compiler caches are not available on GitHub by default.
+- Keep compatibility metadata, tracked payload validation and malformed-input rejection checks portable and mandatory. Real decoded-byte audits may use an explicit JUnit assumption only when their retained exact input is absent; present but invalid bytes must still fail. Synthetic rejection fixtures do not establish native compatibility.
+- Byte-hashed text payloads must declare a deterministic checkout encoding/line ending in `.gitattributes` (for the foveal canvas manifest: UTF-8 with LF). Validate the actual resource bytes after checkout; do not change the expected hash to accept Windows CRLF conversion or weaken production validation.
+- Verify new fixture-dependent tests both with retained real inputs and from an isolated working directory without those inputs. Report executed and skipped counts separately; a skipped audit is not compatibility proof.
+- Follow `.agents/skills/morphe-patches/SKILL.md` for the fresh-checkout check. Cached local compilation does not establish that GitHub CI passed; confirm the workflow for the corrected commit before claiming CI success.
+
 ## Local artifact lifecycle
 
 - Apply the parent workspace's required cleanup rule whenever an experiment ends or a patch is finalized/applied. Keep a dated tried/retired record and validation evidence, then delete obsolete experiment APKs, bundles, decoded derivatives, compiler output, and stale source/resource copies.
