@@ -64,7 +64,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.21.0](https://github.com/AngelDark92/steamlink-patches/releases/tag/v1.21.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;28 patches total
+> **[v1.21.0-dev.1](https://github.com/AngelDark92/steamlink-patches/releases/tag/v1.21.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;29 patches total
 <details open>
 <summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;26 patches</summary>
 <br>
@@ -107,19 +107,20 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **🎯 Supported versions:**
 
-| 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.20 (5001712) | 2.0.22 (5002244) | 2.0.23 (5002363) |
-| :---: | :---: | :---: | :---: | :---: |
-| Exact native blue-noise adaptation 2.0.20/5001812; static validation only. | Exact native blue-noise adaptation 2.0.21/5001968; static validation only. | Exact native blue-noise adaptation 2.0.20/5001712; static validation only. | Exact native blue-noise adaptation 2.0.22/5002244; static validation only. | Exact native blue-noise adaptation 2.0.23/5002363; static validation only. |
+| 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.20 (5001712) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.20 (5001812) |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| Exact native blue-noise adaptation 2.0.20/5001812; static validation only. | Exact native blue-noise adaptation 2.0.21/5001968; static validation only. | Exact native blue-noise adaptation 2.0.20/5001712; static validation only. | Exact native blue-noise adaptation 2.0.22/5002244; static validation only. | Exact native blue-noise adaptation 2.0.23/5002363; static validation only. | Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending. |
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
 | [Background blue-noise dithering (experimental)](#background-blue-noise-dithering-experimental) | Static blue-noise quantization after video colour processing and fade, only on the background/base layer. Accepts 8-bit or 10-bit input and always uses 8-bit sRGB output. Select independently or together with the other layer's blue-noise patch. Separate from OLED/VD-like processing; headset validation pending. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
 | [Foveal blue-noise dithering (experimental)](#foveal-blue-noise-dithering-experimental) | Static blue-noise quantization after video colour processing and fade, only on the foveal layer. Accepts 8-bit or 10-bit input and always uses 8-bit sRGB output. Select independently or together with the other layer's blue-noise patch. Separate from OLED/VD-like processing; headset validation pending. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
+| [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Exact Steam Link 2.0.20/5001812 experiment: copies only the foveal image onto a transparent 5000x6000 regular-GL canvas per eye and submits it as the 2nd projection. Preserves the original background projection and any existing static Surface-trigger quad. GPU allocation, runtime acceptance and resolution improvement require headset validation. | 5001812 |  |
 
 </details>
 

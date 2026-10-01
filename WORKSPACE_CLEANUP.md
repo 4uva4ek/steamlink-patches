@@ -350,3 +350,35 @@ Results: all 59 targets absent; 0 missing or altered retained files (with archiv
   excluded and left untouched. No blanket build-tree removal was performed.
 - Regeneration commands are in the new diagnostic README. The retained local MPP
   is a delivery artifact, not a published Gradle release or signed application.
+
+### 2026-10-01 — Full-FOV foveal canvas experiment
+
+- Prepared a separate, default-off experiment for exact Steam Link **2.0.20/5001812**.
+  It retains the background projection and copies each foveal image into its angular
+  location on a transparent 5000x6000 full-FOV GL swapchain for projection 2.
+  Existing resolution workarounds and retired experiments remain unchanged.
+- Retained source, canonical helper/manifest, compact receipts and reproduction
+  commands in `extensions/foveal-canvas-layer/` and
+  `diagnostics/steamlink-foveal-canvas/`. Geometry checks, 13 production native
+  double scenarios, 136 Kotlin tests, Release/API26 D8, and 5 actual Morphe cases
+  against the pristine signed APK passed. Normal Gradle is blocked by unresolved
+  `app.morphe.patches:1.3.3`. No installation, ADB, SteamVR or headset result claimed.
+- Retained delivery bundle:
+  `patches/build/libs/patches-1.21.0-foveal-canvas-local.mpp`, SHA-256
+  `f7312d953f01b98882bc37396b50e743f5081a5530b688b968fd351bc52a5823`.
+  The helper SHA-256 is
+  `2939db189b19322da6ec601e96f9d4036d449fd8ee386e3cbd69e491d539eac3`.
+- **Cleanup deferred:** automatic approval review rejected the checked native
+  PowerShell removal with **blocked by policy** before execution. Removed 0 files
+  and reclaimed 0 bytes; no alternate deletion route attempted. The exact reviewed
+  allowlist totals **1,949 files / 2,001,469,901 bytes**:
+  `build/foveal-canvas-work` (1,947 files / 1,994,517,965 bytes),
+  `build/foveal-canvas-layer-tests.exe` (1 file / 1,389,568 bytes), and
+  `build/foveal-canvas-layer-tests.pdb` (1 file / 5,562,368 bytes).
+  See `diagnostics/steamlink-foveal-canvas/cleanup.json` for the inventory and
+  containment checks. Temporary compiler output, isolated APK copies, unsigned
+  audit APKs and preliminary bundles remain only within this allowlist.
+- Preserve the delivery bundle, canonical payloads, original signed APK, exact
+  decoded inputs, fixture APKs, SDKs, cached compilers/tools, compact receipts and
+  unrelated build children. Original APK and scene hashes were rechecked unchanged.
+  Remove only the reviewed allowlist when deletion is permitted; never root `build/`.
