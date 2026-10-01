@@ -1,3 +1,9 @@
+## [1.21.1-dev.1](https://github.com/AngelDark92/steamlink-patches/compare/v1.21.0...v1.21.1-dev.1) (2026-10-01)
+
+### 🐛 Bug Fixes
+
+* Enhance CI testing and documentation for foveal canvas patches ([9597eec](https://github.com/AngelDark92/steamlink-patches/commit/9597eec564dd67080f181faae8754054633b4ad0))
+
 ## [1.21.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.20.0...v1.21.0) (2026-09-28)
 
 ### ✨ New Features
