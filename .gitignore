@@ -171,3 +171,11 @@ diagnostics/steamlink-foveal-canvas/*
 !diagnostics/steamlink-foveal-canvas/*.json
 !diagnostics/steamlink-foveal-canvas/*.txt
 !diagnostics/steamlink-foveal-canvas/Verify-Catalogs.py
+
+# Category validation keeps compact receipts/recipes; compiler logs and reports stay local.
+!diagnostics/patch-categories/
+diagnostics/patch-categories/*
+!diagnostics/patch-categories/*.md
+!diagnostics/patch-categories/*.json
+!diagnostics/patch-categories/*.py
+!diagnostics/patch-categories/*.java

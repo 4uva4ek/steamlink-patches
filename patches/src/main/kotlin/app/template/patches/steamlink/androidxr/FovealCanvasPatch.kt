@@ -1,5 +1,6 @@
 package app.template.patches.steamlink.androidxr
 
+import app.template.patches.shared.PatchCategories
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.rawResourcePatch
@@ -124,6 +125,7 @@ val xrFovealCanvasPatch = rawResourcePatch(
     description = "Exact Steam Link 2.0.20/5001812 experiment: copies only the foveal image onto a transparent 5000x6000 regular-GL canvas per eye and submits it as the 2nd projection. Preserves the original background projection and any existing static Surface-trigger quad. GPU allocation, runtime acceptance and resolution improvement require headset validation.",
     default = false,
 ) {
+    category(PatchCategories.EXPERIMENTS)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.map { exact ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,

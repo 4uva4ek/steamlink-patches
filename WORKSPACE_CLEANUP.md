@@ -6,6 +6,24 @@ Scope: `D:\Angelo\Desktop\SteamLink-GalaxyXR-Windows-Toolkit-FULL`, including it
 
 Cleanup is part of completing an experiment or finalizing/applying a patch. Record the outcome, exact base, evidence and runtime limits; remove disposable outputs and superseded local copies; verify retained inputs and tool references. Keep a dated failed/retired record so a failed experiment is not recommended again. Parent and repository `AGENTS.md` enforce this rule.
 
+## Patch categories, 2026-10-03
+
+- Added 7 categories to all 29 public patches, preserving the 5 exact supported
+  Steam Link pairs and every existing mutation/default/option/dependency. All 4
+  generated catalogs differ only by category fields. [Validation and reproduction](diagnostics/patch-categories/README.md)
+  record 139 retained-input JUnit passes; 127 passes/12 missing-input skips in the
+  isolated checkout; 4 documentation passes; and local D8/archive metadata checks.
+- Standard Gradle remains blocked at Morphe plugin resolution, including updated
+  plugin 1.3.4. No CI, APK installation, headset behavior or publication is claimed.
+- Retain the local category-validation MPP beneath `build/patch-categories-20261003`,
+  the matching official Desktop 1.15.1 runtime in `build/startup-boundary-tools`, and
+  compact logs/recipes/reports in `diagnostics/patch-categories`. The scoped cleanup
+  receipt inventories disposable checkout/compiler/catalog/D8 scratch and retained
+  exceptions. Automatic approval review rejected the scoped deletion before execution
+  with "blocked by policy": **0 bytes removed**. Cleanup remains deferred until policy
+  permits deleting that recorded allowlist after fresh path checks. Original
+  bases/payloads, older artifacts and adjacent repositories remain preserved.
+
 ## Exact 5001812 / 5001968 adaptation, 2026-09-28
 
 - Added exact 2.0.20/5001812 and 2.0.21/5001968 with independent native addresses,

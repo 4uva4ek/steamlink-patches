@@ -8,7 +8,7 @@ description: Author, edit, debug and validate Steam Link Morphe patches in this 
 Use when authoring, editing, or debugging patches in this project.
 
 ## Project facts
-- Library: morphe-patcher 1.9.0-dev.1
+- Library: morphe-patcher 1.13.0; Morphe Manager 1.30.0 or newer
 - Target app: `com.valvesoftware.steamlinkvr`; exact `(versionName, versionCode)` pairs are defined in `shared/Constants.kt`
 - Required compatibility rules: read the repository-root `AGENTS.md` before editing
 - Kotlin source root: `patches/src/main/kotlin/app/template/patches/steamlink/`
@@ -56,13 +56,18 @@ val myPatch = bytecodePatch(          // or rawResourcePatch / resourcePatch
 - Delete cached `.mpe` before rebuilding: `Remove-Item patches/build/generated/extension-resources/extensions/extension.mpe`
 - **Smali API level: `-a 33`** — never use 35 or higher
 
-### Why not `-a 35`?
-API 35 makes smali emit DEX format 040/041 (multi-DEX container). morphe-patcher 1.7.0's
-bundled dexlib2 cannot parse container-format headers and crashes:
+### DEX format follows the pinned toolchain
+The current smali `d856bad65f` emits standard DEX 040 with a `0x70` header at API 33.
+Patcher 1.13.0 parses this format; keep the fresh-helper parsing checks in
+`NativeXrTrackingConfigTest` mandatory. The earlier smali pin emitted DEX 039 at
+API 33. Do not change DEX headers manually or raise the API level to fix a format mismatch.
+
+Historical Morphe 1.7.0 builds could not parse container-format output from higher
+API-level assembly and crashed:
 ```
 Caused by: com.android.tools.smali.dexlib2.util.DexUtil$InvalidFile: Unexpected container offset in header
 ```
-API 33 → DEX 039, no container, fully compatible.
+This historical failure does not make every DEX 040 file a multi-DEX container.
 
 ## Bytecode editing
 
