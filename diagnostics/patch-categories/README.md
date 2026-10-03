@@ -12,6 +12,15 @@ metadata checks. These local results do not establish a successful Gradle/CI rel
 
 ## Results
 
+These are historical manual-classpath results, not validation of Gradle dependency
+scopes. The subsequent [run 37129119119](https://github.com/AngelDark92/steamlink-patches/actions/runs/37129119119)
+for commit `9c63254039e9078489764acac040241751c99194` failed in
+`:patches:compileTestKotlin`: `PatchCategoriesTest` could not resolve
+`com.google.gson.JsonParser`. The manual recipe supplied `gson.jar`, hiding the
+missing `testImplementation(libs.gson)` declaration. Production compilation and
+Android packaging passed. The corrective change declares Gson for tests and
+runs the complete clean Gradle test/Android/catalog gate before semantic-release.
+
 - Retained decoded inputs: **139 passed, 0 skipped, 0 failed** JUnit tests.
 - Isolated tracked-input checkout: **127 passed, 12 skipped, 0 failed**. The skipped
   cases are existing native-byte audits whose ignored decoded inputs are absent.

@@ -41,6 +41,13 @@ AppTarget(
 - Verify new fixture-dependent tests both with retained real inputs and from an isolated working directory without those inputs. Report executed and skipped counts separately; a skipped audit is not compatibility proof.
 - Follow `.agents/skills/morphe-patches/SKILL.md` for the fresh-checkout check. Cached local compilation does not establish that GitHub CI passed; confirm the workflow for the corrected commit before claiming CI success.
 
+## Build dependency and release gates
+
+- Declare libraries imported by tests in `testImplementation` (or the appropriate test configuration). Production `compileOnly` dependencies do not populate the test compile/runtime classpaths. Keep generator-only and test-only libraries out of the shipped patch bundle.
+- For dependency, plugin, generator or test changes, validate the actual Gradle graph from a fresh checkout: `./gradlew clean :patches:test :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=experimental --no-daemon` (use `stable` for main). This must pass before semantic-release prepares metadata or publishes artifacts.
+- A desktop fat JAR or hand-built compiler classpath can supply undeclared dependencies. Such fallback checks are diagnostic evidence only, even when every test passes; they do not validate Gradle dependency scopes, the pinned compiler or the release build. If Gradle is blocked locally, state the blocker and verify the corrected commit in GitHub Actions before reporting the workflow fixed.
+- Investigate the exact failed commit, run, job and first failed task before editing. Retain a compact failure receipt and check both test compilation and Android packaging; a production compile or documentation pass alone is insufficient. Do not rerun an old commit to validate new changes, disable tests or widen production dependencies to hide missing test declarations.
+
 ## Local artifact lifecycle
 
 - Apply the parent workspace's required cleanup rule whenever an experiment ends or a patch is finalized/applied. Keep a dated tried/retired record and validation evidence, then delete obsolete experiment APKs, bundles, decoded derivatives, compiler output, and stale source/resource copies.
