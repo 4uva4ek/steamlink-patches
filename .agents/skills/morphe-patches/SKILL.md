@@ -93,6 +93,39 @@ the repository-root `AGENTS.md`. Never replace the existing compatibility list w
 
 ## Build commands
 
+### Dependency scopes and release preflight
+
+Tests importing a production `compileOnly` library must declare their own
+`testImplementation` dependency. Gson belongs in `compileOnly(libs.gson)`,
+`testImplementation(libs.gson)` and the separate catalog generator configuration;
+do not promote it to production `implementation` or `runtimeOnly` to fix tests.
+
+Run the workflow's complete Gradle gate in a fresh checkout before accepting
+dependency/plugin, generator or test changes:
+
+```powershell
+.\gradlew.bat clean :patches:test :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=experimental --no-daemon
+```
+
+Use `stable` on main. The workflow must run this gate before semantic-release,
+including commits that do not produce a release. Preserve generated extensions
+and mandatory portable tests in this graph.
+Use an isolated checkout for this clean command; the working repository's root
+`build/` contains protected fixtures/tools/evidence. Use `Verify-Build.ps1` for
+scoped local test/Android checks rather than cleaning that mixed directory.
+
+Manual compiler classpaths and desktop fat JARs can hide missing declarations and
+use a different compiler. Never call their output a Gradle or CI pass. When local
+plugin resolution blocks the gate, report that limitation and use the corrected
+commit's GitHub run for authoritative build verification.
+
+For workflow failures, identify the exact SHA/run/job and first failed task before
+editing; verify that same corrected SHA afterward. Run `37129119119` failed in
+`:patches:compileTestKotlin`: `PatchCategoriesTest` imported Gson without a test
+dependency, while manual validation supplied `gson.jar`. Production compilation
+and Android packaging passed, so changing the patcher/smali pins or skipping tests
+would not fix that failure.
+
 Before accepting new tests, check whether each file input is tracked (`git ls-files -- <path>`) or explicitly provisioned by `.github/workflows/release.yml`. The workflow's ordinary `:patches:test` has no decoded APK provisioning. A local cached-compiler pass with ignored inputs present does not test that environment.
 
 Keep tracked resource/hash checks, metadata tests and malformed-input rejection runnable without proprietary decoded APKs. For real-byte audits, use `org.junit.Assume.assumeTrue` with an explicit `BLOCKED` reason only when the exact decoded input is absent. Do not skip missing canonical payloads, invalid present inputs or assertion failures. Synthetic invalid bytes can prove rejection, never real-base compatibility.
