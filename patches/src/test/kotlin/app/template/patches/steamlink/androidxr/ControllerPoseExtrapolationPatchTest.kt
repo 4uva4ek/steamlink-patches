@@ -40,19 +40,32 @@ class ControllerPoseExtrapolationPatchTest {
     }
 
     @Test
-    fun `patch is opt-in and limited to the measured base`() {
+    fun `patch is opt-in and covers the legacy and native bases`() {
         assertFalse(controllerPoseExtrapolationPatch.default)
         assertEquals("Controller pose extrapolation (experimental)", controllerPoseExtrapolationPatch.name)
         assertTrue(controllerPoseExtrapolationPatch.dependencies.isEmpty())
 
-        val compatibility = controllerPoseExtrapolationPatch.compatibility.orEmpty().single()
-        assertEquals(EXPERIMENTAL_COMPATIBILITY_NAME, compatibility.name)
-        val target = compatibility.targets.single()
-        assertEquals("2.0.23", target.version)
-        assertEquals(setOf(5002363), target.versionCodes!!.values.toSet())
+        val compatibilities = controllerPoseExtrapolationPatch.compatibility.orEmpty()
+        assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+        assertEquals(
+            listOf("2.0.20" to 5001712, "2.0.20" to 5001812, "2.0.21" to 5001968, "2.0.22" to 5002244,
+                "2.0.23" to 5002363),
+            compatibilities.map { it.targets.single() }.map { it.version to it.versionCodes!!.values.toSet().single() },
+        )
+        // Only the base the layer was measured on says so.
+        assertEquals(
+            listOf("2.0.23"),
+            compatibilities.map { it.targets.single() }
+                .filter { "not run on this base" !in it.description.orEmpty() }
+                .map { it.version },
+        )
 
-        assertTrue(isControllerExtrapolationBuild("2.0.23", "5002363"))
-        listOf("2.0.22" to "5002363", "2.0.23" to "5002322", "2.0.23" to "5002364", "2.0.22" to "5002244")
+        listOf("2.0.20" to "5001712", "2.0.20" to "5001812", "2.0.21" to "5001968", "2.0.22" to "5002244",
+            "2.0.23" to "5002363")
+            .forEach { (version, versionCode) ->
+                assertTrue(isControllerExtrapolationBuild(version, versionCode), "$version/$versionCode")
+            }
+        listOf("2.0.22" to "5002363", "2.0.23" to "5002322", "2.0.23" to "5002364", "2.0.20" to "5002244")
             .forEach { (version, versionCode) ->
                 assertFalse(isControllerExtrapolationBuild(version, versionCode), "$version/$versionCode")
             }

@@ -194,7 +194,7 @@ Face bridge, tongue bridge, high resolution and battery no longer select either 
 ---
 
 ### Controller pose extrapolation (`controllerPoseExtrapolationPatch`, experimental)
-**Default: disabled** (experimental) — no dependencies; exact 2.0.23/5002363 only
+**Default: disabled** (experimental) — no dependencies; legacy 5001712/5001812/5001968/5002244 and 2.0.23/5002363. The layer hooks only the runtime library, so it does not depend on the base; measured on 5002363 only, the legacy bases were not run.
 | Artifact | Edit |
 |---|---|
 | `lib/arm64-v8a/libgxr_controller_extrapolation.so` | New file (OpenXR implicit API layer; source `extensions/controller-extrapolation-layer`) |
@@ -207,7 +207,7 @@ Measured on a Galaxy XR headset with 2.0.23/5002363 on 2026-10-04: stock, the ru
 ---
 
 ### Controller velocity frame (`controllerVelocityFramePatch`, experimental)
-**Default: disabled** (experimental) — no dependencies; exact 2.0.23/5002363 only
+**Default: disabled** (experimental) — no dependencies; legacy 5001712/5001812/5001968/5002244 and 2.0.23/5002363. The legacy bases use the same pose action and, with this repository's `controller_config.json`, the same controller pose offset; the angles were measured on 5002363 only and the legacy bases were not run. Do not combine with Controller velocity fix, which replaces the same velocities.
 | Artifact | Edit |
 |---|---|
 | `lib/arm64-v8a/libgxr_controller_velocity_frame.so` | New file (OpenXR implicit API layer; source `extensions/controller-velocity-frame-layer`) |

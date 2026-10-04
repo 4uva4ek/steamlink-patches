@@ -11,12 +11,17 @@ internal const val CONTROLLER_VELOCITY_FRAME_LIBRARY = "libgxr_controller_veloci
 internal const val CONTROLLER_VELOCITY_FRAME_MANIFEST =
     "XR_APILAYER_local_GalaxyXR_controller_velocity_frame.json"
 
-private data class ControllerVelocityFrameBuild(val version: String, val versionCode: Int)
+private data class ControllerVelocityFrameBuild(val version: String, val versionCode: Int, val measured: Boolean)
 
 // The layer edits no Steam Link code, but it keys on VRLink's pose action name and its angles
-// were measured only on these exact bases.
+// depend on the controller pose offset. The legacy bases use the same action name and, with this
+// repository's controller_config.json, the same offset; the angles were measured on 5002363 only.
 private val CONTROLLER_VELOCITY_FRAME_BUILDS = listOf(
-    ControllerVelocityFrameBuild("2.0.23", 5002363),
+    ControllerVelocityFrameBuild("2.0.20", 5001712, measured = false),
+    ControllerVelocityFrameBuild("2.0.20", 5001812, measured = false),
+    ControllerVelocityFrameBuild("2.0.21", 5001968, measured = false),
+    ControllerVelocityFrameBuild("2.0.22", 5002244, measured = false),
+    ControllerVelocityFrameBuild("2.0.23", 5002363, measured = true),
 )
 
 internal fun isControllerVelocityFrameBuild(version: String, versionCode: String): Boolean =
@@ -43,7 +48,10 @@ val controllerVelocityFramePatch = rawResourcePatch(
                 version = build.version,
                 versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
                 description = "Controller velocity frame layer for exact Steam Link " +
-                    "${build.version}/${build.versionCode}; measured on a Galaxy XR headset.",
+                    "${build.version}/${build.versionCode}; " +
+                    if (build.measured) "measured on a Galaxy XR headset."
+                    else "measured on 2.0.23/5002363 only, not run on this base. " +
+                        "Do not combine with Controller velocity fix.",
             )),
         )
     }.toTypedArray())

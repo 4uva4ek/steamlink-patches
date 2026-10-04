@@ -11,11 +11,16 @@ internal const val CONTROLLER_EXTRAPOLATION_LIBRARY = "libgxr_controller_extrapo
 internal const val CONTROLLER_EXTRAPOLATION_MANIFEST =
     "XR_APILAYER_local_GalaxyXR_controller_extrapolation.json"
 
-private data class ControllerExtrapolationBuild(val version: String, val versionCode: Int)
+private data class ControllerExtrapolationBuild(val version: String, val versionCode: Int, val measured: Boolean)
 
-// The layer edits no Steam Link code, but its effect was measured only on these exact bases.
+// The layer edits no Steam Link code and hooks only the runtime's own library, so it does not
+// depend on the base. Its effect was measured on 5002363 only.
 private val CONTROLLER_EXTRAPOLATION_BUILDS = listOf(
-    ControllerExtrapolationBuild("2.0.23", 5002363),
+    ControllerExtrapolationBuild("2.0.20", 5001712, measured = false),
+    ControllerExtrapolationBuild("2.0.20", 5001812, measured = false),
+    ControllerExtrapolationBuild("2.0.21", 5001968, measured = false),
+    ControllerExtrapolationBuild("2.0.22", 5002244, measured = false),
+    ControllerExtrapolationBuild("2.0.23", 5002363, measured = true),
 )
 
 internal fun isControllerExtrapolationBuild(version: String, versionCode: String): Boolean =
@@ -42,7 +47,9 @@ val controllerPoseExtrapolationPatch = rawResourcePatch(
                 version = build.version,
                 versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
                 description = "Controller pose extrapolation layer for exact Steam Link " +
-                    "${build.version}/${build.versionCode}; measured on a Galaxy XR headset.",
+                    "${build.version}/${build.versionCode}; " +
+                    if (build.measured) "measured on a Galaxy XR headset."
+                    else "measured on 2.0.23/5002363 only, not run on this base.",
             )),
         )
     }.toTypedArray())
