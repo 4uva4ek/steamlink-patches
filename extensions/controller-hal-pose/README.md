@@ -93,7 +93,7 @@ stand down while this layer supplies the pose and the velocities.
 
 ## Properties
 
-`debug.gxr.halpose`, `.velocity`, `.ahead`, `.pitch` and `.hz` are read when Steam Link starts; the
+`debug.gxr.halpose`, `.velocity`, `.pitch` and `.hz` are read when Steam Link starts; `.ahead` and the
 filter properties are re-read every second while streaming. Logcat tag: `GxrHalPose`
 (a statistics line every 5 s).
 

@@ -226,6 +226,7 @@ float readFloat(const char* name, float fallback, float low, float high) {
 //   debug.gxr.halpose.pos.beta    position cutoff added per m/s, Hz (60)
 //   debug.gxr.halpose.rot.cutoff  rotation cutoff at rest, Hz (3)
 //   debug.gxr.halpose.rot.beta    rotation cutoff added per rad/s, Hz (60)
+//   debug.gxr.halpose.ahead       milliseconds added to "now" in the HAL request (1)
 //   debug.gxr.halpose.lin.cutoff  linear velocity cutoff at rest, Hz (10)
 //   debug.gxr.halpose.lin.beta    linear velocity cutoff added per m/s, Hz (40)
 //   debug.gxr.halpose.ang.cutoff  angular velocity cutoff at rest, Hz (10)
@@ -234,6 +235,11 @@ void refreshTuning(int64_t now) {
     if (TUNING_READ_AT != 0 && now - TUNING_READ_AT < TUNING_REFRESH_NS) return;
     const bool first = TUNING_READ_AT == 0;
     TUNING_READ_AT = now;
+    const float aheadMs =
+        readFloat("debug.gxr.halpose.ahead", static_cast<float>(DEFAULT_AHEAD_MS), -50.0f, 100.0f);
+    const int64_t aheadNs = static_cast<int64_t>(aheadMs * 1e6);
+    if (!first && aheadNs != AHEAD_NS.load()) GXR_LOG("ahead=%.1fms", aheadMs);
+    AHEAD_NS.store(aheadNs);
     const bool on = readFloat("debug.gxr.halpose.filter", 1.0f, 0.0f, 1.0f) != 0.0f;
     const float positionCutoff =
         readFloat("debug.gxr.halpose.pos.cutoff", DEFAULT_POSITION_MIN_CUTOFF, 0.05f, 1000.0f);
@@ -324,7 +330,6 @@ void filterPose(
 
 // Read when the instance is created:
 //   debug.gxr.halpose        0 = report the runtime's pose unchanged
-//   debug.gxr.halpose.ahead  milliseconds added to "now" in the HAL request (1)
 //   debug.gxr.halpose.pitch  pitch of the grip pose against the HAL's pose, degrees (42.25)
 //   debug.gxr.halpose.velocity  0 = leave the runtime's velocities in place
 //   debug.gxr.halpose.hz     HAL reads per second by the layer's own thread (1000); 0 = read only
