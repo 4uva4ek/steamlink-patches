@@ -69,12 +69,20 @@ constexpr int64_t TUNING_REFRESH_NS = 1000000000LL;
 // VRLink asks for a controller pose four times per display frame. A thread of the layer reads the
 // HAL more often than that and runs the jitter filter on every read, so the filter averages more
 // samples over the same time and the reported pose is quieter without trailing further behind.
-constexpr int DEFAULT_POLL_HZ = 1000;
+// The default is twice VRLink's own 360 requests per second.
+constexpr int DEFAULT_POLL_HZ = 720;
 constexpr int MAX_POLL_HZ = 2000;
 // The thread reads only while poses are being asked for.
 constexpr int64_t POLL_IDLE_NS = 300000000LL;
 constexpr int64_t POLL_FRESH_NS = 20000000LL;
 constexpr int64_t STATS_NS = 5000000000LL;
+
+// The HAL's velocities, checked against the motion of its own poses in the same recording: the
+// linear one is in the HAL's world axes (5 degrees off the positions' displacement; 26-31 degrees
+// if read as local to the controller) and the angular one is in the controller's own axes
+// (5 degrees; 21-25 degrees if read as a world vector). The runtime forwards both unconverted.
+// Reported the way VRLink's receiver reads them: linear in the base space, angular local to the
+// grip pose, which is what the controller velocity frame layer produces from the runtime's.
 // Milliseconds added to "now" in every HAL request; chosen by feel on the headset.
 constexpr double DEFAULT_AHEAD_MS = 1.0;
 
@@ -161,6 +169,7 @@ std::mutex BASE_MUTEX;
 BaseSpace BASE;
 Quat GRIP_PITCH;
 std::atomic<int64_t> AHEAD_NS{0};
+std::atomic<bool> VELOCITIES{true};
 Filter FILTERS[CONTROLLERS];
 bool FILTER_ON = true;
 float POSITION_MIN_CUTOFF = DEFAULT_POSITION_MIN_CUTOFF;
@@ -181,6 +190,7 @@ std::atomic<bool> POLL_STARTED{false};
 std::atomic<int64_t> LOCATED_AT{0};
 std::atomic<int> STATS_POLLS{0};
 std::atomic<int64_t> REPLACED_AT{0};
+std::atomic<int64_t> VELOCITY_AT{0};
 constexpr int64_t ACTIVE_NS = 300000000LL;
 
 int64_t monotonicNs() {
@@ -262,7 +272,8 @@ void filterPose(Filter& filter, int64_t now, float linear, float angular, Vec* p
 //   debug.gxr.halpose        0 = report the runtime's pose unchanged
 //   debug.gxr.halpose.ahead  milliseconds added to "now" in the HAL request (1)
 //   debug.gxr.halpose.pitch  pitch of the grip pose against the HAL's pose, degrees (42.25)
-//   debug.gxr.halpose.hz     HAL reads per second by the layer's own thread (1000); 0 = read only
+//   debug.gxr.halpose.velocity  0 = leave the runtime's velocities in place
+//   debug.gxr.halpose.hz     HAL reads per second by the layer's own thread (720); 0 = read only
 //                            when VRLink asks for a pose
 void readConfig() {
     char value[PROP_VALUE_MAX]{};
@@ -273,6 +284,7 @@ void readConfig() {
     AHEAD_NS.store(static_cast<int64_t>(aheadMs * 1e6));
     double pitch = DEFAULT_GRIP_PITCH_DEG;
     if (__system_property_get("debug.gxr.halpose.pitch", value) > 0) pitch = std::atof(value);
+    VELOCITIES.store(__system_property_get("debug.gxr.halpose.velocity", value) <= 0 || std::atoi(value) != 0);
     int pollHz = DEFAULT_POLL_HZ;
     if (__system_property_get("debug.gxr.halpose.hz", value) > 0) pollHz = std::atoi(value);
     POLL_HZ.store(pollHz < 0 ? 0 : pollHz > MAX_POLL_HZ ? MAX_POLL_HZ : pollHz);
@@ -284,8 +296,9 @@ void readConfig() {
         for (Filter& filter : FILTERS) filter = Filter{};
         TUNING_READ_AT = 0;
     }
-    GXR_LOG("controller HAL poses %s, ahead=%.1fms pitch=%.2f poll=%dHz service=%d",
-        ENABLED.load() ? "on" : "off", aheadMs, pitch, POLL_HZ.load(), SERVICE.load() != nullptr);
+    GXR_LOG("controller HAL poses %s, velocities %s, ahead=%.1fms pitch=%.2f poll=%dHz service=%d",
+        ENABLED.load() ? "on" : "off", VELOCITIES.load() ? "on" : "off", aheadMs, pitch, POLL_HZ.load(),
+        SERVICE.load() != nullptr);
 }
 
 void* serviceCreate(void*) { return nullptr; }
@@ -395,6 +408,13 @@ XrResult XRAPI_PTR layerDestroySession(XrSession session) {
 
 // Reports the HAL's pose in place of the runtime's. The runtime's pose is still used, while the
 // controller is nearly still, to learn where the base space sits in the HAL's world.
+XrSpaceVelocity* velocityOf(XrSpaceLocation* location) {
+    for (auto* next = static_cast<XrBaseOutStructure*>(location->next); next; next = next->next) {
+        if (next->type == XR_TYPE_SPACE_VELOCITY) return reinterpret_cast<XrSpaceVelocity*>(next);
+    }
+    return nullptr;
+}
+
 bool isTracked(const HalPose& hal) {
     // Words: 0 result, 15 position present, 34 state (2 = tracked).
     return hal.valid && hal.words[0] == 0 && hal.words[15] != 0 && hal.words[34] == 2;
@@ -536,6 +556,19 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
         static_cast<float>(rotation.z), static_cast<float>(rotation.w)};
     pose.position = {static_cast<float>(position.x), static_cast<float>(position.y), static_cast<float>(position.z)};
 
+    // Words: 21 and 27 say the linear and the angular velocity are present.
+    XrSpaceVelocity* velocity = VELOCITIES.load() ? velocityOf(location) : nullptr;
+    if (velocity && hal.words[21] != 0 && hal.words[27] != 0) {
+        const Vec world = rotate(BASE.rotation, {hal.f(24), hal.f(25), hal.f(26)});
+        const Vec local = rotate(conj(GRIP_PITCH), {hal.f(30), hal.f(31), hal.f(32)});
+        velocity->linearVelocity =
+            {static_cast<float>(world.x), static_cast<float>(world.y), static_cast<float>(world.z)};
+        velocity->angularVelocity =
+            {static_cast<float>(local.x), static_cast<float>(local.y), static_cast<float>(local.z)};
+        velocity->velocityFlags = XR_SPACE_VELOCITY_LINEAR_VALID_BIT | XR_SPACE_VELOCITY_ANGULAR_VALID_BIT;
+        VELOCITY_AT.store(readAt);
+    }
+
     const int64_t now = monotonicNs();
     if (STATS_AT == 0) STATS_AT = now;
     if (now - STATS_AT >= STATS_NS) {
@@ -651,6 +684,13 @@ XrResult XRAPI_PTR layerCreateApiLayerInstance(
 extern "C" __attribute__((visibility("default"))) int gxr_controller_hal_pose_active() {
     const int64_t replacedAt = REPLACED_AT.load();
     return replacedAt != 0 && monotonicNs() - replacedAt < ACTIVE_NS ? 1 : 0;
+}
+
+// For the controller velocity frame layer: 1 while this layer supplies the velocities, already in
+// the frames VRLink's receiver reads them in, so that they are not rotated a second time.
+extern "C" __attribute__((visibility("default"))) int gxr_controller_hal_velocity_active() {
+    const int64_t suppliedAt = VELOCITY_AT.load();
+    return suppliedAt != 0 && monotonicNs() - suppliedAt < ACTIVE_NS ? 1 : 0;
 }
 
 extern "C" JNIEXPORT void JNICALL Java_gxr_pose_PoseBridge_nativeSetBinder(

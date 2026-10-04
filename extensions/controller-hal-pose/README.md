@@ -20,8 +20,8 @@ application cannot look it up. So the call is made from a
   the HAL's reply for both controllers for one requested time.
 - `src/controller_hal_pose_layer.cpp` is an OpenXR API layer that wraps `xrLocateSpace` for
   the action spaces of VRLink's controller pose action (`pamir-stream-pose`) and reports the
-  HAL's pose in place of the runtime's. Velocities, other spaces and hand tracking are not
-  touched.
+  HAL's pose and velocities in place of the runtime's. Other spaces and hand tracking are
+  not touched.
 
 Without Shizuku, without its permission, or while a controller is not tracked, the runtime's
 pose is reported unchanged, which is the stock behaviour.
@@ -59,28 +59,43 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   still (below 0.02 m/s and 0.1 rad/s; looser limits until it is first found), as a slow
   running average. Eight consecutive still samples more than 3 cm or 0.05 rad away replace
   it at once, which follows a recenter or a new session.
-- **Reads.** A thread of the layer reads the HAL 1000 times per second while VRLink is
-  locating the controllers (912-936 reads per second were reached in a stream). VRLink
-  itself asks four times per display frame and gets the latest read. Each request is for
+- **Reads.** A thread of the layer reads the HAL 720 times per second while VRLink is
+  locating the controllers, twice VRLink's own 360 requests per second (four per display
+  frame); VRLink gets the latest read. With the rate set to 1000, 912-936 reads per second
+  were reached in a stream. Each request is for
   "now" plus half a read period, the read's own duration and `debug.gxr.halpose.ahead`.
 - **Filter.** Every read goes through a low-pass whose cutoff rises with the controller's
   speed, taken from the HAL's own velocities: `cutoff = base + beta * speed`. A resting hand
   is smoothed hard and a fast one barely lags (at most about 2.6 mm and 0.15 degrees with
   the defaults).
 
+- **Velocities.** The HAL's linear and angular velocity from the same read replace the
+  runtime's. Against the motion of the HAL's own poses in the recording, the linear one is in
+  the HAL's world axes (5 degrees off the positions' displacement, 26-31 degrees if read as
+  local to the controller) and the angular one is in the controller's axes (5 degrees, 21-25
+  degrees if read as a world vector). They are reported the way VRLink's receiver reads
+  them: the linear one turned into the base space, the angular one turned by the grip pitch
+  and left local to the grip pose. The runtime forwards the same values unconverted and a
+  frame behind, which is what the
+  [velocity frame layer](../controller-velocity-frame-layer/README.md) corrects by fixed
+  angles. The HAL's speeds read 13-17 % lower than the displacement of its own predicted
+  poses; they are passed on unscaled, as the runtime does.
+
 The [extrapolation layer](../controller-extrapolation-layer/README.md) has the same filter
-for the runtime's pose; it stands down while this layer supplies the pose.
+for the runtime's pose, and the velocity frame layer rotates the runtime's velocities; both
+stand down while this layer supplies the pose and the velocities.
 
 ## Properties
 
-`debug.gxr.halpose`, `.ahead`, `.pitch` and `.hz` are read when Steam Link starts; the
+`debug.gxr.halpose`, `.velocity`, `.ahead`, `.pitch` and `.hz` are read when Steam Link starts; the
 filter properties are re-read every second while streaming. Logcat tag: `GxrHalPose`
 (a statistics line every 5 s).
 
 | Property | Default | Meaning |
 |---|---|---|
 | `debug.gxr.halpose` | on | `0` reports the runtime's pose unchanged |
-| `debug.gxr.halpose.hz` | 1000 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
+| `debug.gxr.halpose.velocity` | on | `0` leaves the runtime's velocities in place |
+| `debug.gxr.halpose.hz` | 720 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
 | `debug.gxr.halpose.ahead` | 1 | Milliseconds added to the requested time |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
 | `debug.gxr.halpose.filter` | 1 | `0` reports the HAL's pose unfiltered |
@@ -94,8 +109,9 @@ The filter values and the 1 ms were chosen by feel on the headset.
 ## Limits
 
 - Run on 2.0.23/5002363 only. The legacy bases create the same pose action but were not run.
-- Velocities still come from the runtime, so they are older than the pose they travel with.
-- The pose read costs two HAL calls per read, about 2000 per second.
+- The HAL's velocities were checked against the recording only, not by throwing objects in
+  a game.
+- Every read costs two HAL calls, about 1440 per second.
 
 ## Build
 

@@ -2,6 +2,7 @@
 #include <openxr/openxr_loader_negotiation.h>
 
 #include <android/log.h>
+#include <dlfcn.h>
 #include <sys/system_properties.h>
 
 #include <cmath>
@@ -46,6 +47,12 @@ struct Pitch {
     double sine = 0.0;
     double cosine = 1.0;
 };
+// The controller HAL pose layer reports the HAL's own velocities, already in the right frames.
+constexpr char HAL_POSE_LIBRARY[] = "libgxr_controller_hal_pose.so";
+constexpr char HAL_VELOCITY_ACTIVE_SYMBOL[] = "gxr_controller_hal_velocity_active";
+constexpr unsigned HAL_LOOKUP_EVERY = 512;
+int (*HAL_VELOCITY_ACTIVE)() = nullptr;
+unsigned HAL_LOOKUP_COUNT = 0;
 bool ENABLED = true;
 Pitch LINEAR_PITCH;
 Pitch ANGULAR_PITCH;
@@ -179,7 +186,15 @@ XrResult XRAPI_PTR layerLocateSpace(
     {
         std::lock_guard<std::mutex> lock(MUTEX);
         if (STREAM_SPACES.count(space) == 0) return result;
+        if (!HAL_VELOCITY_ACTIVE && HAL_LOOKUP_COUNT++ % HAL_LOOKUP_EVERY == 0) {
+            // Only looks at a library that is already loaded.
+            if (void* library = dlopen(HAL_POSE_LIBRARY, RTLD_NOW | RTLD_NOLOAD)) {
+                HAL_VELOCITY_ACTIVE =
+                    reinterpret_cast<int (*)()>(dlsym(library, HAL_VELOCITY_ACTIVE_SYMBOL));
+            }
+        }
     }
+    if (HAL_VELOCITY_ACTIVE && HAL_VELOCITY_ACTIVE()) return result;
     if (velocity->velocityFlags & XR_SPACE_VELOCITY_LINEAR_VALID_BIT) {
         velocity->linearVelocity =
             rotated(location->pose.orientation, pitched(LINEAR_PITCH, velocity->linearVelocity));

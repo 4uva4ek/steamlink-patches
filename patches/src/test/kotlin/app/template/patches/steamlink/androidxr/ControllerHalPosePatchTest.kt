@@ -20,15 +20,17 @@ class ControllerHalPosePatchTest {
 
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-hal-pose, NDK 28.2.13676358, arm64-v8a, Release.
-        assertEquals("e7eae434d93cbe45e7d7e3d06773adf5a80e10c2e331361bff28ece1ceaa6ba8", sha256(library))
+        assertEquals("b310c80b1d17978c806ccd4cbfa06a1b7b0f8da41084ee4d5544295efadf9e8e", sha256(library))
         val text = String(library, Charsets.ISO_8859_1)
         assertTrue("xrNegotiateLoaderApiLayerInterface" in text)
         // Called by the bridge class in the extension, and the interface of its user service.
         assertTrue("Java_gxr_pose_PoseBridge_nativeSetBinder" in text)
         assertTrue("gxr.pose.IPoseService" in text)
         assertTrue("pamir-stream-pose" in text)
-        // Asked by the pose filter of the extrapolation layer.
+        // Asked by the pose filter of the extrapolation layer and by the velocity frame layer.
         assertTrue("gxr_controller_hal_pose_active" in text)
+        assertTrue("gxr_controller_hal_velocity_active" in text)
+        assertTrue("debug.gxr.halpose.velocity" in text)
         assertTrue("debug.gxr.halpose" in text)
         assertTrue("debug.gxr.halpose.ahead" in text)
         assertTrue("debug.gxr.halpose.pitch" in text)

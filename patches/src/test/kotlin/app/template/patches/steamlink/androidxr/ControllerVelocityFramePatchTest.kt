@@ -16,7 +16,7 @@ class ControllerVelocityFramePatchTest {
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-velocity-frame-layer, NDK 28.2.13676358, arm64-v8a, Release.
         assertEquals(
-            "322a07c1e7dc60a2a37cc0647c2ee8dd6d877fc3a0d534c2ba1673956519f3d6",
+            "3aad1358a6698eb3725ecdbd442d83cbe684566c141a0124d1005d5fde69c0e2",
             MessageDigest.getInstance("SHA-256").digest(library).joinToString("") { "%02x".format(it) },
         )
         val text = String(library, Charsets.ISO_8859_1)

@@ -20,6 +20,8 @@ The layer wraps `xrLocateSpace` for the action spaces of VRLink's controller pos
   SteamVR reads what VRLink forwards.
 
 Poses, other spaces and hand tracking are not touched, and no Steam Link code is changed.
+While the [controller HAL pose layer](../controller-hal-pose/README.md) supplies the
+velocities, which are then already in these frames, this layer leaves them alone.
 The layer is independent of the controller pose extrapolation layer; either can be
 installed without the other.
 
