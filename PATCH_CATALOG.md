@@ -193,6 +193,19 @@ Face bridge, tongue bridge, high resolution and battery no longer select either 
 
 ---
 
+### Controller pose extrapolation (`controllerPoseExtrapolationPatch`, experimental)
+**Default: disabled** (experimental) — no dependencies; exact 2.0.23/5002363 only
+| Artifact | Edit |
+|---|---|
+| `lib/arm64-v8a/libgxr_controller_extrapolation.so` | New file (OpenXR implicit API layer; source `extensions/controller-extrapolation-layer`) |
+| `assets/openxr/1/api_layers/implicit.d/XR_APILAYER_local_GalaxyXR_controller_extrapolation.json` | New file (layer manifest; disable env: `GXR_DISABLE_CONTROLLER_EXTRAPOLATION`) |
+
+No Steam Link code, shader or config is changed. Inside the Steam Link process the layer redirects the Galaxy XR runtime library's (`libopenxr_android.so`) import of `GetServerConfigurableFlag` so that `com.android.xr.flags.enable_controller_pose_extrapolation_consumer_side` reads as `true`; every other flag is passed through. `adb shell setprop debug.gxr.extrapolation 0` leaves the flag untouched (read at app start).
+
+Measured on a Galaxy XR headset with 2.0.23/5002363 on 2026-10-04: stock, the runtime returned 90 distinct controller poses per second for VRLink's 360 `xrLocateSpace` calls and the same pose for "now" and "now + 30 ms"; with the flag forced, all 360 calls returned distinct poses and the pose depended on the requested time. Velocity still updates 90 times per second, so the added poses are the runtime's extrapolation, not new measurements. See the [layer notes](extensions/controller-extrapolation-layer/README.md).
+
+---
+
 ### GXR Face Bridge (version 5002318 and below) (`gxrFacebridgePatch`)
 **Default: disabled individually; selected by all 4 legacy bundles** — exact 5001712/5001812/5001968/5002244 targets only; adds the guarded face-permission declaration without selecting startup patches.
 | Artifact | Edit |
