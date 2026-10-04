@@ -17,12 +17,10 @@ application cannot look it up. So the call is made from a
 - The shared [Shizuku bridge](../shizuku-bridge/README.md) binds the user service;
   `java/gxr/pose/PoseBridge` hands its binder to the layer.
 - `java/gxr/pose/PoseService` runs in the user service process with shell rights and returns
-  the HAL's poses of both controllers for one requested time. It uses the HAL's
-  `getDualPoseAtTimestamp` (transaction 19), one call for both controllers, as the system
-  controller service does once per display frame. Which of the two poses is the left
-  controller's is not stated in the reply, so the service compares one dual reply with the
-  left controller's own pose once both are tracked and at least 5 cm apart; until then it
-  reads each controller separately.
+  the HAL's poses of both controllers for one requested time, one HAL call per controller.
+  The HAL also has `getDualPoseAtTimestamp` (transaction 19), but over binder it answers
+  with a copy of the last single reply in both poses (checked on tracked controllers); the
+  system controller service gets its dual poses through the HAL's message queues.
 - `src/controller_hal_pose_layer.cpp` is an OpenXR API layer that wraps `xrLocateSpace` for
   the action spaces of VRLink's controller pose action (`pamir-stream-pose`) and reports the
   HAL's pose and velocities in place of the runtime's. Other spaces and hand tracking are
@@ -66,9 +64,8 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   it at once, which follows a recenter or a new session.
 - **Reads.** A thread of the layer reads the HAL 1000 times per second while VRLink is
   locating the controllers, the rate of the controller's IMU; VRLink asks 360 times per
-  second (four per display frame) and gets the latest read. With two HAL calls per read,
-  912-936 reads per second were reached in a stream; the rate with one call per read was
-  not measured yet. Each request is for
+  second (four per display frame) and gets the latest read. 912-936 reads per second were
+  reached in a stream. Each request is for
   "now" plus half a read period, the read's own duration and `debug.gxr.halpose.ahead`.
 - **Filter.** Every read goes through a low-pass whose cutoff rises with the controller's
   speed, taken from the HAL's own velocities: `cutoff = base + beta * speed`. A resting hand
@@ -125,8 +122,8 @@ values are a first guess and were not judged in the headset.
 - Run on 2.0.23/5002363 only. The legacy bases create the same pose action but were not run.
 - The HAL's velocities were checked against the recording only, not by throwing objects in
   a game.
-- The stock controller service reads the HAL 90 times per second; this layer adds about
-  1000 calls per second on top.
+- The stock controller service reads the HAL 90 times per second; this layer adds two HAL
+  calls per read, about 2000 per second, on top.
 
 ## Build
 

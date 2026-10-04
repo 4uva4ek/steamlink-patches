@@ -65,7 +65,7 @@ class ControllerHalPosePatchTest {
     fun `extension adds only the pose classes`() {
         val extension = controllerHalPoseResource(CONTROLLER_HAL_POSE_EXTENSION)
         // extensions/controller-hal-pose/java, d8 --min-api 29.
-        assertEquals("f7596543165042ac66f6bc739a959466cfd8232b98e82ad75a34efb4128f9371", sha256(extension))
+        assertEquals("7ebf2aacc5399080157621c7e44ff07503726fac43e0501f7f5c663878e3ca73", sha256(extension))
 
         val types = DexBackedDexFile.fromInputStream(Opcodes.getDefault(), extension.inputStream().buffered())
             .classes

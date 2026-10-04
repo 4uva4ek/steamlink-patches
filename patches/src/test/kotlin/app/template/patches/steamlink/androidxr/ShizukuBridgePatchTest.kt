@@ -32,7 +32,7 @@ class ShizukuBridgePatchTest {
     fun `extension adds only the bridge and the Shizuku API`() {
         val extension = shizukuBridgeResource(SHIZUKU_BRIDGE_EXTENSION)
         // extensions/shizuku-bridge/java with dev.rikka.shizuku 13.1.5, d8 --min-api 29.
-        assertEquals("8476a87b660161f7fbe6eca1e9937419786ee90c2f6e23358ce5430d4db06823", sha256(extension))
+        assertEquals("ba9583a3af24cb00ab23952b7bd032b91c65405c9888a0635da7f2b384a421a8", sha256(extension))
 
         val types = DexBackedDexFile.fromInputStream(Opcodes.getDefault(), extension.inputStream().buffered())
             .classes
