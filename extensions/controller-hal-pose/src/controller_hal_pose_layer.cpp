@@ -10,7 +10,6 @@
 #include <sys/system_properties.h>
 #include <time.h>
 
-#include <algorithm>
 #include <atomic>
 #include <cmath>
 #include <cstdlib>
@@ -77,7 +76,7 @@ constexpr int64_t TUNING_REFRESH_NS = 1000000000LL;
 // HAL more often than that and runs the jitter filter on every read, so the filter averages more
 // samples over the same time and the reported pose is quieter without trailing further behind.
 // The default is VRLink's own request rate, 360 per second: at 1000 the pose looked no smoother
-// in the headset, and the largest steps of the reported pose at rest were the same.
+// in the headset.
 constexpr int DEFAULT_POLL_HZ = 360;
 constexpr int MAX_POLL_HZ = 2000;
 // The thread reads only while poses are being asked for.
@@ -183,7 +182,6 @@ std::atomic<int64_t> AHEAD_NS{0};
 std::atomic<bool> VELOCITIES{true};
 Filter FILTERS[CONTROLLERS];
 bool FILTER_ON = true;
-bool SMOOTHED_SPEED = true;
 float POSITION_MIN_CUTOFF = DEFAULT_POSITION_MIN_CUTOFF;
 float POSITION_BETA = DEFAULT_POSITION_BETA;
 float ROTATION_MIN_CUTOFF = DEFAULT_ROTATION_MIN_CUTOFF;
@@ -196,24 +194,6 @@ int64_t TUNING_READ_AT = 0;
 int64_t STATS_AT = 0;
 int STATS_REPLACED = 0, STATS_PASSED = 0, STATS_STILL = 0, STATS_JUMPS = 0;
 double STATS_SHIFT = 0;
-// Per controller, while it is nearly still: the largest step between two consecutive reports of
-// the reported pose, of the HAL's unfiltered pose and of the runtime's pose. Tells a jump made by
-// this layer from one that is already in the HAL's or the runtime's pose.
-struct RestSteps {
-    bool has = false;
-    Vec reported, raw, runtime;
-    Quat reportedRotation, rawRotation;
-    double maxReported = 0, maxRaw = 0, maxRuntime = 0, maxReportedAngle = 0, maxRawAngle = 0;
-    float minConfidence = 1.0f;
-    double linearSum = 0, angularSum = 0;
-    int samples = 0;
-};
-RestSteps REST[CONTROLLERS];
-
-double distance(const Vec& a, const Vec& b) {
-    const double x = a.x - b.x, y = a.y - b.y, z = a.z - b.z;
-    return std::sqrt(x * x + y * y + z * z);
-}
 
 std::mutex HAL_MUTEX;
 HalPose HAL_POSES[CONTROLLERS];
@@ -243,7 +223,6 @@ float readFloat(const char* name, float fallback, float low, float high) {
 
 // Read once a second while poses are replaced (BASE_MUTEX held):
 //   debug.gxr.halpose.filter      0 = report the HAL's pose unfiltered (default 1)
-//   debug.gxr.halpose.speed       0 = the pose cutoffs follow the unsmoothed speed (default 1)
 //   debug.gxr.halpose.pos.cutoff  position cutoff at rest, Hz (3)
 //   debug.gxr.halpose.pos.beta    position cutoff added per m/s, Hz (60)
 //   debug.gxr.halpose.rot.cutoff  rotation cutoff at rest, Hz (3)
@@ -284,11 +263,6 @@ void refreshTuning(int64_t now) {
             on ? "on" : "off", positionCutoff, positionBeta, rotationCutoff, rotationBeta,
             linearCutoff, linearBeta, angularCutoff, angularBeta);
     }
-    const bool smoothedSpeed = readFloat("debug.gxr.halpose.speed", 1.0f, 0.0f, 1.0f) != 0.0f;
-    if (!first && smoothedSpeed != SMOOTHED_SPEED) {
-        GXR_LOG("pose cutoffs follow the %s speed", smoothedSpeed ? "smoothed" : "unsmoothed");
-    }
-    SMOOTHED_SPEED = smoothedSpeed;
     LINEAR_MIN_CUTOFF = linearCutoff;
     LINEAR_BETA = linearBeta;
     ANGULAR_MIN_CUTOFF = angularCutoff;
@@ -334,18 +308,6 @@ void filterPose(
     }
     if (FILTER_ON && filter.at != 0 && step > 0 && step < FILTER_RESET_NS) {
         const double seconds = step / 1e9;
-        *linearVelocity = blended(filter.linearVelocity, *linearVelocity,
-            blendFor(LINEAR_MIN_CUTOFF + LINEAR_BETA * linear, seconds));
-        *angularVelocity = blended(filter.angularVelocity, *angularVelocity,
-            blendFor(ANGULAR_MIN_CUTOFF + ANGULAR_BETA * angular, seconds));
-        // The pose cutoffs follow the smoothed speed. In a pose the cameras see badly the HAL's
-        // velocities are noisy on a controller held still; the size of each noisy sample would
-        // open the pose filter and let the pose's own noise through, while the noise largely
-        // cancels in the smoothed vector.
-        if (SMOOTHED_SPEED) {
-            linear = static_cast<float>(distance(*linearVelocity, Vec{}));
-            angular = static_cast<float>(distance(*angularVelocity, Vec{}));
-        }
         const double p = blendFor(POSITION_MIN_CUTOFF + POSITION_BETA * linear, seconds);
         position->x = filter.position.x + (position->x - filter.position.x) * p;
         position->y = filter.position.y + (position->y - filter.position.y) * p;
@@ -358,6 +320,10 @@ void filterPose(
         }
         *rotation = normalized({last.x + (next.x - last.x) * r, last.y + (next.y - last.y) * r,
             last.z + (next.z - last.z) * r, last.w + (next.w - last.w) * r});
+        *linearVelocity = blended(filter.linearVelocity, *linearVelocity,
+            blendFor(LINEAR_MIN_CUTOFF + LINEAR_BETA * linear, seconds));
+        *angularVelocity = blended(filter.angularVelocity, *angularVelocity,
+            blendFor(ANGULAR_MIN_CUTOFF + ANGULAR_BETA * angular, seconds));
     }
     filter.at = now;
     filter.position = *position;
@@ -653,28 +619,6 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
         &angularVelocity);
     const double sx = position.x - pose.position.x, sy = position.y - pose.position.y, sz = position.z - pose.position.z;
     STATS_SHIFT += std::sqrt(sx * sx + sy * sy + sz * sz);
-    {
-        RestSteps& rest = REST[device];
-        const bool still = linear < FIND_LINEAR && angular < FIND_ANGULAR;
-        const Vec runtime{pose.position.x, pose.position.y, pose.position.z};
-        if (still && rest.has) {
-            rest.maxReported = std::max(rest.maxReported, distance(position, rest.reported));
-            rest.maxRaw = std::max(rest.maxRaw, distance(halPosition, rest.raw));
-            rest.maxRuntime = std::max(rest.maxRuntime, distance(runtime, rest.runtime));
-            rest.maxReportedAngle = std::max(rest.maxReportedAngle, angle(rotation, rest.reportedRotation));
-            rest.maxRawAngle = std::max(rest.maxRawAngle, angle(halRotation, rest.rawRotation));
-            rest.minConfidence = std::min(rest.minConfidence, hal.f(33));
-            rest.linearSum += linear;
-            rest.angularSum += angular;
-            ++rest.samples;
-        }
-        rest.has = still;
-        rest.reported = position;
-        rest.raw = halPosition;
-        rest.runtime = runtime;
-        rest.reportedRotation = rotation;
-        rest.rawRotation = halRotation;
-    }
     ++STATS_REPLACED;
     REPLACED_AT.store(readAt);
     pose.orientation = {static_cast<float>(rotation.x), static_cast<float>(rotation.y),
@@ -701,19 +645,6 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
             STATS_REPLACED, STATS_PASSED, STATS_STILL, STATS_JUMPS,
             STATS_REPLACED ? STATS_SHIFT * 1000.0 / STATS_REPLACED : 0.0,
             STATS_POLLS.exchange(0) * 1e9 / (now - STATS_AT));
-        for (int hand = 0; hand < CONTROLLERS; ++hand) {
-            RestSteps& rest = REST[hand];
-            GXR_LOG("rest %d: max step reported=%.2fmm/%.3fdeg hal=%.2fmm/%.3fdeg runtime=%.2fmm confidence>=%.2f "
-                "samples=%d mean hal speed=%.3fm/s %.3frad/s",
-                hand, rest.maxReported * 1000.0, rest.maxReportedAngle * 57.29578, rest.maxRaw * 1000.0,
-                rest.maxRawAngle * 57.29578, rest.maxRuntime * 1000.0, rest.minConfidence, rest.samples,
-                rest.samples ? rest.linearSum / rest.samples : 0.0,
-                rest.samples ? rest.angularSum / rest.samples : 0.0);
-            rest.linearSum = rest.angularSum = 0;
-            rest.samples = 0;
-            rest.maxReported = rest.maxRaw = rest.maxRuntime = rest.maxReportedAngle = rest.maxRawAngle = 0;
-            rest.minConfidence = 1.0f;
-        }
         STATS_AT = now;
         STATS_REPLACED = STATS_PASSED = STATS_STILL = STATS_JUMPS = 0;
         STATS_SHIFT = 0;
