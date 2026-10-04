@@ -14,9 +14,9 @@ controller is held at release.
 The layer wraps `xrLocateSpace` for the action spaces of VRLink's controller pose action
 (`pamir-stream-pose`) and rewrites the chained `XrSpaceVelocity`:
 
-- linear: pitched by -62.6 degrees about X in the located pose's frame, then rotated by
+- linear: pitched by -62.85 degrees about X in the located pose's frame, then rotated by
   the located orientation into the base space;
-- angular: pitched by -42 degrees about X and left local to the pose, which is how
+- angular: pitched by -42.25 degrees about X and left local to the pose, which is how
   SteamVR reads what VRLink forwards.
 
 Poses, other spaces and hand tracking are not touched, and no Steam Link code is changed.
@@ -27,8 +27,8 @@ Read when Steam Link starts (logcat tag `GxrVelocityFrame`):
 
 ```
 adb shell setprop debug.gxr.velocity_frame 0            # report the runtime's velocities unchanged
-adb shell setprop debug.gxr.velocity_pitch_linear -62.6
-adb shell setprop debug.gxr.velocity_pitch_angular -42
+adb shell setprop debug.gxr.velocity_pitch_linear -62.85
+adb shell setprop debug.gxr.velocity_pitch_angular -42.25
 ```
 
 ## Measurements (Galaxy XR SM-I610, Steam Link 2.0.23/5002363, 2026-10-04)
@@ -51,7 +51,14 @@ degrees of pitch brought them to 7 / 12 degrees (linear) and 6 / 12 degrees (ang
 which is where the two angles come from. The streamed pose is pitched -20.6 degrees
 against the runtime's grip pose, hence -62.6 for the linear velocity. With the layer, the
 best remaining fixed rotation is 2-4 degrees for the angular velocity and 11-18 degrees
-about inconsistent axes for the linear one, so the defaults were left as they are.
+about inconsistent axes for the linear one.
+
+The table above was taken with -62.6 and -42. The defaults are now -62.85 and -42.25: the
+grip pose is pitched 42.25 degrees against the controller HAL's own pose (measured on still
+controllers to 0.04 degrees, see the
+[controller HAL pose layer notes](../controller-hal-pose/README.md)), and the velocities
+are in the HAL's frame. The measurement was not repeated with the new values; the change
+is a quarter of a degree.
 
 The runtime's own pose extrapolation still moves the pose along the uncorrected vector;
 the layer does not change poses.

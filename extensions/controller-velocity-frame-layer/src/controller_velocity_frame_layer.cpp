@@ -23,10 +23,12 @@ constexpr char STREAM_POSE_ACTION[] = "pamir-stream-pose";
 // to the controller, pitched against the grip pose, instead of in the base space. VRLink forwards
 // both unchanged: SteamVR reads the linear one as a world vector and the angular one as local to
 // the streamed pose. Measured on the PC side against the motion of the streamed positions
-// (2026-10-04): both sit 42 degrees of pitch away from the streamed pose's frame, which is itself
-// pitched -20.6 degrees against the runtime's grip pose.
-constexpr double DEFAULT_LINEAR_PITCH_DEG = -62.6;
-constexpr double DEFAULT_ANGULAR_PITCH_DEG = -42.0;
+// (2026-10-04): both sit about 42 degrees of pitch away from the streamed pose's frame, which is
+// itself pitched -20.6 degrees against the runtime's grip pose. The exact angle is the pitch of
+// the grip pose against the controller HAL's own pose, 42.25 degrees, measured on still
+// controllers to 0.04 degrees: the velocities are in the HAL's frame.
+constexpr double DEFAULT_LINEAR_PITCH_DEG = -62.85;
+constexpr double DEFAULT_ANGULAR_PITCH_DEG = -42.25;
 
 PFN_xrGetInstanceProcAddr NEXT_GET_INSTANCE_PROC_ADDR = nullptr;
 PFN_xrCreateAction NEXT_CREATE_ACTION = nullptr;
