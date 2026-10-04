@@ -35,14 +35,17 @@ class PatchCategoriesTest {
             androidXrNativePermissionNamesPatch, forceHmdInitializationGatesPatch,
             forceLobbyPermissionStateGatePatch, forceStreamXrGatesPatch,
         ),
-        "Experiments" to listOf(backgroundBlueNoisePatch, fovealBlueNoisePatch, xrFovealCanvasPatch),
+        "Experiments" to listOf(
+            backgroundBlueNoisePatch, fovealBlueNoisePatch, xrFovealCanvasPatch,
+            controllerPoseExtrapolationPatch, controllerVelocityFramePatch, controllerGripHapticsPatch,
+        ),
     )
     private val publicPatches: Set<Patch<*>> = groups.values.flatten().toSet()
 
     @Test
     fun `every public patch carries its agreed category and default`() {
-        assertEquals(29, publicPatches.size)
-        assertEquals(listOf(5, 2, 6, 4, 2, 7, 3), groups.values.map { it.size })
+        assertEquals(32, publicPatches.size)
+        assertEquals(listOf(5, 2, 6, 4, 2, 7, 6), groups.values.map { it.size })
         groups.forEach { (category, patches) ->
             patches.forEach { patch ->
                 assertEquals(category, patch.category, patch.name)
@@ -69,7 +72,7 @@ class PatchCategoriesTest {
             val name = channel.name
             assertEquals(channel.name.lowercase(), generated.get("channel").asString)
             val entries = generated.getAsJsonArray("patches").map { it.asJsonObject }
-            assertEquals(if (channel == ReleaseChannel.STABLE) 26 else 29, entries.size, name)
+            assertEquals(if (channel == ReleaseChannel.STABLE) 26 else 32, entries.size, name)
             val names = entries.map { it.get("name").asString }
             assertEquals(names.sorted(), names, name)
             assertEquals(names.size, names.toSet().size, name)
@@ -79,7 +82,7 @@ class PatchCategoriesTest {
                 assertEquals(patch.category, entry.get("category").asString, patch.name)
                 assertEquals(patch.default, entry.get("default").asBoolean, patch.name)
             }
-            assertEquals(if (channel == ReleaseChannel.STABLE) 0 else 3,
+            assertEquals(if (channel == ReleaseChannel.STABLE) 0 else 6,
                 entries.count { it.get("category").asString == "Experiments" }, name)
         }
     }

@@ -209,6 +209,47 @@ Face bridge, tongue bridge, high resolution and battery no longer select either 
 
 ---
 
+### Controller pose extrapolation (`controllerPoseExtrapolationPatch`, experimental)
+**Default: disabled** (experimental) — no dependencies; legacy 5001712/5001812/5001968/5002244 and 2.0.23/5002363. The layer hooks only the runtime library, so it does not depend on the base; measured on 5002363 only, the legacy bases were not run.
+| Artifact | Edit |
+|---|---|
+| `lib/arm64-v8a/libgxr_controller_extrapolation.so` | New file (OpenXR implicit API layer; source `extensions/controller-extrapolation-layer`) |
+| `assets/openxr/1/api_layers/implicit.d/XR_APILAYER_local_GalaxyXR_controller_extrapolation.json` | New file (layer manifest; disable env: `GXR_DISABLE_CONTROLLER_EXTRAPOLATION`) |
+
+No Steam Link code, shader or config is changed. Inside the Steam Link process the layer redirects the Galaxy XR runtime library's (`libopenxr_android.so`) import of `GetServerConfigurableFlag` so that `com.android.xr.flags.enable_controller_pose_extrapolation_consumer_side` reads as `true`; every other flag is passed through. `adb shell setprop debug.gxr.extrapolation 0` leaves the flag untouched (read at app start).
+
+Measured on a Galaxy XR headset with 2.0.23/5002363 on 2026-10-04: stock, the runtime returned 90 distinct controller poses per second for VRLink's 360 `xrLocateSpace` calls and the same pose for "now" and "now + 30 ms"; with the flag forced, all 360 calls returned distinct poses and the pose depended on the requested time. Velocity still updates 90 times per second, so the added poses are the runtime's extrapolation, not new measurements. See the [layer notes](extensions/controller-extrapolation-layer/README.md).
+
+---
+
+### Controller velocity frame (`controllerVelocityFramePatch`, experimental)
+**Default: disabled** (experimental) — no dependencies; legacy 5001712/5001812/5001968/5002244 and 2.0.23/5002363. The legacy bases use the same pose action and, with this repository's `controller_config.json`, the same controller pose offset; the angles were measured on 5002363 only and the legacy bases were not run. Do not combine with Controller velocity fix, which replaces the same velocities.
+| Artifact | Edit |
+|---|---|
+| `lib/arm64-v8a/libgxr_controller_velocity_frame.so` | New file (OpenXR implicit API layer; source `extensions/controller-velocity-frame-layer`) |
+| `assets/openxr/1/api_layers/implicit.d/XR_APILAYER_local_GalaxyXR_controller_velocity_frame.json` | New file (layer manifest; disable env: `GXR_DISABLE_CONTROLLER_VELOCITY_FRAME`) |
+
+No Steam Link code, shader or config is changed. The Galaxy XR runtime reports the controller's linear and angular velocity in a frame attached to the controller instead of in the base space, and VRLink forwards both unchanged, so SteamVR sends thrown objects in the wrong direction. The layer wraps `xrLocateSpace` for the action spaces of VRLink's controller pose action (`pamir-stream-pose`) and rewrites the chained velocity: the linear one is pitched by -62.6 degrees in the located pose's frame and rotated into the base space, the angular one is pitched by -42 degrees and left local to the pose. Poses, other spaces and hand tracking are not touched. `adb shell setprop debug.gxr.velocity_frame 0` reports the runtime's velocities unchanged; `debug.gxr.velocity_pitch_linear` and `debug.gxr.velocity_pitch_angular` override the two angles (all read when Steam Link starts).
+
+Measured on the PC from the poses VRLink delivers, Galaxy XR headset with 2.0.23/5002363 on 2026-10-04, against the displacement of the streamed positions (left / right controller): the linear velocity's direction error went from 44 / 55 degrees to 15 / 17.5 degrees and the angular velocity's from 18 / 33 degrees to 12 / 14 degrees; speed stayed at 98-100% of the positions'. Independent of the controller pose extrapolation patch.
+
+---
+
+### Controller grip haptics through Shizuku (`controllerGripHapticsPatch`, experimental)
+**Default: disabled** (experimental) — no patch dependencies; legacy 5001712/5001812/5001968/5002244 and 2.0.23/5002363. Needs [Shizuku](https://github.com/RikkaApps/Shizuku) on the headset.
+| Artifact | Edit |
+|---|---|
+| `lib/arm64-v8a/libgxr_haptic_main.so` | New file (OpenXR implicit API layer; source `extensions/controller-grip-haptics`) |
+| `assets/openxr/1/api_layers/implicit.d/XR_APILAYER_local_GalaxyXR_haptic_main.json` | New file (layer manifest; disable env: `GXR_DISABLE_HAPTIC_MAIN`) |
+| dex | New classes `gxr.haptic.HapticProvider`, `gxr.haptic.HapticService` and the Shizuku API 13.1.5 (`rikka.shizuku`, `rikka.sui`, `moe.shizuku`) from `extensions/controller-grip-haptics.mpe` |
+| `AndroidManifest.xml` | Adds `uses-permission` `moe.shizuku.manager.permission.API_V23`, `queries` for `moe.shizuku.privileged.api`, `meta-data` `moe.shizuku.client.V3_SUPPORT` and the provider `gxr.haptic.HapticProvider` with authority `<package>.shizuku` |
+
+No Steam Link code, shader or config is changed. A Galaxy XR controller has a vibrator at the trigger and one in the grip; the system controller service sends every OpenXR vibration to the trigger one. The grip vibrator is reachable only through the controller HAL, which answers shell but not an application, so the provider asks Shizuku for permission at start and binds a Shizuku user service that relays to the HAL. The layer wraps `xrApplyHapticFeedback` and `xrStopHapticFeedback` and, while that service is connected, sends `XrHapticVibration` to the grip vibrator instead of the runtime. Without Shizuku or its permission every call goes to the runtime unchanged.
+
+The layer generates the vibration itself and streams it to the grip vibrator as 8-bit samples in short chunks: a sine at half the requested frequency, capped at 130 Hz, with the amplitude mapped onto 0.2..0.8 by a square-root curve. `adb shell setprop debug.gxr.haptic 0|1|2` selects OpenXR only, grip (default) or grip and trigger; `debug.gxr.haptic.pcm 0` switches to the HAL's plain pulses; the other `debug.gxr.haptic.*` properties tune amplitude, tone and chunk length and are re-read while streaming. Checked by hand on a Galaxy XR headset with 2.0.23/5002363 on 2026-10-04 (SteamVR dashboard, Beat Saber); the legacy bases make the same OpenXR calls but were not run. See the [layer notes](extensions/controller-grip-haptics/README.md).
+
+---
+
 ### GXR Face Bridge (version 5002318 and below) (`gxrFacebridgePatch`)
 **Default: disabled individually; selected by all 4 legacy bundles** — exact 5001712/5001812/5001968/5002244 targets only; adds the guarded face-permission declaration without selecting startup patches.
 | Artifact | Edit |
