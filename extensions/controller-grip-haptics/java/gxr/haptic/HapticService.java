@@ -14,6 +14,7 @@ public class HapticService extends Binder {
     static final String DESCRIPTOR = "gxr.haptic.IHapticService";
     static final int TRANSACTION_VIBRATE = 1;
     static final int TRANSACTION_STOP = 2;
+    static final int TRANSACTION_PLAY = 3;
     // Reserved by Shizuku: asks the user service to exit.
     private static final int TRANSACTION_DESTROY = 16777115;
 
@@ -22,9 +23,16 @@ public class HapticService extends Binder {
     private static final String HAL_DESCRIPTOR = "vendor.samsung.hardware.secxrcontroller.ISecXRController";
     private static final int HAL_PERFORM_HAPTIC = 21;
     private static final int HAL_STOP_HAPTIC = 22;
+    private static final int HAL_GET_DEVICE_STATUS = 15;
+    private static final int HAL_STATUS_CONNECTED = 2;
+    private static final long STATUS_MAX_AGE_MS = 300;
     private static final int HAL_HAPTIC_INFO_SIZE = 28;
+    // The controller plays signed 8-bit samples at this rate.
+    private static final float HAL_SAMPLE_RATE = 8000.0f;
 
     private IBinder hal;
+    private final long[] statusReadAt = new long[2];
+    private final boolean[] connected = new boolean[2];
 
     public HapticService() {
         attachInterface(null, DESCRIPTOR);
@@ -42,6 +50,13 @@ public class HapticService extends Binder {
                 final float frequency = data.readFloat();
                 final float amplitude = data.readFloat();
                 vibrate(device, vibrator, durationMs, frequency, amplitude);
+                return true;
+            }
+            case TRANSACTION_PLAY: {
+                data.enforceInterface(DESCRIPTOR);
+                final int device = data.readInt();
+                final int vibrator = data.readInt();
+                play(device, vibrator, data.createByteArray());
                 return true;
             }
             case TRANSACTION_STOP: {
@@ -82,6 +97,62 @@ public class HapticService extends Binder {
         data.writeFloat(amplitude);
         data.writeInt(0);
         data.writeInt(0);
+        call(HAL_PERFORM_HAPTIC, data);
+    }
+
+    /**
+     * The headset suspends a controller nobody tracks. A waveform sent then never starts uploading
+     * and blocks the HAL, so waveforms go only to a connected controller.
+     */
+    private boolean isConnected(int device) {
+        if (device < 0 || device >= connected.length) return false;
+        final long now = android.os.SystemClock.uptimeMillis();
+        if (statusReadAt[device] != 0 && now - statusReadAt[device] < STATUS_MAX_AGE_MS) return connected[device];
+        boolean result = false;
+        final Parcel data = Parcel.obtain();
+        final Parcel reply = Parcel.obtain();
+        try {
+            final IBinder target = hal();
+            if (target != null) {
+                data.writeInterfaceToken(HAL_DESCRIPTOR);
+                data.writeInt(device);
+                target.transact(HAL_GET_DEVICE_STATUS, data, reply, 0);
+                reply.readException();
+                result = reply.readInt() == HAL_STATUS_CONNECTED;
+            }
+        } catch (Throwable error) {
+            Log.w(TAG, "controller status read failed", error);
+        } finally {
+            reply.recycle();
+            data.recycle();
+        }
+        if (result != connected[device] || statusReadAt[device] == 0) {
+            Log.i(TAG, "controller " + device + (result ? " connected" : " not connected, waveforms held back"));
+        }
+        connected[device] = result;
+        statusReadAt[device] = now;
+        return result;
+    }
+
+    private void play(int device, int vibrator, byte[] samples) {
+        if (samples == null || samples.length == 0) return;
+        if (!isConnected(device)) return;
+        final Parcel data = Parcel.obtain();
+        data.writeInterfaceToken(HAL_DESCRIPTOR);
+        data.writeInt(device);
+        data.writeInt(1);
+        final int start = data.dataPosition();
+        data.writeInt(0);
+        data.writeInt(vibrator);
+        data.writeInt(0);
+        data.writeFloat(HAL_SAMPLE_RATE);
+        data.writeFloat(0.0f);
+        data.writeByteArray(samples);
+        data.writeInt(0);
+        final int end = data.dataPosition();
+        data.setDataPosition(start);
+        data.writeInt(end - start);
+        data.setDataPosition(end);
         call(HAL_PERFORM_HAPTIC, data);
     }
 

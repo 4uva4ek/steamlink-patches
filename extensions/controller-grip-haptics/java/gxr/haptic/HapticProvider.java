@@ -16,7 +16,7 @@ import rikka.shizuku.ShizukuProvider;
 public class HapticProvider extends ShizukuProvider {
     private static final String TAG = "GxrHapticMain";
     private static final int PERMISSION_REQUEST = 7301;
-    private static final int SERVICE_VERSION = 1;
+    private static final int SERVICE_VERSION = 3;
 
     private static boolean libraryLoaded;
     private static boolean bound;

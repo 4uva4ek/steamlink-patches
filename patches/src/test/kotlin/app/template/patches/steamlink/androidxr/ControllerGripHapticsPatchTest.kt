@@ -36,17 +36,21 @@ class ControllerGripHapticsPatchTest {
 
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-grip-haptics, NDK 28.2.13676358, arm64-v8a, Release.
-        assertEquals("87334a072b4a0ddc929f404fb4ff9c0af5578e5cc1b6ccd916918d39cac546c3", sha256(library))
+        assertEquals("93d3700bda20d5bd90d664ff1c10dda18fcca7ede4911d4000415f468e5af0cb", sha256(library))
         val text = String(library, Charsets.ISO_8859_1)
         assertTrue("xrNegotiateLoaderApiLayerInterface" in text)
         // Called by the provider in the extension, and the interface of its user service.
         assertTrue("Java_gxr_haptic_HapticProvider_nativeSetBinder" in text)
         assertTrue("gxr.haptic.IHapticService" in text)
         assertTrue("debug.gxr.haptic" in text)
-        assertTrue("debug.gxr.haptic.gain" in text)
+        assertTrue("debug.gxr.haptic.min" in text)
+        assertTrue("debug.gxr.haptic.pcm" in text)
+        assertTrue("debug.gxr.haptic.chunkms" in text)
+        assertTrue("debug.gxr.haptic.gamma" in text)
         assertTrue("debug.gxr.haptic.max" in text)
         assertTrue("debug.gxr.haptic.freq" in text)
         assertTrue("debug.gxr.haptic.minms" in text)
+        assertTrue("debug.gxr.haptic.streamms" in text)
     }
 
     @Test
@@ -70,7 +74,7 @@ class ControllerGripHapticsPatchTest {
     fun `extension adds only the haptic classes and the Shizuku API`() {
         val extension = controllerGripHapticsResource(CONTROLLER_GRIP_HAPTICS_EXTENSION)
         // extensions/controller-grip-haptics/java with dev.rikka.shizuku 13.1.5, d8 --min-api 29.
-        assertEquals("32fbb803058924e168e9c3f78c032014ae8a77e70f6a574451ceb008fce95ead", sha256(extension))
+        assertEquals("012aa86ede864d12d33236f520b32343ad71431da6e7a43555253f490276c5de", sha256(extension))
 
         val types = DexBackedDexFile.fromInputStream(Opcodes.getDefault(), extension.inputStream().buffered())
             .classes
