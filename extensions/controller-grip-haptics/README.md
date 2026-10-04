@@ -41,15 +41,21 @@ amplitude 0.16) and in Beat Saber:
 | Property | Default | Meaning |
 |---|---|---|
 | `debug.gxr.haptic` | `1` | `0` OpenXR only, `1` grip, `2` grip and trigger |
-| `debug.gxr.haptic.gain` | `5` | amplitude multiplier before the 0.1..0.8 clamp |
+| `debug.gxr.haptic.gain` | `5` | amplitude multiplier |
+| `debug.gxr.haptic.max` | `1.0` | strongest amplitude sent, up to 1.27 |
 | `debug.gxr.haptic.freq` | `2` | HAL frequency step 1..10; `0` derives it from the OpenXR frequency. Step 3 is already shrill |
 | `debug.gxr.haptic.minms` | `60` | shortest pulse in milliseconds |
 
 Set with `adb shell setprop`; the layer re-reads them twice a second while streaming.
 Logcat tag: `GxrHapticMain` (first 40 vibrations are logged).
 
-With gain 5 any amplitude above 0.16 reaches the 0.8 limit, so weak and strong effects
-feel alike.
+The 0.8 limit is the stock service's, not the HAL's: the HAL packs `amplitude * 100` into a
+7-bit field (`kxr_spi_uart::EncodeMotorData`), so 1.27 is the largest value that does not
+wrap. Pulses at 0.8, 1.0 and 1.27 each felt stronger than the one before; the default
+ceiling is 1.0.
+
+With gain 5 any amplitude above 0.2 reaches that ceiling, so weak and strong effects feel
+alike.
 
 The legacy bases (5001712, 5001812, 5001968, 5002244) call the same two OpenXR functions
 with the same `/user/hand/left|right` subaction paths, but the patch was run on a headset

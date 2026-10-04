@@ -36,7 +36,7 @@ class ControllerGripHapticsPatchTest {
 
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-grip-haptics, NDK 28.2.13676358, arm64-v8a, Release.
-        assertEquals("e270a9a55814f85a4815341a06963f8c9fe0c21754f5f2ceab8b4be26c86069c", sha256(library))
+        assertEquals("6e7f8a64691081ac630c14933024cd6940a66ccc05f9c9ceda632196bfb2caa2", sha256(library))
         val text = String(library, Charsets.ISO_8859_1)
         assertTrue("xrNegotiateLoaderApiLayerInterface" in text)
         // Called by the provider in the extension, and the interface of its user service.
@@ -44,6 +44,7 @@ class ControllerGripHapticsPatchTest {
         assertTrue("gxr.haptic.IHapticService" in text)
         assertTrue("debug.gxr.haptic" in text)
         assertTrue("debug.gxr.haptic.gain" in text)
+        assertTrue("debug.gxr.haptic.max" in text)
         assertTrue("debug.gxr.haptic.freq" in text)
         assertTrue("debug.gxr.haptic.minms" in text)
     }

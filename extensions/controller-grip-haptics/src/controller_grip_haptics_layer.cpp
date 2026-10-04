@@ -32,13 +32,16 @@ constexpr int32_t VIBRATOR_MAIN = 1;
 // Limits the stock controller service applies before it calls the HAL.
 constexpr int32_t MIN_DURATION_MS = 30;
 constexpr float MIN_AMPLITUDE = 0.1f;
-constexpr float MAX_AMPLITUDE = 0.8f;
 constexpr float HZ_PER_FREQUENCY_STEP = 50.0f;
 constexpr float MIN_FREQUENCY = 1.0f;
 constexpr float MAX_FREQUENCY = 10.0f;
 // The grip vibrator is much weaker than the trigger one at the same amplitude and gets shrill above
 // step 2. Values picked by feel on SteamVR dashboard ticks (21 ms, amplitude 0.16).
 constexpr float DEFAULT_GAIN = 5.0f;
+// The stock service stops at 0.8. The HAL sends amplitude * 100 in a 7-bit field, so 1.27 is the
+// largest value that does not wrap; 0.8, 1.0 and 1.27 each feel stronger than the one before.
+constexpr float DEFAULT_MAX_AMPLITUDE = 1.0f;
+constexpr float AMPLITUDE_LIMIT = 1.27f;
 constexpr float DEFAULT_FREQUENCY = 2.0f;
 constexpr int32_t DEFAULT_MIN_DURATION_MS = 60;
 constexpr int64_t TUNING_REFRESH_NS = 500000000;
@@ -53,11 +56,16 @@ XrPath LEFT_HAND = XR_NULL_PATH;
 XrPath RIGHT_HAND = XR_NULL_PATH;
 std::atomic<int> MODE{MODE_MAIN};
 std::atomic<float> GAIN{DEFAULT_GAIN};
+std::atomic<float> MAX_AMPLITUDE{DEFAULT_MAX_AMPLITUDE};
 std::atomic<float> FREQUENCY{DEFAULT_FREQUENCY};
 std::atomic<int32_t> MIN_DURATION{DEFAULT_MIN_DURATION_MS};
 std::atomic<int64_t> TUNING_READ_AT{0};
 std::atomic<AIBinder*> SERVICE{nullptr};
 std::atomic<int> LOGGED{0};
+
+float clamp(float value, float low, float high) {
+    return value < low ? low : value > high ? high : value;
+}
 
 float readProperty(const char* name, float fallback) {
     char value[PROP_VALUE_MAX]{};
@@ -68,6 +76,7 @@ float readProperty(const char* name, float fallback) {
 // Tuning from adb, picked up while the stream runs:
 //   debug.gxr.haptic        0|1|2  OpenXR only, grip, grip + trigger
 //   debug.gxr.haptic.gain   amplitude multiplier for the grip vibrator
+//   debug.gxr.haptic.max    strongest amplitude sent, up to 1.27
 //   debug.gxr.haptic.freq   1..10 fixed HAL frequency step, 0 = derive from the OpenXR frequency
 //   debug.gxr.haptic.minms  shortest pulse in milliseconds
 void refreshTuning() {
@@ -79,12 +88,10 @@ void refreshTuning() {
     TUNING_READ_AT.store(nowNs);
     MODE.store(static_cast<int>(readProperty("debug.gxr.haptic", MODE_MAIN)));
     GAIN.store(readProperty("debug.gxr.haptic.gain", DEFAULT_GAIN));
+    MAX_AMPLITUDE.store(
+        clamp(readProperty("debug.gxr.haptic.max", DEFAULT_MAX_AMPLITUDE), MIN_AMPLITUDE, AMPLITUDE_LIMIT));
     FREQUENCY.store(readProperty("debug.gxr.haptic.freq", DEFAULT_FREQUENCY));
     MIN_DURATION.store(static_cast<int32_t>(readProperty("debug.gxr.haptic.minms", DEFAULT_MIN_DURATION_MS)));
-}
-
-float clamp(float value, float low, float high) {
-    return value < low ? low : value > high ? high : value;
 }
 
 void* serviceCreate(void*) { return nullptr; }
@@ -147,7 +154,7 @@ XrResult XRAPI_CALL layerApplyHapticFeedback(
     int32_t durationMs = static_cast<int32_t>(vibration->duration / 1000000);
     const int32_t minDuration = MIN_DURATION.load() > MIN_DURATION_MS ? MIN_DURATION.load() : MIN_DURATION_MS;
     if (durationMs < minDuration) durationMs = minDuration;
-    const float amplitude = clamp(vibration->amplitude * GAIN.load(), MIN_AMPLITUDE, MAX_AMPLITUDE);
+    const float amplitude = clamp(vibration->amplitude * GAIN.load(), MIN_AMPLITUDE, MAX_AMPLITUDE.load());
     float frequency = FREQUENCY.load();
     if (frequency <= 0.0f) frequency = std::round(vibration->frequency / HZ_PER_FREQUENCY_STEP);
     frequency = clamp(frequency, MIN_FREQUENCY, MAX_FREQUENCY);
