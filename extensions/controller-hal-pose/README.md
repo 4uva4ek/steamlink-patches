@@ -105,7 +105,7 @@ filter properties are re-read every second while streaming. Logcat tag: `GxrHalP
 | `debug.gxr.halpose.ahead` | 1 | Milliseconds added to the requested time |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
 | `debug.gxr.halpose.filter` | 1 | `0` reports the HAL's pose unfiltered |
-| `debug.gxr.halpose.pos.cutoff` | 1.5 | Position cutoff at rest, Hz |
+| `debug.gxr.halpose.pos.cutoff` | 3 | Position cutoff at rest, Hz |
 | `debug.gxr.halpose.pos.beta` | 60 | Position cutoff added per m/s, Hz |
 | `debug.gxr.halpose.rot.cutoff` | 3 | Rotation cutoff at rest, Hz |
 | `debug.gxr.halpose.rot.beta` | 60 | Rotation cutoff added per rad/s, Hz |
@@ -114,8 +114,8 @@ filter properties are re-read every second while streaming. Logcat tag: `GxrHalP
 | `debug.gxr.halpose.ang.cutoff` | 10 | Angular velocity cutoff at rest, Hz |
 | `debug.gxr.halpose.ang.beta` | 10 | Angular velocity cutoff added per rad/s, Hz |
 
-The pose filter values and the 1 ms were chosen by feel on the headset. The velocity filter
-values are a first guess and were not judged in the headset.
+The pose filter values and the 1 ms were chosen by feel on the headset, and the velocity
+filter values were accepted there as they are.
 
 ## Limits
 

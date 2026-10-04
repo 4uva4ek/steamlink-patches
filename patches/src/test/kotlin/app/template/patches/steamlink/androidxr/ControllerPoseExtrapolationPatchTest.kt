@@ -16,7 +16,7 @@ class ControllerPoseExtrapolationPatchTest {
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-extrapolation-layer, NDK 28.2.13676358, arm64-v8a, Release.
         assertEquals(
-            "22e520d206e0314326041f68eee61085fc543abd7a53dc1f0f00d9b66bc3b20e",
+            "ae75434d377afd8056f70ffd5bf28377ae4c3a8d6dbbca5adac2566ab7c9f092",
             MessageDigest.getInstance("SHA-256").digest(library).joinToString("") { "%02x".format(it) },
         )
         val text = String(library, Charsets.ISO_8859_1)

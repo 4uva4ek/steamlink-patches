@@ -45,7 +45,7 @@ constexpr char STREAM_POSE_ACTION[] = "pamir-stream-pose";
 // Cutoff = MIN_CUTOFF + BETA * speed, in Hz; speed in m/s for the position, rad/s for the rotation.
 // Only the size of the runtime's velocities is used, so the frame they are reported in does not
 // matter. The values were chosen by feel on the headset.
-constexpr float DEFAULT_POSITION_MIN_CUTOFF = 1.5f;
+constexpr float DEFAULT_POSITION_MIN_CUTOFF = 3.0f;
 constexpr float DEFAULT_POSITION_BETA = 60.0f;
 constexpr float DEFAULT_ROTATION_MIN_CUTOFF = 3.0f;
 constexpr float DEFAULT_ROTATION_BETA = 60.0f;
@@ -96,7 +96,7 @@ float readFloat(const char* name, float fallback, float low, float high) {
 
 // Read once a second while poses are located (MUTEX held):
 //   debug.gxr.posefilter             0 = report the runtime's pose unfiltered
-//   debug.gxr.posefilter.pos.cutoff  position cutoff at rest, Hz (1.5)
+//   debug.gxr.posefilter.pos.cutoff  position cutoff at rest, Hz (3)
 //   debug.gxr.posefilter.pos.beta    position cutoff added per m/s, Hz (60)
 //   debug.gxr.posefilter.rot.cutoff  rotation cutoff at rest, Hz (3)
 //   debug.gxr.posefilter.rot.beta    rotation cutoff added per rad/s, Hz (60)

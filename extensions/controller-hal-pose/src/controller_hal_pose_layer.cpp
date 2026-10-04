@@ -59,7 +59,7 @@ constexpr double BLEND = 0.005;
 // Jitter filter on the reported pose: a low-pass whose cutoff rises with the controller's speed
 // (the HAL's own velocities), so a resting hand is smoothed hard and a fast one barely lags.
 // Cutoff = MIN_CUTOFF + BETA * speed, in Hz; speed in m/s for the position, rad/s for the rotation.
-constexpr float DEFAULT_POSITION_MIN_CUTOFF = 1.5f;
+constexpr float DEFAULT_POSITION_MIN_CUTOFF = 3.0f;
 constexpr float DEFAULT_POSITION_BETA = 60.0f;
 constexpr float DEFAULT_ROTATION_MIN_CUTOFF = 3.0f;
 constexpr float DEFAULT_ROTATION_BETA = 60.0f;
@@ -222,7 +222,7 @@ float readFloat(const char* name, float fallback, float low, float high) {
 
 // Read once a second while poses are replaced (BASE_MUTEX held):
 //   debug.gxr.halpose.filter      0 = report the HAL's pose unfiltered (default 1)
-//   debug.gxr.halpose.pos.cutoff  position cutoff at rest, Hz (1.5)
+//   debug.gxr.halpose.pos.cutoff  position cutoff at rest, Hz (3)
 //   debug.gxr.halpose.pos.beta    position cutoff added per m/s, Hz (60)
 //   debug.gxr.halpose.rot.cutoff  rotation cutoff at rest, Hz (3)
 //   debug.gxr.halpose.rot.beta    rotation cutoff added per rad/s, Hz (60)

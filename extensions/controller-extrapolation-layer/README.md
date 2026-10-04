@@ -33,7 +33,7 @@ The filter properties are re-read every second while streaming:
 | Property | Default | Meaning |
 |---|---|---|
 | `debug.gxr.posefilter` | 1 | `0` reports the runtime's pose unfiltered |
-| `debug.gxr.posefilter.pos.cutoff` | 1.5 | Position cutoff at rest, Hz |
+| `debug.gxr.posefilter.pos.cutoff` | 3 | Position cutoff at rest, Hz |
 | `debug.gxr.posefilter.pos.beta` | 60 | Position cutoff added per m/s, Hz |
 | `debug.gxr.posefilter.rot.cutoff` | 3 | Rotation cutoff at rest, Hz |
 | `debug.gxr.posefilter.rot.beta` | 60 | Rotation cutoff added per rad/s, Hz |
