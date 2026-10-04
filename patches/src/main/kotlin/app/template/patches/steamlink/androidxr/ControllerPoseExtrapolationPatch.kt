@@ -6,6 +6,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
+import app.template.patches.shared.PatchCategories
 
 internal const val CONTROLLER_EXTRAPOLATION_LIBRARY = "libgxr_controller_extrapolation.so"
 internal const val CONTROLLER_EXTRAPOLATION_MANIFEST =
@@ -39,6 +40,7 @@ val controllerPoseExtrapolationPatch = rawResourcePatch(
     description = "Makes the Galaxy XR runtime extrapolate controller poses to the time VRLink requests. Stock, the runtime returns one controller sample per display frame, so 3 of VRLink's 4 pose sends per frame repeat it. Adds an OpenXR API layer; no Steam Link code is changed.",
     default = false,
 ) {
+    category(PatchCategories.EXPERIMENTS)
     compatibleWith(*CONTROLLER_EXTRAPOLATION_BUILDS.map { build ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,

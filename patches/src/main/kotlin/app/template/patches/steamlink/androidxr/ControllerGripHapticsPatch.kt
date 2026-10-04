@@ -7,6 +7,7 @@ import app.morphe.patcher.patch.resourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_EXPERIMENTAL
 import app.template.patches.shared.Constants.isLegacyXrFoundationSteamLinkBuild
 import app.template.patches.shared.Constants.isNativeXrSteamLinkBuild
+import app.template.patches.shared.PatchCategories
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -100,6 +101,7 @@ val controllerGripHapticsPatch = rawResourcePatch(
     description = "Sends controller vibration to the vibrator in the grip instead of the one at the trigger. Galaxy XR routes every OpenXR vibration to the trigger vibrator; the grip one is reachable only with shell rights, so this needs Shizuku running and its permission granted to Steam Link. Without Shizuku vibration stays as it is.",
     default = false,
 ) {
+    category(PatchCategories.EXPERIMENTS)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_EXPERIMENTAL.toTypedArray())
     dependsOn(
         controllerGripHapticsExtensionPatch,

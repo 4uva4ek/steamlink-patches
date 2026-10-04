@@ -6,6 +6,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
+import app.template.patches.shared.PatchCategories
 
 internal const val CONTROLLER_VELOCITY_FRAME_LIBRARY = "libgxr_controller_velocity_frame.so"
 internal const val CONTROLLER_VELOCITY_FRAME_MANIFEST =
@@ -40,6 +41,7 @@ val controllerVelocityFramePatch = rawResourcePatch(
     description = "Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads them in. Stock, they arrive in a frame attached to the controller, so thrown objects leave in the wrong direction. Adds an OpenXR API layer; no Steam Link code is changed.",
     default = false,
 ) {
+    category(PatchCategories.EXPERIMENTS)
     compatibleWith(*CONTROLLER_VELOCITY_FRAME_BUILDS.map { build ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,
