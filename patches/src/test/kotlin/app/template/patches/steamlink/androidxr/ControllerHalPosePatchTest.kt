@@ -20,7 +20,7 @@ class ControllerHalPosePatchTest {
 
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-hal-pose, NDK 28.2.13676358, arm64-v8a, Release.
-        assertEquals("b310c80b1d17978c806ccd4cbfa06a1b7b0f8da41084ee4d5544295efadf9e8e", sha256(library))
+        assertEquals("526eeef78d725153dcc6a2fea3e6f04c7d4b89e0a7ab23aac43c60a3b0b54f35", sha256(library))
         val text = String(library, Charsets.ISO_8859_1)
         assertTrue("xrNegotiateLoaderApiLayerInterface" in text)
         // Called by the bridge class in the extension, and the interface of its user service.
@@ -40,6 +40,10 @@ class ControllerHalPosePatchTest {
         assertTrue("debug.gxr.halpose.pos.beta" in text)
         assertTrue("debug.gxr.halpose.rot.cutoff" in text)
         assertTrue("debug.gxr.halpose.rot.beta" in text)
+        assertTrue("debug.gxr.halpose.lin.cutoff" in text)
+        assertTrue("debug.gxr.halpose.lin.beta" in text)
+        assertTrue("debug.gxr.halpose.ang.cutoff" in text)
+        assertTrue("debug.gxr.halpose.ang.beta" in text)
     }
 
     @Test
@@ -61,7 +65,7 @@ class ControllerHalPosePatchTest {
     fun `extension adds only the pose classes`() {
         val extension = controllerHalPoseResource(CONTROLLER_HAL_POSE_EXTENSION)
         // extensions/controller-hal-pose/java, d8 --min-api 29.
-        assertEquals("51674530c7baee366422f08e8c7d0e56d79fb708178981ad1f093608c7c2c4ac", sha256(extension))
+        assertEquals("f7596543165042ac66f6bc739a959466cfd8232b98e82ad75a34efb4128f9371", sha256(extension))
 
         val types = DexBackedDexFile.fromInputStream(Opcodes.getDefault(), extension.inputStream().buffered())
             .classes

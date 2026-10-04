@@ -63,14 +63,20 @@ constexpr float DEFAULT_POSITION_MIN_CUTOFF = 1.5f;
 constexpr float DEFAULT_POSITION_BETA = 60.0f;
 constexpr float DEFAULT_ROTATION_MIN_CUTOFF = 3.0f;
 constexpr float DEFAULT_ROTATION_BETA = 60.0f;
+// The same low-pass on the velocities, where the noise of the controller's accelerometer (linear)
+// and gyroscope (angular) shows; the raw IMU samples themselves are not available to the layer.
+constexpr float DEFAULT_LINEAR_MIN_CUTOFF = 10.0f;
+constexpr float DEFAULT_LINEAR_BETA = 40.0f;
+constexpr float DEFAULT_ANGULAR_MIN_CUTOFF = 10.0f;
+constexpr float DEFAULT_ANGULAR_BETA = 10.0f;
 constexpr int64_t FILTER_RESET_NS = 100000000LL;
 constexpr int64_t TUNING_REFRESH_NS = 1000000000LL;
 
 // VRLink asks for a controller pose four times per display frame. A thread of the layer reads the
 // HAL more often than that and runs the jitter filter on every read, so the filter averages more
 // samples over the same time and the reported pose is quieter without trailing further behind.
-// The default is twice VRLink's own 360 requests per second.
-constexpr int DEFAULT_POLL_HZ = 720;
+// The default is the rate of the controller's IMU, which is what the HAL's pose is fused from.
+constexpr int DEFAULT_POLL_HZ = 1000;
 constexpr int MAX_POLL_HZ = 2000;
 // The thread reads only while poses are being asked for.
 constexpr int64_t POLL_IDLE_NS = 300000000LL;
@@ -163,6 +169,9 @@ struct Filter {
     int64_t at = 0;
     Vec position;
     Quat rotation;
+    // In the HAL's frames: world axes and the controller's own axes.
+    Vec linearVelocity;
+    Vec angularVelocity;
 };
 
 std::mutex BASE_MUTEX;
@@ -176,6 +185,10 @@ float POSITION_MIN_CUTOFF = DEFAULT_POSITION_MIN_CUTOFF;
 float POSITION_BETA = DEFAULT_POSITION_BETA;
 float ROTATION_MIN_CUTOFF = DEFAULT_ROTATION_MIN_CUTOFF;
 float ROTATION_BETA = DEFAULT_ROTATION_BETA;
+float LINEAR_MIN_CUTOFF = DEFAULT_LINEAR_MIN_CUTOFF;
+float LINEAR_BETA = DEFAULT_LINEAR_BETA;
+float ANGULAR_MIN_CUTOFF = DEFAULT_ANGULAR_MIN_CUTOFF;
+float ANGULAR_BETA = DEFAULT_ANGULAR_BETA;
 int64_t TUNING_READ_AT = 0;
 int64_t STATS_AT = 0;
 int STATS_REPLACED = 0, STATS_PASSED = 0, STATS_STILL = 0, STATS_JUMPS = 0;
@@ -213,6 +226,10 @@ float readFloat(const char* name, float fallback, float low, float high) {
 //   debug.gxr.halpose.pos.beta    position cutoff added per m/s, Hz (60)
 //   debug.gxr.halpose.rot.cutoff  rotation cutoff at rest, Hz (3)
 //   debug.gxr.halpose.rot.beta    rotation cutoff added per rad/s, Hz (60)
+//   debug.gxr.halpose.lin.cutoff  linear velocity cutoff at rest, Hz (10)
+//   debug.gxr.halpose.lin.beta    linear velocity cutoff added per m/s, Hz (40)
+//   debug.gxr.halpose.ang.cutoff  angular velocity cutoff at rest, Hz (10)
+//   debug.gxr.halpose.ang.beta    angular velocity cutoff added per rad/s, Hz (10)
 void refreshTuning(int64_t now) {
     if (TUNING_READ_AT != 0 && now - TUNING_READ_AT < TUNING_REFRESH_NS) return;
     const bool first = TUNING_READ_AT == 0;
@@ -224,11 +241,25 @@ void refreshTuning(int64_t now) {
     const float rotationCutoff =
         readFloat("debug.gxr.halpose.rot.cutoff", DEFAULT_ROTATION_MIN_CUTOFF, 0.05f, 1000.0f);
     const float rotationBeta = readFloat("debug.gxr.halpose.rot.beta", DEFAULT_ROTATION_BETA, 0.0f, 10000.0f);
+    const float linearCutoff =
+        readFloat("debug.gxr.halpose.lin.cutoff", DEFAULT_LINEAR_MIN_CUTOFF, 0.05f, 1000.0f);
+    const float linearBeta = readFloat("debug.gxr.halpose.lin.beta", DEFAULT_LINEAR_BETA, 0.0f, 10000.0f);
+    const float angularCutoff =
+        readFloat("debug.gxr.halpose.ang.cutoff", DEFAULT_ANGULAR_MIN_CUTOFF, 0.05f, 1000.0f);
+    const float angularBeta = readFloat("debug.gxr.halpose.ang.beta", DEFAULT_ANGULAR_BETA, 0.0f, 10000.0f);
     if (first || on != FILTER_ON || positionCutoff != POSITION_MIN_CUTOFF || positionBeta != POSITION_BETA ||
-        rotationCutoff != ROTATION_MIN_CUTOFF || rotationBeta != ROTATION_BETA) {
-        GXR_LOG("filter %s: position %.2f Hz + %.1f per m/s, rotation %.2f Hz + %.1f per rad/s",
-            on ? "on" : "off", positionCutoff, positionBeta, rotationCutoff, rotationBeta);
+        rotationCutoff != ROTATION_MIN_CUTOFF || rotationBeta != ROTATION_BETA ||
+        linearCutoff != LINEAR_MIN_CUTOFF || linearBeta != LINEAR_BETA ||
+        angularCutoff != ANGULAR_MIN_CUTOFF || angularBeta != ANGULAR_BETA) {
+        GXR_LOG("filter %s: position %.2f Hz + %.1f per m/s, rotation %.2f Hz + %.1f per rad/s, "
+            "linear velocity %.2f Hz + %.1f per m/s, angular velocity %.2f Hz + %.1f per rad/s",
+            on ? "on" : "off", positionCutoff, positionBeta, rotationCutoff, rotationBeta,
+            linearCutoff, linearBeta, angularCutoff, angularBeta);
     }
+    LINEAR_MIN_CUTOFF = linearCutoff;
+    LINEAR_BETA = linearBeta;
+    ANGULAR_MIN_CUTOFF = angularCutoff;
+    ANGULAR_BETA = angularBeta;
     FILTER_ON = on;
     POSITION_MIN_CUTOFF = positionCutoff;
     POSITION_BETA = positionBeta;
@@ -241,11 +272,28 @@ double blendFor(double cutoffHz, double seconds) {
     return 1.0 - std::exp(-2.0 * 3.14159265358979323846 * cutoffHz * seconds);
 }
 
-void filterPose(Filter& filter, int64_t now, float linear, float angular, Vec* position, Quat* rotation) {
+Vec blended(const Vec& last, const Vec& next, double share) {
+    return {last.x + (next.x - last.x) * share, last.y + (next.y - last.y) * share,
+        last.z + (next.z - last.z) * share};
+}
+
+// `linear` and `angular` are the unfiltered speeds; the velocities are filtered in place.
+void filterPose(
+    Filter& filter,
+    int64_t now,
+    float linear,
+    float angular,
+    Vec* position,
+    Quat* rotation,
+    Vec* linearVelocity,
+    Vec* angularVelocity
+) {
     const int64_t step = now - filter.at;
     if (filter.at != 0 && step == 0) {
         *position = filter.position;
         *rotation = filter.rotation;
+        *linearVelocity = filter.linearVelocity;
+        *angularVelocity = filter.angularVelocity;
         return;
     }
     if (FILTER_ON && filter.at != 0 && step > 0 && step < FILTER_RESET_NS) {
@@ -262,10 +310,16 @@ void filterPose(Filter& filter, int64_t now, float linear, float angular, Vec* p
         }
         *rotation = normalized({last.x + (next.x - last.x) * r, last.y + (next.y - last.y) * r,
             last.z + (next.z - last.z) * r, last.w + (next.w - last.w) * r});
+        *linearVelocity = blended(filter.linearVelocity, *linearVelocity,
+            blendFor(LINEAR_MIN_CUTOFF + LINEAR_BETA * linear, seconds));
+        *angularVelocity = blended(filter.angularVelocity, *angularVelocity,
+            blendFor(ANGULAR_MIN_CUTOFF + ANGULAR_BETA * angular, seconds));
     }
     filter.at = now;
     filter.position = *position;
     filter.rotation = *rotation;
+    filter.linearVelocity = *linearVelocity;
+    filter.angularVelocity = *angularVelocity;
 }
 
 // Read when the instance is created:
@@ -273,7 +327,7 @@ void filterPose(Filter& filter, int64_t now, float linear, float angular, Vec* p
 //   debug.gxr.halpose.ahead  milliseconds added to "now" in the HAL request (1)
 //   debug.gxr.halpose.pitch  pitch of the grip pose against the HAL's pose, degrees (42.25)
 //   debug.gxr.halpose.velocity  0 = leave the runtime's velocities in place
-//   debug.gxr.halpose.hz     HAL reads per second by the layer's own thread (720); 0 = read only
+//   debug.gxr.halpose.hz     HAL reads per second by the layer's own thread (1000); 0 = read only
 //                            when VRLink asks for a pose
 void readConfig() {
     char value[PROP_VALUE_MAX]{};
@@ -463,7 +517,10 @@ void pollLoop() {
                     std::sqrt(hal.f(24) * hal.f(24) + hal.f(25) * hal.f(25) + hal.f(26) * hal.f(26));
                 const float angular =
                     std::sqrt(hal.f(30) * hal.f(30) + hal.f(31) * hal.f(31) + hal.f(32) * hal.f(32));
-                filterPose(FILTERS[device], now, linear, angular, &position, &rotation);
+                Vec linearVelocity{hal.f(24), hal.f(25), hal.f(26)};
+                Vec angularVelocity{hal.f(30), hal.f(31), hal.f(32)};
+                filterPose(FILTERS[device], now, linear, angular, &position, &rotation, &linearVelocity,
+                    &angularVelocity);
             }
         }
         next += period;
@@ -547,7 +604,10 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
     Quat rotation = normalized(mul(mul(BASE.rotation, halRotation), GRIP_PITCH));
     const Vec turned = rotate(BASE.rotation, halPosition);
     Vec position{turned.x + BASE.offset.x, turned.y + BASE.offset.y, turned.z + BASE.offset.z};
-    filterPose(FILTERS[device], readAt, linear, angular, &position, &rotation);
+    Vec linearVelocity{hal.f(24), hal.f(25), hal.f(26)};
+    Vec angularVelocity{hal.f(30), hal.f(31), hal.f(32)};
+    filterPose(FILTERS[device], readAt, linear, angular, &position, &rotation, &linearVelocity,
+        &angularVelocity);
     const double sx = position.x - pose.position.x, sy = position.y - pose.position.y, sz = position.z - pose.position.z;
     STATS_SHIFT += std::sqrt(sx * sx + sy * sy + sz * sz);
     ++STATS_REPLACED;
@@ -559,8 +619,8 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
     // Words: 21 and 27 say the linear and the angular velocity are present.
     XrSpaceVelocity* velocity = VELOCITIES.load() ? velocityOf(location) : nullptr;
     if (velocity && hal.words[21] != 0 && hal.words[27] != 0) {
-        const Vec world = rotate(BASE.rotation, {hal.f(24), hal.f(25), hal.f(26)});
-        const Vec local = rotate(conj(GRIP_PITCH), {hal.f(30), hal.f(31), hal.f(32)});
+        const Vec world = rotate(BASE.rotation, linearVelocity);
+        const Vec local = rotate(conj(GRIP_PITCH), angularVelocity);
         velocity->linearVelocity =
             {static_cast<float>(world.x), static_cast<float>(world.y), static_cast<float>(world.z)};
         velocity->angularVelocity =
