@@ -30,6 +30,15 @@ So the call is made from a [Shizuku](https://github.com/RikkaApps/Shizuku) user 
 Without Shizuku, without its permission, or when a call fails, the layer passes the
 vibration to the runtime unchanged, which is the stock behaviour.
 
+## Rate limit
+
+SteamVR can repeat a vibration every frame; in a game the layer saw up to 120 requests per
+second for one controller. The stock service drops requests while a pulse is playing. Sent
+to the HAL unthrottled, they flood the controller link: right after such bursts the
+controller's pose status dropped to 0 for about two seconds. The layer therefore sends one
+pulse per controller at a time and drops requests that arrive before it ends; repeated
+stops are sent once.
+
 ## Mapping
 
 The stock service clamps amplitude to 0.1..0.8, turns the frequency into a step

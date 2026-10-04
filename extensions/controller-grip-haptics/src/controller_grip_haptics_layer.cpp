@@ -60,6 +60,9 @@ std::atomic<float> MAX_AMPLITUDE{DEFAULT_MAX_AMPLITUDE};
 std::atomic<float> FREQUENCY{DEFAULT_FREQUENCY};
 std::atomic<int32_t> MIN_DURATION{DEFAULT_MIN_DURATION_MS};
 std::atomic<int64_t> TUNING_READ_AT{0};
+// Per controller: when its current pulse ends, and whether a stop was already sent.
+std::atomic<int64_t> BUSY_UNTIL[2]{};
+std::atomic<bool> STOPPED[2]{};
 std::atomic<AIBinder*> SERVICE{nullptr};
 std::atomic<int> LOGGED{0};
 
@@ -79,10 +82,14 @@ float readProperty(const char* name, float fallback) {
 //   debug.gxr.haptic.max    strongest amplitude sent, up to 1.27
 //   debug.gxr.haptic.freq   1..10 fixed HAL frequency step, 0 = derive from the OpenXR frequency
 //   debug.gxr.haptic.minms  shortest pulse in milliseconds
-void refreshTuning() {
+int64_t monotonicNs() {
     timespec now{};
     clock_gettime(CLOCK_MONOTONIC, &now);
-    const int64_t nowNs = now.tv_sec * 1000000000LL + now.tv_nsec;
+    return now.tv_sec * 1000000000LL + now.tv_nsec;
+}
+
+void refreshTuning() {
+    const int64_t nowNs = monotonicNs();
     const int64_t readAt = TUNING_READ_AT.load();
     if (readAt != 0 && nowNs - readAt < TUNING_REFRESH_NS) return;
     TUNING_READ_AT.store(nowNs);
@@ -159,11 +166,21 @@ XrResult XRAPI_CALL layerApplyHapticFeedback(
     if (frequency <= 0.0f) frequency = std::round(vibration->frequency / HZ_PER_FREQUENCY_STEP);
     frequency = clamp(frequency, MIN_FREQUENCY, MAX_FREQUENCY);
 
+    // SteamVR can repeat a vibration every frame. The stock service drops requests while a pulse
+    // is playing; without that the controller link floods and the controller loses tracking.
     binder_status_t status = STATUS_BAD_VALUE;
     if (device >= 0) {
-        status = vibration->amplitude <= 0.0f
-            ? sendStop(service, device)
-            : sendVibrate(service, device, durationMs, frequency, amplitude);
+        const int64_t nowNs = monotonicNs();
+        if (vibration->amplitude <= 0.0f) {
+            status = STOPPED[device].exchange(true) ? STATUS_OK : sendStop(service, device);
+            BUSY_UNTIL[device].store(0);
+        } else if (nowNs < BUSY_UNTIL[device].load()) {
+            return mode == MODE_BOTH ? NEXT_APPLY_HAPTIC_FEEDBACK(session, info, haptic) : XR_SUCCESS;
+        } else {
+            BUSY_UNTIL[device].store(nowNs + durationMs * 1000000LL);
+            STOPPED[device].store(false);
+            status = sendVibrate(service, device, durationMs, frequency, amplitude);
+        }
     }
     if (LOGGED.fetch_add(1) < LOGGED_CALLS) {
         GXR_LOG("vibration dur=%.1fms freq=%.0f amp=%.2f -> main device=%d dur=%dms freq=%.0f amp=%.2f status=%d",
@@ -178,7 +195,10 @@ XrResult XRAPI_CALL layerStopHapticFeedback(XrSession session, const XrHapticAct
     AIBinder* service = SERVICE.load();
     if (service && MODE.load() != MODE_OFF && info) {
         const int32_t device = deviceFor(info->subactionPath);
-        if (device >= 0) sendStop(service, device);
+        if (device >= 0) {
+            if (!STOPPED[device].exchange(true)) sendStop(service, device);
+            BUSY_UNTIL[device].store(0);
+        }
     }
     return NEXT_STOP_HAPTIC_FEEDBACK(session, info);
 }
