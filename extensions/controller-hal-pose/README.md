@@ -62,10 +62,12 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   still (below 0.02 m/s and 0.1 rad/s; looser limits until it is first found), as a slow
   running average. Eight consecutive still samples more than 3 cm or 0.05 rad away replace
   it at once, which follows a recenter or a new session.
-- **Reads.** A thread of the layer reads the HAL 1000 times per second while VRLink is
-  locating the controllers, the rate of the controller's IMU; VRLink asks 360 times per
-  second (four per display frame) and gets the latest read. 912-936 reads per second were
-  reached in a stream. Each request is for
+- **Reads.** A thread of the layer reads the HAL 360 times per second while VRLink is
+  locating the controllers, which is VRLink's own rate (four requests per display frame);
+  VRLink gets the latest read. A steady thread keeps the filter's time step even, where
+  VRLink's requests come in bursts. With the rate set to 1000, 912-936 reads per second
+  were reached in a stream, but the pose looked no smoother in the headset and the largest
+  steps of the reported pose at rest were the same, so the default stayed at 360. Each request is for
   "now" plus half a read period, the read's own duration and `debug.gxr.halpose.ahead`.
 - **Filter.** Every read goes through a low-pass whose cutoff rises with the controller's
   speed, taken from the HAL's own velocities: `cutoff = base + beta * speed`. A resting hand
@@ -87,6 +89,14 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   controller's accelerometer and gyroscope shows; the raw IMU samples themselves reach only
   the system's single reader.
 
+- **Rest.** The HAL's own pose steps on a controller held still, more in poses the cameras
+  see badly: between two reports its position moved by 0.5-5 mm and its rotation by
+  0.05-0.68 degrees, at full reported confidence (the runtime's pose stepped by 0.7-4.4 mm).
+  The reported pose stepped by at most 0.33 mm and 0.13 degrees. In those poses the HAL's
+  velocities are noisy too (0.02-0.05 m/s and 0.1-0.25 rad/s on a still controller), which
+  would open the pose filter, so its cutoffs follow the smoothed velocities rather than
+  each sample's speed. Every 5 s the layer logs these largest steps per controller.
+
 The [extrapolation layer](../controller-extrapolation-layer/README.md) has the same filter
 for the runtime's pose, and the velocity frame layer rotates the runtime's velocities; both
 stand down while this layer supplies the pose and the velocities.
@@ -101,10 +111,11 @@ filter properties are re-read every second while streaming. Logcat tag: `GxrHalP
 |---|---|---|
 | `debug.gxr.halpose` | on | `0` reports the runtime's pose unchanged |
 | `debug.gxr.halpose.velocity` | on | `0` leaves the runtime's velocities in place |
-| `debug.gxr.halpose.hz` | 1000 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
+| `debug.gxr.halpose.hz` | 360 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
 | `debug.gxr.halpose.ahead` | 1 | Milliseconds added to the requested time |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
 | `debug.gxr.halpose.filter` | 1 | `0` reports the HAL's pose unfiltered |
+| `debug.gxr.halpose.speed` | 1 | `0` makes the pose cutoffs follow the unsmoothed speed |
 | `debug.gxr.halpose.pos.cutoff` | 3 | Position cutoff at rest, Hz |
 | `debug.gxr.halpose.pos.beta` | 60 | Position cutoff added per m/s, Hz |
 | `debug.gxr.halpose.rot.cutoff` | 3 | Rotation cutoff at rest, Hz |
@@ -123,7 +134,7 @@ filter values were accepted there as they are.
 - The HAL's velocities were checked against the recording only, not by throwing objects in
   a game.
 - The stock controller service reads the HAL 90 times per second; this layer adds two HAL
-  calls per read, about 2000 per second, on top.
+  calls per read, about 720 per second, on top.
 
 ## Build
 

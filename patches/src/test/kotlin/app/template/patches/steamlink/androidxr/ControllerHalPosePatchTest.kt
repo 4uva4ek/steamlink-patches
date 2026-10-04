@@ -20,7 +20,7 @@ class ControllerHalPosePatchTest {
 
         assertContentEquals(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), library.copyOfRange(0, 4))
         // extensions/controller-hal-pose, NDK 28.2.13676358, arm64-v8a, Release.
-        assertEquals("e0afdbcf4a40eff09aa452138d33a04c8e3c04838e89adfa5ad520522f156192", sha256(library))
+        assertEquals("1ec10ef3c960c0b2cc8fc941ebccb26c8a0a73d1991b3bbe378c7011134ee2fa", sha256(library))
         val text = String(library, Charsets.ISO_8859_1)
         assertTrue("xrNegotiateLoaderApiLayerInterface" in text)
         // Called by the bridge class in the extension, and the interface of its user service.
@@ -36,6 +36,7 @@ class ControllerHalPosePatchTest {
         assertTrue("debug.gxr.halpose.pitch" in text)
         assertTrue("debug.gxr.halpose.hz" in text)
         assertTrue("debug.gxr.halpose.filter" in text)
+        assertTrue("debug.gxr.halpose.speed" in text)
         assertTrue("debug.gxr.halpose.pos.cutoff" in text)
         assertTrue("debug.gxr.halpose.pos.beta" in text)
         assertTrue("debug.gxr.halpose.rot.cutoff" in text)

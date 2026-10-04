@@ -28,7 +28,7 @@ private val controllerHalPoseExtensionPatch = bytecodePatch {
 @Suppress("unused")
 val controllerHalPosePatch = rawResourcePatch(
     name = "Controller tracking from the controller HAL through Shizuku (experimental)",
-    description = "Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime. The runtime hands an application one controller pose per display frame, about 35 ms behind the HAL; the HAL fuses the controller's IMU about 1000 times per second and predicts a pose for the requested time. The layer reads its pose and velocities 1000 times per second and filters jitter out of both. The HAL is reachable only with shell rights, so this needs Shizuku running and its permission granted to Steam Link. Without Shizuku tracking stays as it is.",
+    description = "Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime. The runtime hands an application one controller pose per display frame, about 35 ms behind the HAL; the HAL fuses the controller's IMU about 1000 times per second and predicts a pose for the requested time. The layer reads its pose and velocities 360 times per second, as often as Steam Link sends them, and filters jitter out of both. The HAL is reachable only with shell rights, so this needs Shizuku running and its permission granted to Steam Link. Without Shizuku tracking stays as it is.",
     default = false,
 ) {
     category(PatchCategories.EXPERIMENTS)
