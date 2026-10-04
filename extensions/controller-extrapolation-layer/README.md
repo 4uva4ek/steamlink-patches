@@ -40,7 +40,8 @@ The filter properties are re-read every second while streaming:
 
 The defaults were chosen by feel on the headset with the
 [controller HAL pose layer](../controller-hal-pose/README.md), which has the same filter.
-On the runtime's pose the filter was not yet judged in the headset. While that layer
+On the runtime's pose a controller held still jitters in the same poses and as much as
+with that layer: the jitter is in the tracking itself, not in either pose path. While that layer
 supplies the controller pose this filter stands down, so a pose is never filtered twice.
 
 `adb shell setprop debug.gxr.extrapolation 0` leaves the flag untouched. The property is

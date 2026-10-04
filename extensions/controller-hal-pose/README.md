@@ -95,6 +95,8 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   The reported pose stepped by at most 0.33 mm and 0.13 degrees. Making the pose cutoffs
   follow the smoothed velocities instead of each sample's speed was tried against the
   remaining jitter and made no visible difference in the headset, so it was dropped.
+  Without Shizuku, on the runtime's pose with the same filter, the controllers jitter in
+  the same poses just as much, so the jitter comes from the tracking itself.
 
 The [extrapolation layer](../controller-extrapolation-layer/README.md) has the same filter
 for the runtime's pose, and the velocity frame layer rotates the runtime's velocities; both
