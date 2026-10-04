@@ -581,7 +581,7 @@ XrResult XRAPI_PTR layerCreateApiLayerInstance(
 
 }  // namespace
 
-extern "C" JNIEXPORT void JNICALL Java_gxr_haptic_HapticProvider_nativeSetBinder(
+extern "C" JNIEXPORT void JNICALL Java_gxr_haptic_HapticBridge_nativeSetBinder(
     JNIEnv* env,
     jclass,
     jobject binder
