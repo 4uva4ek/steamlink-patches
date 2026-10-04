@@ -219,6 +219,21 @@ Measured on the PC from the poses VRLink delivers, Galaxy XR headset with 2.0.23
 
 ---
 
+### Controller grip haptics through Shizuku (`controllerGripHapticsPatch`, experimental)
+**Default: disabled** (experimental) — no patch dependencies; legacy 5001712/5001812/5001968/5002244 and 2.0.23/5002363. Needs [Shizuku](https://github.com/RikkaApps/Shizuku) on the headset.
+| Artifact | Edit |
+|---|---|
+| `lib/arm64-v8a/libgxr_haptic_main.so` | New file (OpenXR implicit API layer; source `extensions/controller-grip-haptics`) |
+| `assets/openxr/1/api_layers/implicit.d/XR_APILAYER_local_GalaxyXR_haptic_main.json` | New file (layer manifest; disable env: `GXR_DISABLE_HAPTIC_MAIN`) |
+| dex | New classes `gxr.haptic.HapticProvider`, `gxr.haptic.HapticService` and the Shizuku API 13.1.5 (`rikka.shizuku`, `rikka.sui`, `moe.shizuku`) from `extensions/controller-grip-haptics.mpe` |
+| `AndroidManifest.xml` | Adds `uses-permission` `moe.shizuku.manager.permission.API_V23`, `queries` for `moe.shizuku.privileged.api`, `meta-data` `moe.shizuku.client.V3_SUPPORT` and the provider `gxr.haptic.HapticProvider` with authority `<package>.shizuku` |
+
+No Steam Link code, shader or config is changed. A Galaxy XR controller has a vibrator at the trigger and one in the grip; the system controller service sends every OpenXR vibration to the trigger one. The grip vibrator is reachable only through the controller HAL, which answers shell but not an application, so the provider asks Shizuku for permission at start and binds a Shizuku user service that relays to the HAL. The layer wraps `xrApplyHapticFeedback` and `xrStopHapticFeedback` and, while that service is connected, sends `XrHapticVibration` to the grip vibrator instead of the runtime. Without Shizuku or its permission every call goes to the runtime unchanged.
+
+`adb shell setprop debug.gxr.haptic 0|1|2` selects OpenXR only, grip (default) or grip and trigger; `debug.gxr.haptic.gain` (5), `debug.gxr.haptic.freq` (2) and `debug.gxr.haptic.minms` (60) tune the pulse. All are re-read while streaming. Checked by hand on a Galaxy XR headset with 2.0.23/5002363 on 2026-10-04 (SteamVR dashboard, Beat Saber); the legacy bases make the same OpenXR calls but were not run. See the [layer notes](extensions/controller-grip-haptics/README.md).
+
+---
+
 ### GXR Face Bridge (version 5002318 and below) (`gxrFacebridgePatch`)
 **Default: disabled individually; selected by all 4 legacy bundles** — exact 5001712/5001812/5001968/5002244 targets only; adds the guarded face-permission declaration without selecting startup patches.
 | Artifact | Edit |
