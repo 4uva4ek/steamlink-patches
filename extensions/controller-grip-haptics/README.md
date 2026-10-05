@@ -19,8 +19,9 @@ not offer `XR_FB_haptic_pcm` (`xrCreateInstance` fails with `XR_ERROR_EXTENSION_
 
 So the call is made from a [Shizuku](https://github.com/RikkaApps/Shizuku) user service:
 
-- `java/gxr/haptic/HapticProvider` (a `ShizukuProvider`) asks Shizuku for permission when
-  Steam Link starts, binds the user service and hands its binder to the layer.
+- The shared [Shizuku bridge](../shizuku-bridge/README.md) asks Shizuku for permission when
+  Steam Link starts and binds the user service; `java/gxr/haptic/HapticBridge` hands its
+  binder to the layer.
 - `java/gxr/haptic/HapticService` runs in the user service process with shell rights and
   relays waveforms, pulses and stops to the HAL.
 - `src/controller_grip_haptics_layer.cpp` is an OpenXR API layer that wraps
@@ -153,13 +154,12 @@ $ndk = "$sdk\ndk\28.2.13676358"
 & "$cmake\cmake.exe" --build <short build dir> --target gxr_haptic_main
 ```
 
-Java extension: take `classes.jar` out of the `api`, `provider`, `aidl` and `shared` AARs of
-`dev.rikka.shizuku` 13.1.5 (Maven Central, Apache-2.0), then
+Java extension (the Shizuku API itself is in the Shizuku bridge's extension):
 
 ```powershell
-javac --release 8 -cp "<android.jar>;api.jar;provider.jar;aidl.jar;shared.jar" -d classes java/gxr/haptic/*.java
+javac --release 8 -cp "<android.jar>" -d classes java/gxr/haptic/*.java
 jar cf gxr.jar -C classes gxr
-d8 --release --min-api 29 --lib <android.jar> --output <dir> gxr.jar api.jar provider.jar aidl.jar shared.jar
+d8 --release --min-api 29 --lib <android.jar> --output <dir> gxr.jar
 ```
 
 Copy `libgxr_haptic_main.so` to `patches/src/main/resources/steamlink/androidxr/` and
