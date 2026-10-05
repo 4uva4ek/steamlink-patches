@@ -75,7 +75,7 @@ constexpr int64_t STATS_NS = 5000000000LL;
 // Reported the way VRLink's receiver reads them: linear in the base space, angular local to the
 // grip pose, which is what the controller velocity frame layer produces from the runtime's.
 // The reported pose is for this long after now; chosen by feel on the headset (2026-10-05).
-constexpr double DEFAULT_AHEAD_MS = 20.0;
+constexpr double DEFAULT_AHEAD_MS = 2.0;
 // The HAL computes a pose only for a time later than the latest one anybody has asked it for;
 // a request for an earlier time gets a copy of an older reply. The system's controller service
 // asks once per display frame for that frame's display time, some 20 ms ahead, so a request
@@ -221,7 +221,7 @@ float readFloat(const char* name, float fallback, float low, float high) {
 }
 
 // Read once a second while poses are replaced (BASE_MUTEX held):
-//   debug.gxr.halpose.ahead       time the reported pose is for, milliseconds after now (20)
+//   debug.gxr.halpose.ahead       time the reported pose is for, milliseconds after now (2)
 //   debug.gxr.halpose.lead        how far ahead of now the HAL is asked, milliseconds (30); the
 //                                 reply is stepped back to now + ahead
 void refreshTuning(int64_t now) {

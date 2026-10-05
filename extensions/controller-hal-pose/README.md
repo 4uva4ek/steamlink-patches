@@ -141,11 +141,11 @@ are re-read every second while streaming. Logcat tag: `GxrHalPose`
 | `debug.gxr.halpose` | on | `0` reports the runtime's pose unchanged |
 | `debug.gxr.halpose.velocity` | on | `0` leaves the runtime's velocities in place |
 | `debug.gxr.halpose.hz` | 360 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
-| `debug.gxr.halpose.ahead` | 20 | Time the reported pose is for, milliseconds after now |
+| `debug.gxr.halpose.ahead` | 2 | Time the reported pose is for, milliseconds after now |
 | `debug.gxr.halpose.lead` | 30 | How far ahead of now the HAL is asked, milliseconds; the reply is stepped back to the time above |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
 
-The 20 ms were chosen by feel on the headset.
+The 2 ms were chosen by feel on the headset (20 and 5 were tried the same day).
 
 ## Limits
 
