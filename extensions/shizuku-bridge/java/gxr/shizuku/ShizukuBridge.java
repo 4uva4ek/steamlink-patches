@@ -51,7 +51,7 @@ public class ShizukuBridge extends ShizukuProvider {
 
     // A changed service needs a higher version, or Shizuku keeps the running one.
     private static final Feature[] FEATURES = {
-        new Feature("gxr.haptic.HapticService", "gxr.haptic.HapticBridge", "haptic", 3),
+        new Feature("gxr.haptic.HapticService", "gxr.haptic.HapticBridge", "haptic", 4),
         new Feature("gxr.pose.PoseService", "gxr.pose.PoseBridge", "pose", 3),
     };
 
