@@ -27,7 +27,12 @@ application cannot look it up. So the call is made from a
   not touched.
 
 Without Shizuku, without its permission, or while a controller is not tracked, the runtime's
-pose is reported unchanged, which is the stock behaviour.
+pose is reported unchanged, which is the stock behaviour. The HAL marks a waved controller
+as not tracked for short runs (121 replies in a row were seen); its reply still carries a
+pose then, and that pose is reported for up to half a second after the last tracked reply,
+because switching to the runtime's pose and back showed as a jump of up to 21 cm. Once the
+base space is known the HAL's pose is also reported when the runtime does not call its own
+pose tracked. The statistics line counts these cases (`lost: hal= runtime= bridged=`).
 
 ## Measurements (Galaxy XR SM-I610, Steam Link 2.0.23/5002363, 2026-10-04)
 
@@ -69,6 +74,26 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   were reached in a stream, but the pose looked no smoother in the headset, so the default
   is 360. Each request is for
   "now" plus half a read period, the read's own duration and `debug.gxr.halpose.ahead`.
+  The statistics line reports the mean and the longest read and the latest wake-up of the
+  thread (`read=`, `late=`). Raising the thread's priority to nice -19 changed neither over
+  a minute each way (reads 356-358 per second, mean read 0.95 ms, longest 5-11 ms), so the
+  thread keeps the default priority.
+- **Request time.** The HAL computes a pose only for a time later than the latest one anybody
+  has asked it for; a request for an earlier time gets a copy of an older reply. The system's
+  controller service asks once per display frame for that frame's display time, so requests
+  for "now" mostly received the system's per-frame answers, hopping between two neighbouring
+  frames. Polled from the shell during a stream on a controller waved at about 1.1 m/s
+  (2026-10-05), requests for "now" went backwards along the hand's path in 26 % of the steps
+  at 100 requests per second, 35 % at 300 and 43 % at 1000, off by -20 to +25 ms; requests
+  for now + 30 ms, made in the same run, went backwards in 0.1 % and were off by -1.1 to
+  +0.7 ms. So the HAL is asked `debug.gxr.halpose.lead` ahead and the reply is stepped back
+  to the wanted time along its own linear and angular velocity. Read on the PC from SteamVR
+  as an application gets them (2026-10-05, 30 s of waving each): driver updates going
+  backwards along the path 28 % before and 0.1-0.5 % after; a frame's position off a smooth
+  path through its neighbours 6.1 mm before (17 mm for every tenth frame) and 1.7-2.0 mm
+  after (5 mm). While the layer reads, the
+  system's own requests are the earlier ones, so the runtime's pose is the one that repeats.
+
 - **Filter.** Every read goes through a low-pass whose cutoff rises with the controller's
   speed, taken from the HAL's own velocities: `cutoff = base + beta * speed`. A resting hand
   is smoothed hard and a fast one barely lags (at most about 2.6 mm and 0.15 degrees with
@@ -104,7 +129,7 @@ stand down while this layer supplies the pose and the velocities.
 
 ## Properties
 
-`debug.gxr.halpose`, `.velocity`, `.pitch` and `.hz` are read when Steam Link starts; `.ahead` and the
+`debug.gxr.halpose`, `.velocity`, `.pitch` and `.hz` are read when Steam Link starts; `.ahead`, `.lead` and the
 filter properties are re-read every second while streaming. Logcat tag: `GxrHalPose`
 (a statistics line every 5 s).
 
@@ -113,7 +138,8 @@ filter properties are re-read every second while streaming. Logcat tag: `GxrHalP
 | `debug.gxr.halpose` | on | `0` reports the runtime's pose unchanged |
 | `debug.gxr.halpose.velocity` | on | `0` leaves the runtime's velocities in place |
 | `debug.gxr.halpose.hz` | 360 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
-| `debug.gxr.halpose.ahead` | 1 | Milliseconds added to the requested time |
+| `debug.gxr.halpose.ahead` | 3 | Time the reported pose is for, milliseconds after now |
+| `debug.gxr.halpose.lead` | 30 | How far ahead of now the HAL is asked, milliseconds; the reply is stepped back to the time above |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
 | `debug.gxr.halpose.filter` | 1 | `0` reports the HAL's pose unfiltered |
 | `debug.gxr.halpose.pos.cutoff` | 3 | Position cutoff at rest, Hz |
@@ -125,7 +151,7 @@ filter properties are re-read every second while streaming. Logcat tag: `GxrHalP
 | `debug.gxr.halpose.ang.cutoff` | 10 | Angular velocity cutoff at rest, Hz |
 | `debug.gxr.halpose.ang.beta` | 10 | Angular velocity cutoff added per rad/s, Hz |
 
-The pose filter values and the 1 ms were chosen by feel on the headset, and the velocity
+The pose filter values and the 3 ms were chosen by feel on the headset, and the velocity
 filter values were accepted there as they are.
 
 ## Limits

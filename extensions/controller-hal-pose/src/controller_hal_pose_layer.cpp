@@ -91,7 +91,15 @@ constexpr int64_t STATS_NS = 5000000000LL;
 // Reported the way VRLink's receiver reads them: linear in the base space, angular local to the
 // grip pose, which is what the controller velocity frame layer produces from the runtime's.
 // Milliseconds added to "now" in every HAL request; chosen by feel on the headset.
-constexpr double DEFAULT_AHEAD_MS = 1.0;
+constexpr double DEFAULT_AHEAD_MS = 3.0;
+// The HAL computes a pose only for a time later than the latest one anybody has asked it for;
+// a request for an earlier time gets a copy of an older reply. The system's controller service
+// asks once per display frame for that frame's display time, some 20 ms ahead, so a request
+// for "now" mostly got the system's per-frame answers, hopping between two neighbouring frames
+// (measured 2026-10-05: with requests for now + 30 ms 0.1 % of the replies went backwards along
+// the hand's path, against 26-43 % for requests for now). So the HAL is asked this far ahead
+// and the reply is stepped back to the wanted time along its own velocities.
+constexpr double DEFAULT_LEAD_MS = 30.0;
 
 // The HAL's reply words after the exception code.
 struct HalPose {
@@ -179,6 +187,7 @@ std::mutex BASE_MUTEX;
 BaseSpace BASE;
 Quat GRIP_PITCH;
 std::atomic<int64_t> AHEAD_NS{0};
+std::atomic<int64_t> LEAD_NS{static_cast<int64_t>(DEFAULT_LEAD_MS * 1e6)};
 std::atomic<bool> VELOCITIES{true};
 Filter FILTERS[CONTROLLERS];
 bool FILTER_ON = true;
@@ -193,6 +202,11 @@ float ANGULAR_BETA = DEFAULT_ANGULAR_BETA;
 int64_t TUNING_READ_AT = 0;
 int64_t STATS_AT = 0;
 int STATS_REPLACED = 0, STATS_PASSED = 0, STATS_STILL = 0, STATS_JUMPS = 0;
+int STATS_HAL_LOST = 0, STATS_RUNTIME_LOST = 0, STATS_BRIDGED = 0;
+// A HAL reply that still carries a position but is not marked tracked is used for this long
+// after the last tracked one, so a short loss does not switch to the runtime's pose and back.
+constexpr int64_t BRIDGE_NS = 500000000LL;
+int64_t TRACKED_AT[CONTROLLERS] = {};
 double STATS_SHIFT = 0;
 
 std::mutex HAL_MUTEX;
@@ -203,6 +217,7 @@ std::atomic<int> POLL_HZ{DEFAULT_POLL_HZ};
 std::atomic<bool> POLL_STARTED{false};
 std::atomic<int64_t> LOCATED_AT{0};
 std::atomic<int> STATS_POLLS{0};
+std::atomic<int64_t> STATS_READ_NS{0}, STATS_READ_MAX_NS{0}, STATS_LATE_MAX_NS{0};
 std::atomic<int64_t> REPLACED_AT{0};
 std::atomic<int64_t> VELOCITY_AT{0};
 constexpr int64_t ACTIVE_NS = 300000000LL;
@@ -227,11 +242,13 @@ float readFloat(const char* name, float fallback, float low, float high) {
 //   debug.gxr.halpose.pos.beta    position cutoff added per m/s, Hz (60)
 //   debug.gxr.halpose.rot.cutoff  rotation cutoff at rest, Hz (3)
 //   debug.gxr.halpose.rot.beta    rotation cutoff added per rad/s, Hz (60)
-//   debug.gxr.halpose.ahead       milliseconds added to "now" in the HAL request (1)
+//   debug.gxr.halpose.ahead       milliseconds added to "now" in the HAL request (3)
 //   debug.gxr.halpose.lin.cutoff  linear velocity cutoff at rest, Hz (10)
 //   debug.gxr.halpose.lin.beta    linear velocity cutoff added per m/s, Hz (40)
 //   debug.gxr.halpose.ang.cutoff  angular velocity cutoff at rest, Hz (10)
 //   debug.gxr.halpose.ang.beta    angular velocity cutoff added per rad/s, Hz (10)
+//   debug.gxr.halpose.lead        how far ahead of now the HAL is asked, milliseconds (30); the
+//                                 reply is stepped back to now + ahead
 void refreshTuning(int64_t now) {
     if (TUNING_READ_AT != 0 && now - TUNING_READ_AT < TUNING_REFRESH_NS) return;
     const bool first = TUNING_READ_AT == 0;
@@ -241,6 +258,11 @@ void refreshTuning(int64_t now) {
     const int64_t aheadNs = static_cast<int64_t>(aheadMs * 1e6);
     if (!first && aheadNs != AHEAD_NS.load()) GXR_LOG("ahead=%.1fms", aheadMs);
     AHEAD_NS.store(aheadNs);
+    const float leadMs =
+        readFloat("debug.gxr.halpose.lead", static_cast<float>(DEFAULT_LEAD_MS), 0.0f, 100.0f);
+    const int64_t leadNs = static_cast<int64_t>(leadMs * 1e6);
+    if (!first && leadNs != LEAD_NS.load()) GXR_LOG("lead=%.1fms", leadMs);
+    LEAD_NS.store(leadNs);
     const bool on = readFloat("debug.gxr.halpose.filter", 1.0f, 0.0f, 1.0f) != 0.0f;
     const float positionCutoff =
         readFloat("debug.gxr.halpose.pos.cutoff", DEFAULT_POSITION_MIN_CUTOFF, 0.05f, 1000.0f);
@@ -395,6 +417,37 @@ bool readHal(AIBinder* service, int64_t timeNs, HalPose* poses) {
     return complete;
 }
 
+// Moves a reply from the time it was asked for back by `backNs` along its own velocities: the
+// linear one is in the HAL's world axes, the angular one in the controller's.
+void stepBack(HalPose& pose, int64_t backNs) {
+    // Words: 21 and 27 say the linear and the angular velocity are present.
+    if (backNs <= 0 || !pose.valid || pose.words[21] == 0 || pose.words[27] == 0) return;
+    const double seconds = backNs / 1e9;
+    const auto put = [&pose](int index, double value) {
+        const float narrow = static_cast<float>(value);
+        std::memcpy(&pose.words[index], &narrow, sizeof(narrow));
+    };
+    for (int axis = 0; axis < 3; ++axis) put(18 + axis, pose.f(18 + axis) - pose.f(24 + axis) * seconds);
+    const double wx = pose.f(30), wy = pose.f(31), wz = pose.f(32);
+    const double speed = std::sqrt(wx * wx + wy * wy + wz * wz);
+    if (speed < 1e-6) return;
+    const double half = -speed * seconds / 2;
+    const double scale = std::sin(half) / speed;
+    const Quat turned = normalized(mul(
+        normalized({pose.f(11), pose.f(12), pose.f(13), pose.f(14)}),
+        {wx * scale, wy * scale, wz * scale, std::cos(half)}));
+    put(11, turned.x);
+    put(12, turned.y);
+    put(13, turned.z);
+    put(14, turned.w);
+}
+
+// How far ahead of `wanted` (nanoseconds from now) the HAL has to be asked.
+int64_t askAhead(int64_t wanted) {
+    const int64_t lead = LEAD_NS.load();
+    return wanted > lead ? wanted : lead;
+}
+
 bool halPose(int device, HalPose* pose, int64_t* readAt) {
     AIBinder* service = SERVICE.load();
     if (!service) return false;
@@ -402,7 +455,10 @@ bool halPose(int device, HalPose* pose, int64_t* readAt) {
     const int64_t now = monotonicNs();
     const int64_t reuse = POLL_STARTED.load() && POLL_HZ.load() > 0 ? POLL_FRESH_NS : REUSE_NS;
     if (HAL_READ_AT == 0 || now - HAL_READ_AT > reuse) {
-        if (!readHal(service, now + AHEAD_NS.load(), HAL_POSES)) return false;
+        const int64_t wanted = AHEAD_NS.load();
+        const int64_t asked = askAhead(wanted);
+        if (!readHal(service, now + asked, HAL_POSES)) return false;
+        for (HalPose& read : HAL_POSES) stepBack(read, asked - wanted);
         HAL_READ_AT = now;
         HAL_CALL_NS = monotonicNs() - now;
     }
@@ -483,6 +539,10 @@ bool isTracked(const HalPose& hal) {
     return hal.valid && hal.words[0] == 0 && hal.words[15] != 0 && hal.words[34] == 2;
 }
 
+bool hasPose(const HalPose& hal) {
+    return hal.valid && hal.words[0] == 0 && hal.words[15] != 0;
+}
+
 // Reads the HAL at its own rate and filters every read. A pose is asked for the moment VRLink
 // will, on average, pick it up: half a period and one read later.
 void pollLoop() {
@@ -497,6 +557,7 @@ void pollLoop() {
             next = monotonicNs();
             continue;
         }
+        if (now - next > STATS_LATE_MAX_NS.load()) STATS_LATE_MAX_NS.store(now - next);
         const int64_t period = 1000000000LL / hz;
         HalPose poses[CONTROLLERS];
         int64_t lead = 0;
@@ -504,8 +565,11 @@ void pollLoop() {
             std::lock_guard<std::mutex> lock(HAL_MUTEX);
             lead = HAL_CALL_NS + period / 2;
         }
-        if (readHal(service, now + AHEAD_NS.load() + lead, poses)) {
+        const int64_t wanted = AHEAD_NS.load() + lead;
+        const int64_t asked = askAhead(wanted);
+        if (readHal(service, now + asked, poses)) {
             const int64_t done = monotonicNs();
+            for (HalPose& read : poses) stepBack(read, asked - wanted);
             {
                 std::lock_guard<std::mutex> lock(HAL_MUTEX);
                 for (int device = 0; device < CONTROLLERS; ++device) HAL_POSES[device] = poses[device];
@@ -514,6 +578,8 @@ void pollLoop() {
                 HAL_CALL_NS += (done - now - HAL_CALL_NS) / 16;
             }
             ++STATS_POLLS;
+            STATS_READ_NS += done - now;
+            if (done - now > STATS_READ_MAX_NS.load()) STATS_READ_MAX_NS.store(done - now);
             std::lock_guard<std::mutex> lock(BASE_MUTEX);
             for (int device = 0; BASE.known && device < CONTROLLERS; ++device) {
                 const HalPose& hal = poses[device];
@@ -549,19 +615,30 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
         XR_SPACE_LOCATION_ORIENTATION_VALID_BIT | XR_SPACE_LOCATION_POSITION_VALID_BIT |
         XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT | XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
     const bool halTracked = isTracked(hal);
+    const bool runtimeTracked = (location->locationFlags & tracked) == tracked;
     std::lock_guard<std::mutex> lock(BASE_MUTEX);
-    if (!halTracked || (location->locationFlags & tracked) != tracked) {
+    if (halTracked) TRACKED_AT[device] = readAt;
+    // While this layer reads the HAL the system's own requests are the earlier ones, so the
+    // runtime's pose is the degraded one: once the base space is known, the HAL's pose is
+    // reported whether or not the runtime calls its own pose tracked.
+    const bool bridged = !halTracked && hasPose(hal) && TRACKED_AT[device] != 0 &&
+        readAt - TRACKED_AT[device] < BRIDGE_NS;
+    if (!halTracked) ++STATS_HAL_LOST;
+    if (!runtimeTracked) ++STATS_RUNTIME_LOST;
+    if (!(halTracked || bridged) || (!runtimeTracked && !BASE.known)) {
         ++STATS_PASSED;
         return;
     }
+    if (bridged) ++STATS_BRIDGED;
     const Quat halRotation = normalized({hal.f(11), hal.f(12), hal.f(13), hal.f(14)});
     const Vec halPosition{hal.f(18), hal.f(19), hal.f(20)};
     const float linear = std::sqrt(hal.f(24) * hal.f(24) + hal.f(25) * hal.f(25) + hal.f(26) * hal.f(26));
     const float angular = std::sqrt(hal.f(30) * hal.f(30) + hal.f(31) * hal.f(31) + hal.f(32) * hal.f(32));
     XrPosef& pose = location->pose;
     refreshTuning(readAt);
-    if (BASE.known ? linear < STILL_LINEAR && angular < STILL_ANGULAR
-                   : linear < FIND_LINEAR && angular < FIND_ANGULAR) {
+    if (halTracked && runtimeTracked &&
+        (BASE.known ? linear < STILL_LINEAR && angular < STILL_ANGULAR
+                    : linear < FIND_LINEAR && angular < FIND_ANGULAR)) {
         ++STATS_STILL;
         const Quat runtime{pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w};
         const Quat rotation = normalized(mul(mul(runtime, conj(GRIP_PITCH)), conj(halRotation)));
@@ -621,6 +698,7 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
     STATS_SHIFT += std::sqrt(sx * sx + sy * sy + sz * sz);
     ++STATS_REPLACED;
     REPLACED_AT.store(readAt);
+    location->locationFlags |= tracked;
     pose.orientation = {static_cast<float>(rotation.x), static_cast<float>(rotation.y),
         static_cast<float>(rotation.z), static_cast<float>(rotation.w)};
     pose.position = {static_cast<float>(position.x), static_cast<float>(position.y), static_cast<float>(position.z)};
@@ -641,10 +719,15 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
     const int64_t now = monotonicNs();
     if (STATS_AT == 0) STATS_AT = now;
     if (now - STATS_AT >= STATS_NS) {
-        GXR_LOG("stats: replaced=%d passed=%d still=%d base moves=%d mean shift=%.1fmm reads=%.0f/s",
+        const int polls = STATS_POLLS.exchange(0);
+        GXR_LOG("stats: replaced=%d passed=%d still=%d base moves=%d mean shift=%.1fmm reads=%.0f/s "
+            "read=%.2f/%.2fms late=%.2fms lost: hal=%d runtime=%d bridged=%d",
             STATS_REPLACED, STATS_PASSED, STATS_STILL, STATS_JUMPS,
             STATS_REPLACED ? STATS_SHIFT * 1000.0 / STATS_REPLACED : 0.0,
-            STATS_POLLS.exchange(0) * 1e9 / (now - STATS_AT));
+            polls * 1e9 / (now - STATS_AT),
+            polls ? STATS_READ_NS.exchange(0) / 1e6 / polls : 0.0, STATS_READ_MAX_NS.exchange(0) / 1e6,
+            STATS_LATE_MAX_NS.exchange(0) / 1e6, STATS_HAL_LOST, STATS_RUNTIME_LOST, STATS_BRIDGED);
+        STATS_HAL_LOST = STATS_RUNTIME_LOST = STATS_BRIDGED = 0;
         STATS_AT = now;
         STATS_REPLACED = STATS_PASSED = STATS_STILL = STATS_JUMPS = 0;
         STATS_SHIFT = 0;
