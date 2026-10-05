@@ -30,9 +30,12 @@ Without Shizuku, without its permission, or while a controller is not tracked, t
 pose is reported unchanged, which is the stock behaviour. The HAL marks a waved controller
 as not tracked for short runs (121 replies in a row were seen); its reply still carries a
 pose then, and that pose is reported for up to half a second after the last tracked reply,
-because switching to the runtime's pose and back showed as a jump of up to 21 cm. Once the
-base space is known the HAL's pose is also reported when the runtime does not call its own
-pose tracked. The statistics line counts these cases (`lost: hal= runtime= bridged=`).
+because switching to the runtime's pose and back showed as a jump of up to 21 cm. When the
+HAL's pose cannot be used any longer, the report slides from the last reported pose to the
+runtime's pose over 200 ms (velocities included, the HAL's side counting as still), and back
+over 200 ms when the HAL's pose returns. Once the base space is known the HAL's pose is also
+reported when the runtime does not call its own pose tracked. The statistics line counts these
+cases (`lost: hal= runtime= bridged= faded=`).
 
 ## Measurements (Galaxy XR SM-I610, Steam Link 2.0.23/5002363, 2026-10-04)
 
@@ -59,7 +62,8 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   on the HAL's velocities, R2 0.86). Which of the two is closer to the hand was judged by
   feel only, not against an external reference.
 - At rest the HAL's pose is as quiet as the runtime's (0.04 mm, 0.02 degrees RMS); in motion
-  it carries two to three times more high-frequency content, hence the filter.
+  it carries two to three times more high-frequency content (those were the zigzag replies
+  described under "Request time"; after that fix the raw pose was preferred).
 
 ## How the pose is produced
 
@@ -69,7 +73,7 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   it at once, which follows a recenter or a new session.
 - **Reads.** A thread of the layer reads the HAL 360 times per second while VRLink is
   locating the controllers, which is VRLink's own rate (four requests per display frame);
-  VRLink gets the latest read. A steady thread keeps the filter's time step even, where
+  VRLink gets the latest read. A steady thread keeps the read spacing even, where
   VRLink's requests come in bursts. With the rate set to 1000, 912-936 reads per second
   were reached in a stream, but the pose looked no smoother in the headset, so the default
   is 360. Each request is for
@@ -94,10 +98,11 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   after (5 mm). While the layer reads, the
   system's own requests are the earlier ones, so the runtime's pose is the one that repeats.
 
-- **Filter.** Every read goes through a low-pass whose cutoff rises with the controller's
-  speed, taken from the HAL's own velocities: `cutoff = base + beta * speed`. A resting hand
-  is smoothed hard and a fast one barely lags (at most about 2.6 mm and 0.15 degrees with
-  the defaults).
+- **No smoothing.** The pose and the velocities are reported raw. A speed-adaptive low-pass
+  on both, a low-pass on the velocities used for the step back and a fade-in of that step
+  with speed were each tried on the headset and taken out again (2026-10-05): with the report
+  20 ms ahead the step back is 10 ms, and the raw pose was preferred. At rest the HAL's own
+  pose moves by at most 0.8 mm between replies.
 
 - **Velocities.** The HAL's linear and angular velocity from the same read replace the
   runtime's. Against the motion of the HAL's own poses in the recording, the linear one is in
@@ -109,10 +114,8 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   frame behind, which is what the
   [velocity frame layer](../controller-velocity-frame-layer/README.md) corrects by fixed
   angles. The HAL's speeds read 13-17 % lower than the displacement of its own predicted
-  poses; they are passed on unscaled, as the runtime does. Both velocities go through the
-  same kind of speed-dependent low-pass as the pose. This is where the noise of the
-  controller's accelerometer and gyroscope shows; the raw IMU samples themselves reach only
-  the system's single reader.
+  poses; they are passed on unscaled, as the runtime does. The raw IMU samples themselves reach
+  only the system's single reader.
 
 - **Rest.** The HAL's own pose steps on a controller held still, more in poses the cameras
   see badly: between two reports its position moved by 0.5-5 mm and its rotation by
@@ -120,17 +123,17 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   The reported pose stepped by at most 0.33 mm and 0.13 degrees. Making the pose cutoffs
   follow the smoothed velocities instead of each sample's speed was tried against the
   remaining jitter and made no visible difference in the headset, so it was dropped.
-  Without Shizuku, on the runtime's pose with the same filter, the controllers jitter in
+  Without Shizuku, on the runtime's pose, the controllers jitter in
   the same poses just as much, so the jitter comes from the tracking itself.
 
-The [extrapolation layer](../controller-extrapolation-layer/README.md) has the same filter
+The [extrapolation layer](../controller-extrapolation-layer/README.md) keeps its own filter
 for the runtime's pose, and the velocity frame layer rotates the runtime's velocities; both
 stand down while this layer supplies the pose and the velocities.
 
 ## Properties
 
-`debug.gxr.halpose`, `.velocity`, `.pitch` and `.hz` are read when Steam Link starts; `.ahead`, `.lead` and the
-filter properties are re-read every second while streaming. Logcat tag: `GxrHalPose`
+`debug.gxr.halpose`, `.velocity`, `.pitch` and `.hz` are read when Steam Link starts; `.ahead` and `.lead`
+are re-read every second while streaming. Logcat tag: `GxrHalPose`
 (a statistics line every 5 s).
 
 | Property | Default | Meaning |
@@ -138,21 +141,11 @@ filter properties are re-read every second while streaming. Logcat tag: `GxrHalP
 | `debug.gxr.halpose` | on | `0` reports the runtime's pose unchanged |
 | `debug.gxr.halpose.velocity` | on | `0` leaves the runtime's velocities in place |
 | `debug.gxr.halpose.hz` | 360 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
-| `debug.gxr.halpose.ahead` | 3 | Time the reported pose is for, milliseconds after now |
+| `debug.gxr.halpose.ahead` | 2 | Time the reported pose is for, milliseconds after now |
 | `debug.gxr.halpose.lead` | 30 | How far ahead of now the HAL is asked, milliseconds; the reply is stepped back to the time above |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
-| `debug.gxr.halpose.filter` | 1 | `0` reports the HAL's pose unfiltered |
-| `debug.gxr.halpose.pos.cutoff` | 3 | Position cutoff at rest, Hz |
-| `debug.gxr.halpose.pos.beta` | 60 | Position cutoff added per m/s, Hz |
-| `debug.gxr.halpose.rot.cutoff` | 3 | Rotation cutoff at rest, Hz |
-| `debug.gxr.halpose.rot.beta` | 60 | Rotation cutoff added per rad/s, Hz |
-| `debug.gxr.halpose.lin.cutoff` | 10 | Linear velocity cutoff at rest, Hz |
-| `debug.gxr.halpose.lin.beta` | 40 | Linear velocity cutoff added per m/s, Hz |
-| `debug.gxr.halpose.ang.cutoff` | 10 | Angular velocity cutoff at rest, Hz |
-| `debug.gxr.halpose.ang.beta` | 10 | Angular velocity cutoff added per rad/s, Hz |
 
-The pose filter values and the 3 ms were chosen by feel on the headset, and the velocity
-filter values were accepted there as they are.
+The 2 ms were chosen by feel on the headset (20 and 5 were tried the same day).
 
 ## Limits
 
