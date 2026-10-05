@@ -1,3 +1,14 @@
+## [1.25.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.24.1...v1.25.0) (2026-10-05)
+
+### 🐛 Bug Fixes
+
+* send one haptic chunk to both controllers for the same tone ([7327056](https://github.com/AngelDark92/steamlink-patches/commit/7327056c63939df4cf8283f8951796140c77ef81))
+
+### ✨ New Features
+
+* report the controller HAL's pose 2 ms ahead by default ([03c4b86](https://github.com/AngelDark92/steamlink-patches/commit/03c4b866a26a3cc471145f8479a559eed6b6331c))
+* report the controller HAL's pose raw, 20 ms ahead ([b422634](https://github.com/AngelDark92/steamlink-patches/commit/b42263477533195c556c42f0220fc2ee77c6b30d))
+
 ## [1.24.1](https://github.com/AngelDark92/steamlink-patches/compare/v1.24.0...v1.24.1) (2026-10-05)
 
 ### 🐛 Bug Fixes
