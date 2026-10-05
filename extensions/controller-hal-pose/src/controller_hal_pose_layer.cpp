@@ -74,6 +74,11 @@ constexpr int64_t STATS_NS = 5000000000LL;
 // (5 degrees; 21-25 degrees if read as a world vector). The runtime forwards both unconverted.
 // Reported the way VRLink's receiver reads them: linear in the base space, angular local to the
 // grip pose, which is what the controller velocity frame layer produces from the runtime's.
+// That angular frame holds for VRLink 2.0.23 only. VRLink 2.0.20 hands the angular velocity to
+// SteamVR as a base-space vector, as OpenXR defines it: reported local there, it was 48-62 degrees
+// off the controller's rotation in SteamVR and skewed the linear velocity of the offset grip
+// point, so thrown objects left low (measured 2026-10-06 against SteamVR). The patch picks the
+// frame per Steam Link base in CONFIG below.
 // The reported pose is for this long after now; chosen by feel on the headset (2026-10-05).
 constexpr double DEFAULT_AHEAD_MS = 2.0;
 // The HAL computes a pose only for a time later than the latest one anybody has asked it for;
@@ -87,6 +92,24 @@ constexpr double DEFAULT_AHEAD_MS = 2.0;
 // fade-in of the step with speed were all tried on the headset and taken out again - with a
 // 10 ms step the raw pose was preferred ("вот это оно", 2026-10-05).
 constexpr double DEFAULT_LEAD_MS = 30.0;
+
+// Written by the Morphe patch, located by the 16-byte magic. Version 1:
+//   +16 version          uint32
+//   +20 angularWorld     uint32  0 = angular velocity local to the grip pose (VRLink 2.0.23),
+//                                1 = in the base space (VRLink 2.0.20 - 2.0.22)
+struct ConfigBlob {
+    char magic[16];
+    uint32_t version;
+    uint32_t angularWorld;
+    uint32_t reserved[2];
+};
+
+__attribute__((used)) volatile ConfigBlob CONFIG = {
+    {'G', 'X', 'R', 'H', 'A', 'L', 'C', 'F', 'G', '0', '0', '0', '0', '0', '0', '1'},
+    1,
+    0,
+    {0, 0},
+};
 
 // The HAL's reply words after the exception code.
 struct HalPose {
@@ -174,6 +197,7 @@ Quat GRIP_PITCH;
 std::atomic<int64_t> AHEAD_NS{0};
 std::atomic<int64_t> LEAD_NS{static_cast<int64_t>(DEFAULT_LEAD_MS * 1e6)};
 std::atomic<bool> VELOCITIES{true};
+std::atomic<bool> ANGULAR_WORLD{false};
 Last LAST[CONTROLLERS];
 int64_t TUNING_READ_AT = 0;
 int64_t STATS_AT = 0;
@@ -196,7 +220,26 @@ double STATS_SHIFT = 0;
 std::mutex HAL_MUTEX;
 HalPose HAL_POSES[CONTROLLERS];
 int64_t HAL_READ_AT = 0;
+// The time the poses in HAL_POSES are for, after the step back.
+int64_t HAL_POSES_AT = 0;
 int64_t HAL_CALL_NS = 0;
+
+// A reply's velocities belong to the time the HAL was asked for, `lead` ahead, and stepping the
+// pose back leaves them there: in throws they ran some 30 ms ahead of the reported positions and
+// aimed 7 degrees low (measured 2026-10-06 against SteamVR; with the lead at 5 ms they matched,
+// but 26 % of the poses stepped backwards). So the velocities of recent replies are kept by the
+// time each was asked for, and the reported pose gets the ones for its own time.
+// debug.gxr.halpose.velocity_sync 0 reports each reply's own velocities instead (read once a second).
+constexpr int VELOCITY_HISTORY = 64;
+struct VelocitySample {
+    int64_t at = 0;
+    float linear[3]{};
+    float angular[3]{};
+};
+VelocitySample VELOCITY_RING[CONTROLLERS][VELOCITY_HISTORY];
+int VELOCITY_NEXT[CONTROLLERS] = {};
+std::atomic<bool> VELOCITY_SYNC{true};
+std::atomic<int> STATS_SYNCED{0}, STATS_UNSYNCED{0};
 std::atomic<int> POLL_HZ{DEFAULT_POLL_HZ};
 std::atomic<bool> POLL_STARTED{false};
 std::atomic<int64_t> LOCATED_AT{0};
@@ -224,6 +267,7 @@ float readFloat(const char* name, float fallback, float low, float high) {
 //   debug.gxr.halpose.ahead       time the reported pose is for, milliseconds after now (2)
 //   debug.gxr.halpose.lead        how far ahead of now the HAL is asked, milliseconds (30); the
 //                                 reply is stepped back to now + ahead
+//   debug.gxr.halpose.velocity_sync  0 = velocities of the latest reply (1)
 void refreshTuning(int64_t now) {
     if (TUNING_READ_AT != 0 && now - TUNING_READ_AT < TUNING_REFRESH_NS) return;
     const bool first = TUNING_READ_AT == 0;
@@ -238,6 +282,9 @@ void refreshTuning(int64_t now) {
     const int64_t leadNs = static_cast<int64_t>(leadMs * 1e6);
     if (!first && leadNs != LEAD_NS.load()) GXR_LOG("lead=%.1fms", leadMs);
     LEAD_NS.store(leadNs);
+    const bool sync = readFloat("debug.gxr.halpose.velocity_sync", 1.0f, 0.0f, 1.0f) != 0.0f;
+    if (first || sync != VELOCITY_SYNC.load()) GXR_LOG("velocity sync %s", sync ? "on" : "off");
+    VELOCITY_SYNC.store(sync);
 }
 Vec blended(const Vec& last, const Vec& next, double share) {
     return {last.x + (next.x - last.x) * share, last.y + (next.y - last.y) * share,
@@ -248,11 +295,18 @@ Vec blended(const Vec& last, const Vec& next, double share) {
 //   debug.gxr.halpose        0 = report the runtime's pose unchanged
 //   debug.gxr.halpose.pitch  pitch of the grip pose against the HAL's pose, degrees (42.25)
 //   debug.gxr.halpose.velocity  0 = leave the runtime's velocities in place
+//   debug.gxr.halpose.angular   local / world: frame of the angular velocity (default from CONFIG)
 //   debug.gxr.halpose.hz     HAL reads per second by the layer's own thread (360); 0 = read only
 //                            when VRLink asks for a pose
 void readConfig() {
     char value[PROP_VALUE_MAX]{};
     ENABLED.store(__system_property_get("debug.gxr.halpose", value) <= 0 || std::atoi(value) != 0);
+    bool angularWorld = CONFIG.angularWorld != 0;
+    if (__system_property_get("debug.gxr.halpose.angular", value) > 0) {
+        if (std::strcmp(value, "world") == 0) angularWorld = true;
+        if (std::strcmp(value, "local") == 0) angularWorld = false;
+    }
+    ANGULAR_WORLD.store(angularWorld);
     double aheadMs = DEFAULT_AHEAD_MS;
     if (__system_property_get("debug.gxr.halpose.ahead", value) > 0) aheadMs = std::atof(value);
     if (!(aheadMs >= -50.0 && aheadMs <= 100.0)) aheadMs = DEFAULT_AHEAD_MS;
@@ -271,9 +325,9 @@ void readConfig() {
         for (Last& last : LAST) last = Last{};
         TUNING_READ_AT = 0;
     }
-    GXR_LOG("controller HAL poses %s, velocities %s, ahead=%.1fms pitch=%.2f poll=%dHz service=%d",
-        ENABLED.load() ? "on" : "off", VELOCITIES.load() ? "on" : "off", aheadMs, pitch, POLL_HZ.load(),
-        SERVICE.load() != nullptr);
+    GXR_LOG("controller HAL poses %s, velocities %s (angular %s), ahead=%.1fms pitch=%.2f poll=%dHz service=%d",
+        ENABLED.load() ? "on" : "off", VELOCITIES.load() ? "on" : "off", angularWorld ? "world" : "local",
+        aheadMs, pitch, POLL_HZ.load(), SERVICE.load() != nullptr);
 }
 
 void* serviceCreate(void*) { return nullptr; }
@@ -332,6 +386,49 @@ void stepBack(HalPose& pose, int64_t backNs) {
     put(14, turned.w);
 }
 
+// Keeps the velocities of fresh replies under the time the HAL was asked for (HAL_MUTEX held).
+void rememberVelocities(const HalPose* poses, int64_t askedFor) {
+    for (int device = 0; device < CONTROLLERS; ++device) {
+        const HalPose& pose = poses[device];
+        if (!pose.valid || pose.words[21] == 0 || pose.words[27] == 0) continue;
+        VelocitySample& sample = VELOCITY_RING[device][VELOCITY_NEXT[device]];
+        VELOCITY_NEXT[device] = (VELOCITY_NEXT[device] + 1) % VELOCITY_HISTORY;
+        sample.at = askedFor;
+        for (int axis = 0; axis < 3; ++axis) {
+            sample.linear[axis] = pose.f(24 + axis);
+            sample.angular[axis] = pose.f(30 + axis);
+        }
+    }
+}
+
+// Two replies further apart than this (a pause in the reads) are not interpolated between.
+constexpr int64_t VELOCITY_GAP_NS = 20000000LL;
+
+// Writes into `pose` the velocities the HAL gave for time `at`, interpolated between the replies
+// asked for just before and after it. False when there are none (HAL_MUTEX held).
+bool velocitiesAt(int device, int64_t at, HalPose& pose) {
+    const VelocitySample* before = nullptr;
+    const VelocitySample* after = nullptr;
+    for (const VelocitySample& sample : VELOCITY_RING[device]) {
+        if (sample.at == 0) continue;
+        if (sample.at <= at && (!before || sample.at > before->at)) before = &sample;
+        if (sample.at >= at && (!after || sample.at < after->at)) after = &sample;
+    }
+    if (!before || !after || after->at - before->at > VELOCITY_GAP_NS) return false;
+    const double share = after->at == before->at
+        ? 0.0
+        : static_cast<double>(at - before->at) / static_cast<double>(after->at - before->at);
+    const auto put = [&pose](int index, double value) {
+        const float narrow = static_cast<float>(value);
+        std::memcpy(&pose.words[index], &narrow, sizeof(narrow));
+    };
+    for (int axis = 0; axis < 3; ++axis) {
+        put(24 + axis, before->linear[axis] + (after->linear[axis] - before->linear[axis]) * share);
+        put(30 + axis, before->angular[axis] + (after->angular[axis] - before->angular[axis]) * share);
+    }
+    return true;
+}
+
 // How far ahead of `wanted` (nanoseconds from now) the HAL has to be asked.
 int64_t askAhead(int64_t wanted) {
     const int64_t lead = LEAD_NS.load();
@@ -349,11 +446,17 @@ bool halPose(int device, HalPose* pose, int64_t* readAt) {
         const int64_t asked = askAhead(wanted);
         if (!readHal(service, now + asked, HAL_POSES)) return false;
         for (HalPose& read : HAL_POSES) stepBack(read, asked - wanted);
+        rememberVelocities(HAL_POSES, now + asked);
         HAL_READ_AT = now;
+        HAL_POSES_AT = now + wanted;
         HAL_CALL_NS = monotonicNs() - now;
     }
     *pose = HAL_POSES[device];
     *readAt = HAL_READ_AT;
+    if (pose->valid && VELOCITY_SYNC.load()) {
+        if (velocitiesAt(device, HAL_POSES_AT, *pose)) ++STATS_SYNCED;
+        else ++STATS_UNSYNCED;
+    }
     return pose->valid;
 }
 
@@ -459,11 +562,14 @@ void pollLoop() {
         const int64_t asked = askAhead(wanted);
         if (readHal(service, now + asked, poses)) {
             const int64_t done = monotonicNs();
+            // The step back moves only the pose; the velocities stay those of `now + asked`.
             for (HalPose& read : poses) stepBack(read, asked - wanted);
             {
                 std::lock_guard<std::mutex> lock(HAL_MUTEX);
+                rememberVelocities(poses, now + asked);
                 for (int device = 0; device < CONTROLLERS; ++device) HAL_POSES[device] = poses[device];
                 HAL_READ_AT = now;
+                HAL_POSES_AT = now + wanted;
                 // Smoothed: one slow read must not push the next requests far ahead.
                 HAL_CALL_NS += (done - now - HAL_CALL_NS) / 16;
             }
@@ -620,7 +726,7 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
     XrSpaceVelocity* velocity = VELOCITIES.load() ? velocityOf(location) : nullptr;
     if (velocity && halVelocities) {
         Vec world = rotate(BASE.rotation, linearVelocity);
-        Vec local = rotate(conj(GRIP_PITCH), angularVelocity);
+        Vec angular = rotate(conj(GRIP_PITCH), angularVelocity);
         if (share < 1.0) {
             // The runtime's velocities are the other side; absent ones count as zero.
             const Vec runtimeLinear = (velocity->velocityFlags & XR_SPACE_VELOCITY_LINEAR_VALID_BIT) != 0
@@ -630,12 +736,14 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
                 ? Vec{velocity->angularVelocity.x, velocity->angularVelocity.y, velocity->angularVelocity.z}
                 : Vec{0, 0, 0};
             world = blended(runtimeLinear, world, share);
-            local = blended(runtimeAngular, local, share);
+            angular = blended(runtimeAngular, angular, share);
         }
+        // Local to the reported grip pose so far; into the base space where VRLink reads it so.
+        if (ANGULAR_WORLD.load()) angular = rotate(rotation, angular);
         velocity->linearVelocity =
             {static_cast<float>(world.x), static_cast<float>(world.y), static_cast<float>(world.z)};
         velocity->angularVelocity =
-            {static_cast<float>(local.x), static_cast<float>(local.y), static_cast<float>(local.z)};
+            {static_cast<float>(angular.x), static_cast<float>(angular.y), static_cast<float>(angular.z)};
         velocity->velocityFlags = XR_SPACE_VELOCITY_LINEAR_VALID_BIT | XR_SPACE_VELOCITY_ANGULAR_VALID_BIT;
         VELOCITY_AT.store(readAt);
     }
@@ -645,12 +753,15 @@ void replacePose(int device, int64_t readAt, const HalPose& hal, XrSpaceLocation
     if (now - STATS_AT >= STATS_NS) {
         const int polls = STATS_POLLS.exchange(0);
         GXR_LOG("stats: replaced=%d passed=%d still=%d base moves=%d mean shift=%.1fmm reads=%.0f/s "
-            "read=%.2f/%.2fms late=%.2fms lost: hal=%d runtime=%d bridged=%d faded=%d",
+            "read=%.2f/%.2fms late=%.2fms lost: hal=%d runtime=%d bridged=%d faded=%d velocity synced=%d/%d",
             STATS_REPLACED, STATS_PASSED, STATS_STILL, STATS_JUMPS,
             STATS_REPLACED ? STATS_SHIFT * 1000.0 / STATS_REPLACED : 0.0,
             polls * 1e9 / (now - STATS_AT),
             polls ? STATS_READ_NS.exchange(0) / 1e6 / polls : 0.0, STATS_READ_MAX_NS.exchange(0) / 1e6,
-            STATS_LATE_MAX_NS.exchange(0) / 1e6, STATS_HAL_LOST, STATS_RUNTIME_LOST, STATS_BRIDGED, STATS_FADED);
+            STATS_LATE_MAX_NS.exchange(0) / 1e6, STATS_HAL_LOST, STATS_RUNTIME_LOST, STATS_BRIDGED, STATS_FADED,
+            STATS_SYNCED.load(), STATS_SYNCED.load() + STATS_UNSYNCED.load());
+        STATS_SYNCED.store(0);
+        STATS_UNSYNCED.store(0);
         STATS_HAL_LOST = STATS_RUNTIME_LOST = STATS_BRIDGED = STATS_FADED = 0;
         STATS_AT = now;
         STATS_REPLACED = STATS_PASSED = STATS_STILL = STATS_JUMPS = 0;

@@ -1,8 +1,10 @@
 # Controller HAL pose layer (2026-10-04)
 
 Source of `libgxr_controller_hal_pose.so` and `extensions/controller-hal-pose.mpe`, installed
-by the opt-in patch **Controller tracking from the controller HAL through Shizuku
-(experimental)**.
+by the opt-in patches **Controller tracking from the controller HAL through Shizuku
+(experimental)** (2.0.23) and **Controller tracking from the controller HAL through Shizuku,
+2.0.20 - 2.0.22 (experimental)**. The two differ only in the angular velocity frame they write
+into the library's config block (see "Velocities").
 
 ## What it changes
 
@@ -110,12 +112,34 @@ The HAL's pose against the runtime's, from a 78 s recording of both in a stream:
   local to the controller) and the angular one is in the controller's axes (5 degrees, 21-25
   degrees if read as a world vector). They are reported the way VRLink's receiver reads
   them: the linear one turned into the base space, the angular one turned by the grip pitch
-  and left local to the grip pose. The runtime forwards the same values unconverted and a
+  and left local to the grip pose (VRLink 2.0.23; the older bases below). The runtime forwards the same values unconverted and a
   frame behind, which is what the
   [velocity frame layer](../controller-velocity-frame-layer/README.md) corrects by fixed
   angles. The HAL's speeds read 13-17 % lower than the displacement of its own predicted
   poses; they are passed on unscaled, as the runtime does. The raw IMU samples themselves reach
   only the system's single reader.
+
+- **Angular velocity frame per base.** Local to the grip pose is what VRLink 2.0.23 reads.
+  VRLink 2.0.20 hands the angular velocity to SteamVR as a base-space vector, as OpenXR
+  defines it. Measured on 2.0.20/5001712 on 2026-10-06 against the poses SteamVR handed to
+  applications: reported local, SteamVR's angular velocity was 48-62 degrees off the
+  controller's rotation, and VRLink's lever arm for the offset grip point (about 10 cm) skewed
+  the linear velocity, so thrown objects left low; rotated into the base space by the
+  reported pose it came within 3-13 degrees. The frame is a field of a config block in the
+  library, written by the patch (`GXRHALCFG0000001`, then version `1` at +16 and
+  `angularWorld` at +20: `0` local, `1` base space); the bundled library carries `0`.
+
+- **Velocities for the pose's time.** A reply is asked for `lead` ahead and its pose is
+  stepped back, but its velocities belong to the time asked for. Reported as they were, they
+  ran about 30 ms ahead of the reported positions: in forward throws on 2.0.20/5001712 the
+  linear velocity aimed 7.4 degrees below the motion of the reported positions on the headset.
+  So the velocities of the latest 64 reads (about 180 ms) are kept by the time each was asked
+  for, and the reported pose gets the ones for its own time, interpolated between the two
+  reads around it; reads more than 20 ms apart are not interpolated between, and without them
+  the read's own velocities go out. In the same throws that gave 1.4 degrees below the motion
+  and speeds within 6 % of it, with 2.2 % of the moving poses stepping backwards. Asking the
+  HAL only 5 ms ahead also matched the velocities (1.7 degrees), but 26 % of the moving poses
+  stepped backwards.
 
 - **Rest.** The HAL's own pose steps on a controller held still, more in poses the cameras
   see badly: between two reports its position moved by 0.5-5 mm and its rotation by
@@ -132,9 +156,10 @@ stand down while this layer supplies the pose and the velocities.
 
 ## Properties
 
-`debug.gxr.halpose`, `.velocity`, `.pitch` and `.hz` are read when Steam Link starts; `.ahead` and `.lead`
-are re-read every second while streaming. Logcat tag: `GxrHalPose`
-(a statistics line every 5 s).
+`debug.gxr.halpose`, `.velocity`, `.angular`, `.pitch` and `.hz` are read when Steam Link starts;
+`.ahead`, `.lead` and `.velocity_sync` are re-read every second while streaming. Logcat tag:
+`GxrHalPose` (a statistics line every 5 s; `velocity synced=` counts the poses that got the
+velocities for their own time).
 
 | Property | Default | Meaning |
 |---|---|---|
@@ -144,14 +169,17 @@ are re-read every second while streaming. Logcat tag: `GxrHalPose`
 | `debug.gxr.halpose.ahead` | 2 | Time the reported pose is for, milliseconds after now |
 | `debug.gxr.halpose.lead` | 30 | How far ahead of now the HAL is asked, milliseconds; the reply is stepped back to the time above |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
+| `debug.gxr.halpose.velocity_sync` | 1 | `0` reports each read's own velocities instead of those for the pose's time |
+| `debug.gxr.halpose.angular` | from the patch | `local` or `world`: frame of the reported angular velocity |
 
 The 2 ms were chosen by feel on the headset (20 and 5 were tried the same day).
 
 ## Limits
 
-- Run on 2.0.23/5002363 only. The legacy bases create the same pose action but were not run.
-- The HAL's velocities were checked against the recording only, not by throwing objects in
-  a game.
+- Run on 2.0.23/5002363 and 2.0.20/5001712. 5001812, 5001968 and 5002244 create the same
+  pose action and get the 2.0.20 angular frame, but were not run.
+- The velocities for the pose's time were measured on 2.0.20/5001712 only; on 2.0.23 they
+  are on by default as well, but its throws were not measured with them.
 - The stock controller service reads the HAL 90 times per second; this layer adds two HAL
   calls per read, about 720 per second, on top.
 
