@@ -1,3 +1,10 @@
+## [1.24.1](https://github.com/AngelDark92/steamlink-patches/compare/v1.24.0...v1.24.1) (2026-10-05)
+
+### 🐛 Bug Fixes
+
+* ask the controller HAL ahead of the system's requests ([d2b3f09](https://github.com/AngelDark92/steamlink-patches/commit/d2b3f095e40506195e82e9e3c915fc46a0ccedcf))
+* start a Shizuku user service again when it does not connect ([79e7008](https://github.com/AngelDark92/steamlink-patches/commit/79e700800be6edd35dcefc9c5fe64cc567ec7998))
+
 ## [1.24.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.23.0...v1.24.0) (2026-10-05)
 
 ### 🐛 Bug Fixes
