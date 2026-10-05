@@ -1,3 +1,9 @@
+## [1.26.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.25.0...v1.26.0) (2026-10-05)
+
+### ✨ New Features
+
+* angular velocity frame per Steam Link base, HAL velocities for the pose's time ([effe0da](https://github.com/AngelDark92/steamlink-patches/commit/effe0da03393ffcf612f5c60ed80a470da5638bf))
+
 ## [1.25.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.24.1...v1.25.0) (2026-10-05)
 
 ### 🐛 Bug Fixes
