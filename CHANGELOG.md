@@ -1,3 +1,19 @@
+## [1.24.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.23.0...v1.24.0) (2026-10-05)
+
+### 🐛 Bug Fixes
+
+* read the controllers one HAL call each again ([40c9bd1](https://github.com/AngelDark92/steamlink-patches/commit/40c9bd151b25949b9aa42f92c5d05d4e81972830))
+* use the measured grip pitch in the controller velocity frame ([d73314d](https://github.com/AngelDark92/steamlink-patches/commit/d73314dd702832e220d26398ad2769bb2d8c41e9))
+
+### ✨ New Features
+
+* add controller tracking from the controller HAL ([1bb25da](https://github.com/AngelDark92/steamlink-patches/commit/1bb25da7fbbc6e8c9a0d035fe67f2c778d69e5cd))
+* raise the position filter's rest cutoff to 3 Hz ([0f78ca3](https://github.com/AngelDark92/steamlink-patches/commit/0f78ca378417204cd03884e7eb670fe89d7c38ee))
+* re-read the HAL request lead while streaming ([cae3af5](https://github.com/AngelDark92/steamlink-patches/commit/cae3af52316bd33362add9cb29a83f0935dc4042))
+* read both controller poses in one HAL call, filter HAL velocities ([e01e58b](https://github.com/AngelDark92/steamlink-patches/commit/e01e58bf01cf4ce6068e97fa726c522c3b530d02))
+* read the HAL 360 times per second, steadier pose at rest ([cd553c5](https://github.com/AngelDark92/steamlink-patches/commit/cd553c5c776234a05092c9982939f23faa614c08))
+* take controller velocities from the controller HAL ([aa9fcae](https://github.com/AngelDark92/steamlink-patches/commit/aa9fcaeb0dc27083a6309c5b8e7346bf70ac18e0))
+
 ## [1.23.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.22.0...v1.23.0) (2026-10-04)
 
 ### 🐛 Bug Fixes
