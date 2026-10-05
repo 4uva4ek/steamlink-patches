@@ -28,6 +28,12 @@ nothing is bound and the layers leave every call to the runtime. Logcat tag: `Gx
 A changed user service needs a higher version number in `ShizukuBridge.FEATURES`, or
 Shizuku keeps the running one.
 
+The user services are started 1.5 s apart, and one that has not connected within 8 s is
+unbound and started again, up to five times. Started at the same moment, one of the two was
+seen left without a connection (`ShizukuServiceStarter: server binder not received`), and
+Shizuku does not start it again by itself; the feature then stayed off until Steam Link was
+restarted.
+
 ## Build
 
 Take `classes.jar` out of the `api`, `provider`, `aidl` and `shared` AARs of
