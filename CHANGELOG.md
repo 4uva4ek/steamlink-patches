@@ -1,3 +1,9 @@
+## [1.28.0-dev.8](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.7...v1.28.0-dev.8) (2026-10-11)
+
+### ✨ New Features
+
+* Add 4XVR Galaxy XR recommended update and first on-device feedback fix ([8d0bb6e](https://github.com/AngelDark92/xr-porting-hub/commit/8d0bb6e9d31a2a073f5098fdbeb4ecaa32d8a7fb))
+
 ## [1.28.0-dev.7](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.6...v1.28.0-dev.7) (2026-10-11)
 
 ### ✨ New Features

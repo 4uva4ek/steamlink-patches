@@ -64,7 +64,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.7](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.7)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
+> **[v1.28.0-dev.8](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.8)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
 <br>
@@ -79,7 +79,7 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Galaxy XR set (4XVR 2.0.22/20022)](#galaxy-xr-set-4xvr-2-0-22-20022) | Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Gated on a pristine 2.0.22/20022 source APK and libplacebo source availability; headset validation pending. | 20022 |  |
+| [Galaxy XR set (4XVR 2.0.22/20022)](#galaxy-xr-set-4xvr-2-0-22-20022) | Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Headset validation pending; the libplacebo source obligation is tracked in the implementation record. | 20022 |  |
 
 #### Image quality
 
@@ -195,7 +195,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -217,7 +217,6 @@ This section is generated from the patch catalog during releases.
 | [Controller velocity frame, 2.0.20 - 2.0.22 (experimental)](#controller-velocity-frame-2-0-20-2-0-22-experimental) | Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads, so thrown objects leave in the right direction. Stock, they arrive in a controller-attached frame. Adds an OpenXR API layer; no Steam Link code is changed. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. | 5001712, 5001812, 5001968, 5002244 |  |
 | [Foveal blue-noise dithering (experimental)](#foveal-blue-noise-dithering-experimental) | Adds static blue noise after video colour processing and fade, on the foveal layer only; 8-bit or 10-bit input, always 8-bit sRGB output. Selectable per layer, but turn OLED's VD-like fovea options off when combining. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
 | [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation. | 5001812 |  |
-| [Uber link rescan disable (experimental)](#uber-link-rescan-disable-experimental) | Stops the Uber UDP transport's post-startup link rescans on exact Steam Link 2.0.23/5002363. The stream then cannot discover new links, so do not switch networks while streaming. Experimental; headset validation pending. | 5002363 |  |
 
 </details>
 
