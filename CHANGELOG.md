@@ -1,3 +1,10 @@
+## [1.28.0-dev.5](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.4...v1.28.0-dev.5) (2026-10-11)
+
+### ✨ New Features
+
+* add analysis and patch plan for 4XVR 2.0.22 vs Galaxy XR reference mod and steamlink new uberudp patch ([74a0ff8](https://github.com/AngelDark92/xr-porting-hub/commit/74a0ff8eb6289658af03ff5cb54a1a49fa28017e))
+* add experimental patch to disable Uber link rescan for Steam Link 2.0.23 ([e3c2cbe](https://github.com/AngelDark92/xr-porting-hub/commit/e3c2cbe3911deceed561562e0b6aee0426d071f2))
+
 ## [1.28.0-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.3...v1.28.0-dev.4) (2026-10-11)
 
 ### 🐛 Bug Fixes

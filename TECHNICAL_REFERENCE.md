@@ -64,7 +64,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.4](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;35 patches total
+> **[v1.28.0-dev.5](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.5)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;36 patches total
 <details open>
 <summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;26 patches</summary>
 <br>
@@ -134,7 +134,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -156,6 +156,7 @@ This section is generated from the patch catalog during releases.
 | [Controller velocity frame, 2.0.20 - 2.0.22 (experimental)](#controller-velocity-frame-2-0-20-2-0-22-experimental) | Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads them in. Stock, they arrive in a frame attached to the controller, so thrown objects leave in the wrong direction. Adds an OpenXR API layer; no Steam Link code is changed. Steam Link 2.0.20 - 2.0.22: the angular velocity is reported in the base space, as their VRLink reads it. | 5001712, 5001812, 5001968, 5002244 |  |
 | [Foveal blue-noise dithering (experimental)](#foveal-blue-noise-dithering-experimental) | Static blue-noise quantization after video colour processing and fade, only on the foveal layer. Accepts 8-bit or 10-bit input and always uses 8-bit sRGB output. Select independently or together with the other layer's blue-noise patch. Separate from OLED/VD-like processing; headset validation pending. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
 | [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Exact Steam Link 2.0.20/5001812 experiment: copies only the foveal image onto a transparent 5000x6000 regular-GL canvas per eye and submits it as the 2nd projection. Preserves the original background projection and any existing static Surface-trigger quad. GPU allocation, runtime acceptance and resolution improvement require headset validation. | 5001812 |  |
+| [Uber link rescan disable (experimental)](#uber-link-rescan-disable-experimental) | Stops the post-startup interface rescans of the Uber UDP transport for exact Steam Link 2.0.23/5002363. After startup the stream cannot discover new links, so do not switch networks while a stream is active. Experimental; no options; headset validation pending. | 5002363 |  |
 
 </details>
 
