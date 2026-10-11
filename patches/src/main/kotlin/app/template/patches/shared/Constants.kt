@@ -216,4 +216,36 @@ object Constants {
 
     val COMPATIBILITIES_STEAM_LINK_NATIVE_XR_EXPERIMENTAL = experimentalCompatibilities(NATIVE_XR_STEAM_LINK_BUILDS)
 
+    // ---------------------------------------------------------------------
+    // 4XVR (cn.vr4p.oculus4xvrplayerov) — exact single-build Galaxy XR adaptation.
+    // ---------------------------------------------------------------------
+
+    private const val FOUR_XVR_PACKAGE = "cn.vr4p.oculus4xvrplayerov"
+    private data class FourXvrBuild(val version: String, val versionCode: Int)
+
+    private val FOUR_XVR_BUILDS = listOf(
+        FourXvrBuild("2.0.22", 20022),
+    )
+
+    fun isFourXvr20022Build(version: String, versionCode: String): Boolean =
+        FOUR_XVR_BUILDS.any {
+            it.version == version && it.versionCode.toString() == versionCode
+        }
+
+    private fun fourXvrBuildCompatibility(build: FourXvrBuild) = Compatibility(
+        name = "4XVR",
+        packageName = FOUR_XVR_PACKAGE,
+        apkFileType = ApkFileType.APK,
+        appIconColor = 0x6C4BB6,
+        targets = listOf(
+            AppTarget(
+                version = build.version,
+                versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
+                description = "4XVR Galaxy XR adaptation for exact build ${build.versionCode}; " +
+                    "decoded-base design, headset validation pending.",
+            ),
+        ),
+    )
+
+    val COMPATIBILITIES_FOUR_XVR = FOUR_XVR_BUILDS.map(::fourXvrBuildCompatibility)
 }

@@ -36,6 +36,9 @@ files for these imports also use the external build root.
 
 The rule is recorded in root `AGENTS.md`, `.agents/AGENTS.md`, the Morphe and
 cavecrew skills, all 3 `.github/agents/cavecrew-*` presets, and Copilot instructions.
+Root `AGENTS.md` also carries the per-app registry (package, exact bases, sources,
+resources, extension payload) for the apps this repository patches (Steam Link VR,
+4XVR); the routing rule itself is app-independent.
 Future delegated builds must receive the same output/input ownership contract.
 
 Moved CMake caches contain absolute paths. The bundled CMake 4.4.3 supports

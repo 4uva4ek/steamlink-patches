@@ -5,6 +5,11 @@ launcher, rejected VR input, handshake crash, slow handshake). Follow this the
 next time you have headset + adb access, then share the captured logs so we
 can go through them together.
 
+This guide covers the **Steam Link VR** app only (`com.valvesoftware.steamlinkvr`).
+The other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`), has no
+log-tag contract here yet; its patch set is default-off and has never been run on a
+headset, so any debugging of it starts from its [plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md).
+
 ## 0. Prerequisites
 
 1. Enable Developer Options on the Galaxy XR (Settings → About → tap Build

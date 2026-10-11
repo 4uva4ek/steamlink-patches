@@ -1,6 +1,6 @@
 ---
 name: morphe-patches
-description: Author, edit, debug and validate Steam Link Morphe patches in this repository, including exact-build guards and fresh-checkout test inputs.
+description: Author, edit, debug and validate Morphe patches for the apps in this repository (Steam Link VR, 4XVR), including exact-build guards and fresh-checkout test inputs.
 ---
 
 # morphe-patches skill
@@ -9,10 +9,11 @@ Use when authoring, editing, or debugging patches in this project.
 
 ## Project facts
 - Library: morphe-patcher 1.13.0; Morphe Manager 1.30.0 or newer
-- Target app: `com.valvesoftware.steamlinkvr`; exact `(versionName, versionCode)` pairs are defined in `shared/Constants.kt`
-- Required compatibility rules: read the repository-root `AGENTS.md` before editing
-- Kotlin source root: `patches/src/main/kotlin/app/template/patches/steamlink/`
-- Resources root: `patches/src/main/resources/steamlink/`
+- Target apps (this repository patches several): Steam Link VR `com.valvesoftware.steamlinkvr` and 4XVR `cn.vr4p.oculus4xvrplayerov`; exact `(versionName, versionCode)` pairs are defined per app in `shared/Constants.kt` (`COMPATIBILITIES_STEAM_LINK*`, `COMPATIBILITIES_FOUR_XVR`)
+- Required compatibility rules: read the repository-root `AGENTS.md` before editing; its app registry maps each app to its package, exact bases, sources, resources and extension payload
+- Kotlin source roots: `patches/src/main/kotlin/app/template/patches/steamlink/` and `.../fourxvr/`; shared code lives in `.../patches/shared/` and `patches/src/main/kotlin/util/`
+- Resources roots: `patches/src/main/resources/steamlink/` and `patches/src/main/resources/fourxvr/`
+- App isolation: a patch declares `compatibleWith` only its own app's `Compatibility`, and an app's extension payload never references another app's `.mpe`, helper classes or resource paths
 
 ## Patch type selection
 
@@ -48,10 +49,25 @@ val myPatch = bytecodePatch(          // or rawResourcePatch / resourcePatch
 }
 ```
 
+## Adding an app
+
+A new app is a new package, never a widening of an existing patch. Checklist:
+
+1. `shared/Constants.kt`: a private `data class <App>Build(version, versionCode)`, its exact build list, an `is<App><Build>(version, versionCode)` helper that every patch body re-checks, a `Compatibility` built on the primary `AppTarget` constructor with a distinct `name`, and an exposed `COMPATIBILITIES_<APP>`. Never touch another app's lists.
+2. Layout: patches `app/template/patches/<app>/`, payloads `resources/<app>/<group>/`, extension smali `resources/<app>/smali/<package path>/`, tests `test/.../<app>/`.
+3. Categories: reuse `shared/PatchCategories.kt`; a new category needs the matching `PatchCategoriesTest` group map and expected counts in the same change. That test enumerates patches by hand (it does not discover new top-level patches), so a new app's patches stay outside its category and catalog assertions until they are listed there explicitly. A new category also needs an entry in `CATEGORY_ORDER` in `.github/scripts/generate_patches_readme.py`; unknown categories are appended alphabetically after the known ones.
+4. Extension payload: a JavaExec task mirroring `assembleExtension` (input that app's smali dir, args `a -a 33 -o <out>`) emitting `<app>-extension.mpe`, plus `resources.srcDir(...)` and `processResources`/`sourcesJar` dependsOn. Never merge two apps' classes into one `.mpe`.
+5. Every patch declares `compatibleWith(*COMPATIBILITIES_<APP>.toTypedArray())` and re-checks the exact pair first: `if (!is<App><Build>(packageMetadata.versionName, packageMetadata.versionCode)) return@execute`.
+6. Payloads load through one private loader per app (`object {}.javaClass.getResourceAsStream("/<app>/<path>")`) that errors with the missing path.
+7. Native in-place edits: model each as `(offset, original, replacement)`, pin the library by exact size + stock SHA-256, accept original or replacement per site (idempotent), fail closed otherwise; keep an unpinned per-site applier so synthetic tests run without the decoded base.
+8. Tests: tracked payload SHA-256 pins, synthetic apply / keep-patched / reject-foreign / wrong-size / wrong-hash cases, and the real-base audit behind `org.junit.Assume.assumeTrue("BLOCKED: ...")`. Report executed and skipped counts separately.
+9. Worked example in repo: the 4XVR set (`fourxvr/`, `resources/fourxvr/`, `fourxvr-extension.mpe`). Cross-check every app-member reference in extension smali against the stock decode before assembling — the app's existing classes are patched in place, never replaced.
+
 ## Extension DEX (smali)
 
-- Sources: `patches/src/main/resources/steamlink/androidxr/smali/`
-- Built by `assembleExtension` Gradle task
+- Sources: `patches/src/main/resources/steamlink/androidxr/smali/` (Steam Link) and `patches/src/main/resources/fourxvr/smali/` (4XVR)
+- Built by `assembleExtension` (Steam Link, plus `assembleMinimalExtension` and `assembleBatteryExtension`) and `assembleFourXvrExtension` (4XVR). Each task emits its own payload: `extension.mpe`, `minimal-extension.mpe`, `battery-extension.mpe`, `fourxvr-extension.mpe`
+- Only brand-new helper classes are assembled. Edits to an app's existing classes stay in build-aware Kotlin code (typed dexlib2 builders, no raw smali strings). A new app adds its own task and output directory; it does not rewire an existing app's task.
 - Output: `../builds/steamlink-patches/gradle/patches/generated/extension-resources/extensions/extension.mpe`
 - Delete cached `.mpe` before rebuilding: `Remove-Item ../builds/steamlink-patches/gradle/patches/generated/extension-resources/extensions/extension.mpe`
 - **Smali API level: `-a 33`** — never use 35 or higher
@@ -79,6 +95,11 @@ the tracked `patches-list*.json` catalogs. Tests pin some wording:
 - `ControllerHalPosePatchTest` / `ControllerVelocityFramePatchTest` assert `needs Shizuku`,
   `local to the grip pose`, `local to the streamed pose`, `in the base space`.
 - `UberLinkRescanDisablePatchTest` asserts `2.0.23/5002363` and `Experimental`.
+- The 4XVR tests cover the new app instead of wording: `FourXvrNativeGuardTest` pins
+  `libvr4p-oculus.so` and `libovrplatformloader.so` size/SHA-256 plus the refresh-profile
+  and stub edit bytes and fails closed on wrong-size, wrong-hash or unpinned layouts;
+  `FourXvrPayloadResourceTest` pins the bundled 4XVR payload hashes and requires the
+  shipped smali helper sources.
 
 Rewriting a description therefore needs a matching test update (or keep the phrase), then
 `:patches:generatePatchesList` to rewrite all 4 root catalogs, and `:patches:test`. The
@@ -103,7 +124,8 @@ Use the exact `(versionName, versionCode)` model and primary `AppTarget` constru
 the repository-root `AGENTS.md`. Never replace the existing compatibility list when adding a base.
 
 ## Helpers available
-- `loadResource(name: String): ByteArray` — loads from `/steamlink/androidxr/` classpath resources
+- `loadResource(name: String): ByteArray` — Steam Link private loader for `/steamlink/androidxr/` (`AndroidXrCompatibilityPatch.kt`)
+- `loadFourXvrResource(name: String): ByteArray` — 4XVR loader for `/fourxvr/` (`fourxvr/FourXvrDexKit.kt`). Each app keeps its own private loader; there is no cross-app loader.
 - `BinaryPatchHelper.findUniqueAndReplace(bytes, search, replace)` — AArch64 .so patching
 - `BinaryPatchHelper.vaddrToFileOffset(...)` — virtual address → file offset in ELF
 
@@ -177,7 +199,8 @@ Report cached compilation, full Gradle/Android packaging, real APK audits and Gi
 Byte-pinned JSON/text resources need deterministic checkout bytes. Set an explicit `.gitattributes` rule (the foveal canvas manifest uses `text eol=lf`) and check `git ls-files --eol` plus the resource SHA-256 after checkout. Windows `core.autocrlf` can otherwise invalidate a correct Linux manifest pin. Preserve the canonical hash and installer guard; do not accept multiple line-ending hashes to hide the mismatch.
 
 ```powershell
-.\gradlew.bat build              # full build
-.\gradlew.bat assembleExtension  # rebuild extension DEX only
-.\gradlew.bat generatePatchesList # regenerate patches-list.json
+.\gradlew.bat build                    # full build (every app)
+.\gradlew.bat assembleExtension        # rebuild the Steam Link extension DEX only
+.\gradlew.bat assembleFourXvrExtension # rebuild the 4XVR extension DEX only
+.\gradlew.bat generatePatchesList      # regenerate the root patches-list.json catalogs
 ```

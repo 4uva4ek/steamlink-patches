@@ -1,6 +1,6 @@
 # Technical reference
 
-Implementation notes, compatibility details, validation status, and build instructions for Steam Link GalaxyXR Patches. For installation and patch selection, see the [README](README.md).
+Implementation notes, compatibility details, validation status, and build instructions for the Galaxy XR app patch set (Steam Link VR and 4XVR). For installation and patch selection, see the [README](README.md). The tables below cover the Steam Link VR patch set; the 4XVR set is default-off and not yet released — see its [plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) and the README status table.
 
 ## Steam Link 2.0.20 / 5001812 and 2.0.21 / 5001968
 

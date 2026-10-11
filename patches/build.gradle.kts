@@ -158,19 +158,48 @@ val assembleBatteryExtension: TaskProvider<JavaExec> = tasks.register("assembleB
     }
 }
 
+// 4XVR Galaxy XR helper classes (cn.vr4p.patch.*, dev.eni.hdrdirect.*, frame/render dispatch).
+// Only brand-new classes are assembled here; edits to 4XVR's existing classes stay in
+// build-aware Kotlin patch code (typed dexlib2 builders, no raw smali strings).
+val fourXvrExtensionOutputDir = layout.buildDirectory.dir("generated/fourxvr-extension-resources")
+val assembleFourXvrExtension: TaskProvider<JavaExec> = tasks.register("assembleFourXvrExtension", JavaExec::class) {
+    group = "build"
+    description = "Assemble the 4XVR Galaxy XR helper classes to fourxvr-extension.mpe (no Android SDK required)"
+    val smaliSrcDir = file("src/main/resources/fourxvr/smali")
+    val smaliSources = fileTree(smaliSrcDir) {
+        include("**/*.smali")
+    }
+    val outputFile = fourXvrExtensionOutputDir.map { it.file("extensions/fourxvr-extension.mpe") }
+    inputs.files(smaliSources)
+    outputs.file(outputFile)
+    classpath = smaliAssembler
+    mainClass.set("com.android.tools.smali.smali.Main")
+    doFirst {
+        val out = outputFile.get().asFile
+        out.parentFile.mkdirs()
+        args(
+            "a",
+            "-a", "33",
+            "-o", out.absolutePath,
+            *smaliSources.files.map { it.absolutePath }.sorted().toTypedArray(),
+        )
+    }
+}
+
 // Include the assembled extension.mpe in the patches JAR.
 sourceSets.main {
     resources.srcDir(extensionOutputDir)
     resources.srcDir(minimalExtensionOutputDir)
     resources.srcDir(batteryExtensionOutputDir)
+    resources.srcDir(fourXvrExtensionOutputDir)
 }
 
 tasks.named("processResources") {
-    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension)
+    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension, assembleFourXvrExtension)
 }
 
 tasks.named("sourcesJar") {
-    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension)
+    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension, assembleFourXvrExtension)
 }
 
 tasks {

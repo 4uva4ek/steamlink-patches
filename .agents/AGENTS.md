@@ -1,6 +1,6 @@
 # Project skill guidance
 
-Repository-root and parent `AGENTS.md` apply to every skill here. When a skill
+Repository-root and parent `AGENTS.md` apply to every skill here. This repository patches several apps (Steam Link VR, 4XVR) for the Galaxy XR headset; the root `AGENTS.md` app registry maps each app to its package, exact bases, source roots and extension payload, and per-app isolation rules live there too. When a skill
 builds, compiles, audits, or delegates work, all generated output, scratch and
 project caches must use `../builds/steamlink-patches/`, outside the repository.
 Use the [build layout](../diagnostics/build-layout/README.md): Gradle output is

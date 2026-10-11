@@ -73,7 +73,10 @@ Or `No issues.` Findings sorted file → line ascending.
 ## Chaining patterns
 
 For every delegated task in this project, pass the repository's `AGENTS.md` and
-the external build contract: all generated outputs, temporary checkouts, logs and
+the external build contract: the repository patches several apps for the Galaxy XR
+(Steam Link VR, 4XVR) and the root `AGENTS.md` app registry lists each app's package,
+exact bases, source roots and extension payload — give every child the target app's
+row and keep its edits inside that app's sources. All generated outputs, temporary checkouts, logs and
 project caches belong under `../builds/steamlink-patches/` (on this workspace,
 `D:/Angelo/Desktop/SteamLink-GalaxyXR-Windows-Toolkit-FULL/builds/steamlink-patches`).
 Gradle uses `gradle/root` and `gradle/patches`; mixed retained fixtures/tools/evidence
@@ -84,7 +87,7 @@ repository-local build trees or clean retained inputs wholesale. See
 release consumers and clean/input separation. Static routing checks and cached
 compiler passes do not establish a successful Morphe Gradle or GitHub CI build.
 
-For Steam Link patch/test changes in this repository, include fresh-checkout input availability in the investigator/reviewer task. Use the [Morphe skill](../morphe-patches/SKILL.md) CI guidance: local ignored decoded APKs are not GitHub inputs, and absent-input audits must be distinguished from mandatory portable tests.
+For patch/test changes in this repository (any app), include fresh-checkout input availability in the investigator/reviewer task. Use the [Morphe skill](../morphe-patches/SKILL.md) CI guidance: local ignored decoded APKs and decoded trees are not GitHub inputs, and absent-input audits must be distinguished from mandatory portable tests.
 
 For build/CI failures, give the investigator the exact commit/run/job and first
 failed task. Ask the reviewer to compare imported test libraries with Gradle test

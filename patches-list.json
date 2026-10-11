@@ -4,6 +4,40 @@
   "version": "1.28.0-dev.6",
   "patches": [
     {
+      "name": "5.1-channel audio bridge (4XVR)",
+      "description": "Routes the AAudio calls of Vr4pMediaPlayer and its audio runnable through the bundled 5.1-channel bridge, initializes the bridge in Main4XActivity and refreshes the subtitle style on the playback-speed tick for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
+      "category": "Tracking & audio",
+      "default": false,
+      "dependencies": [
+        "RawResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Android XR native permission names",
       "description": "Rewrites native Oculus face/eye permission checks to the Android XR names, on exact 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244 builds.",
       "category": "Advanced XR compatibility",
@@ -196,6 +230,38 @@
               "isExperimental": false,
               "minSdk": null,
               "description": "Verified Steam Link 2.0.22 build 5002244."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Audio bridge payload (4XVR)",
+      "description": "Installs the bundled 5.1-channel AAudio bridge native for exact 4XVR 2.0.22 build 20022.",
+      "category": "Tracking & audio",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
             }
           ]
         }
@@ -1676,6 +1742,40 @@
       ]
     },
     {
+      "name": "Frame-synced render dispatch (4XVR)",
+      "description": "Drains the render dispatch queue before every frame, hands scene switches to RenderDispatch.requestScene instead of the retired render runnable, and routes window teardown through the dispatch for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
+      "category": "Advanced XR compatibility",
+      "default": false,
+      "dependencies": [
+        "RawResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Full-FOV foveal canvas (experimental)",
       "description": "Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation.",
       "category": "Experiments",
@@ -1843,6 +1943,38 @@
       "options": []
     },
     {
+      "name": "Galaxy XR controller models (4XVR)",
+      "description": "Replaces the four Quest 3 controller assets with the Galaxy XR reference models (2048x2048 textures, re-authored meshes) for exact 4XVR 2.0.22 build 20022. Static asset swap; headset validation pending.",
+      "category": "Tracking & audio",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Galaxy XR high-resolution 3-projection fix",
       "description": "Permission-free high-resolution fix: appends a static 2x2 Android-surface compositor trigger and leaves each build's native projection layers and formats, including future RGB10_A2, untouched. No image copy. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363.",
       "category": "Image quality",
@@ -1958,6 +2090,38 @@
               "isExperimental": false,
               "minSdk": null,
               "description": "Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.23 build 5002363; headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Galaxy XR launch compatibility (4XVR)",
+      "description": "Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending.",
+      "category": "Startup & permissions",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
             }
           ]
         }
@@ -2197,6 +2361,143 @@
               "isExperimental": false,
               "minSdk": null,
               "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Galaxy XR refresh profile (72 Hz, 4XVR)",
+      "description": "Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation.",
+      "category": "Advanced XR compatibility",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Galaxy XR set (4XVR 2.0.22/20022)",
+      "description": "Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Gated on a pristine 2.0.22/20022 source APK and libplacebo source availability; headset validation pending.",
+      "category": "Recommended sets",
+      "default": false,
+      "dependencies": [
+        "ResourcePatch",
+        "RawResourcePatch",
+        "RawResourcePatch",
+        "BytecodePatch",
+        "BytecodePatch",
+        "BytecodePatch",
+        "BytecodePatch",
+        "BytecodePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "HDR pipeline payload (4XVR)",
+      "description": "Installs the modified libplacebo 7.360.1 (LGPL-2.1-or-later), the 4XVR HDR bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022.",
+      "category": "Image quality",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Meta platform decoupling (4XVR, experimental)",
+      "description": "Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime; launch-criticality is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling.",
+      "category": "Experiments",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
             }
           ]
         }
@@ -2519,6 +2820,70 @@
       ]
     },
     {
+      "name": "Render dispatch payload (4XVR)",
+      "description": "Installs the 4XVR render dispatch native (frame-synced scene queue and adaptive theater background updates) for exact 4XVR 2.0.22 build 20022.",
+      "category": "Advanced XR compatibility",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Startup and UI continuity helper (4XVR)",
+      "description": "Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build 20022. Headless validation pending.",
+      "category": "Startup & permissions",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Startup permission requests (before 5002322)",
       "description": "Requests hand, eye, face, microphone and Bluetooth permissions at startup on older builds. Battery settings and the splash are separate patches.",
       "category": "Startup & permissions",
@@ -2717,6 +3082,72 @@
               "isExperimental": false,
               "minSdk": null,
               "description": "Verified Steam Link 2.0.22 build 5002244."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Subtitle suite (4XVR)",
+      "description": "Adds the subtitle position controls row, the enlarged subtitle panel height, immediate config persistence on color-tab changes, the custom subtitle font load and the wrapped-cue size clamp for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
+      "category": "Subtitles & playback",
+      "default": false,
+      "dependencies": [
+        "RawResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Subtitle suite payload (4XVR)",
+      "description": "Installs the subtitle position native library used by the 4XVR subtitle suite controls on exact 4XVR 2.0.22 build 20022.",
+      "category": "Subtitles & playback",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
             }
           ]
         }
@@ -3405,6 +3836,40 @@
               "isExperimental": false,
               "minSdk": null,
               "description": "Verified Steam Link 2.0.22 build 5002244."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "libplacebo HDR pipeline (4XVR)",
+      "description": "Loads the HDR bridge, routes the decoder output surface through it for the FP16 hand-off, detects HLG from the video MediaFormat and keeps the bridge informed of movie/seek transitions for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
+      "category": "Image quality",
+      "default": false,
+      "dependencies": [
+        "RawResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
             }
           ]
         }

@@ -1,12 +1,21 @@
-# Steam Link GalaxyXR Patches
+# Galaxy XR app patches (Steam Link VR and 4XVR)
 
-[Morphe](https://morphe.software) patches for using Steam Link VR on the **Samsung Galaxy XR (SM-I610)** headset.
+[Morphe](https://morphe.software) patches for running apps on the **Samsung Galaxy XR (SM-I610)** headset.
 
 ## What this repository contains
 
-The patches adapt Steam Link for Android XR and provide build-specific fixes for resolution, color, microphone input, tracking, permissions, and startup. Recommended bundles select the patches appropriate for your Steam Link build. Optional face tracking works with VRCFaceTracking and the Galaxy XR LinkFT module. Exact older builds use the full GXR face bridge, while exact build 2.0.23/5002363 uses a native tongue-only bridge that preserves Valve's built-in Android XR face mappings.
+This is a multi-app patch set: every app keeps its own package, exact supported builds, patch sources, payloads and compatibility list. Morphe applies a bundle to one APK at a time, so pick the app you want to patch.
 
-This repository contains the patch source and downloadable `.mpp` patch bundles, which Morphe applies to a Steam Link VR APK (`com.valvesoftware.steamlinkvr`).
+| App | Package | Supported exact builds | Status |
+|---|---|---|---|
+| Steam Link VR | `com.valvesoftware.steamlinkvr` | 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363 | released patch set, 5 recommended bundles (documented below) |
+| 4XVR | `cn.vr4p.oculus4xvrplayerov` | 2.0.22/20022 | default-off patch set from a static cross-build analysis, in no bundle; not released, runtime validation pending |
+
+The Steam Link VR patches adapt Steam Link for Android XR and provide build-specific fixes for resolution, color, microphone input, tracking, permissions, and startup. Recommended bundles select the patches appropriate for your Steam Link build. Optional face tracking works with VRCFaceTracking and the Galaxy XR LinkFT module. Exact older builds use the full GXR face bridge, while exact build 2.0.23/5002363 uses a native tongue-only bridge that preserves Valve's built-in Android XR face mappings.
+
+The 4XVR set is 6 default-off patches as of 2026-10-11 (launch compatibility, controller models, HDR pipeline payload, libplacebo HDR pipeline, refresh profile 72 Hz, and the experimental Meta platform decoupling); a `subtitles/lib4xvr_subtitle_position.so` payload is staged in resources with no patch yet. All target exact 2.0.22/20022 only. Their [diff and patch plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) is static-only evidence: no pristine stock 4XVR APK is available yet, the bundled `libplacebo.so` payload is LGPL-2.1-or-later and its `NOTICE.txt` claims a `libplacebo-source.zip` that is not present in the reference APK, and nothing has been executed on a headset. Do not expect a documented install flow for 4XVR yet.
+
+This repository contains the patch source and downloadable `.mpp` patch bundles, which Morphe applies to the APK of any supported app above (Steam Link VR `com.valvesoftware.steamlinkvr`, 4XVR `cn.vr4p.oculus4xvrplayerov`).
 
 ## What you need
 
@@ -134,7 +143,7 @@ The [2.0.23/5002363 audit](diagnostics/steamlink-5002363/README.md) records the 
 
 ## Agent instructions
 
-This repository follows the shared `AGENTS.md` contract; each agent host reads a different subset of the instruction files.
+This repository follows the shared `AGENTS.md` contract; each agent host reads a different subset of the instruction files. The root `AGENTS.md` also holds the app registry (package, exact bases, sources, resources, extension payload) for every app this repository patches.
 
 - **Hermes** reads `AGENTS.md` and, once the checkout is trusted (`hermes skills trust` in the repository root, once per machine), the project skills in `.agents/skills/`. Hermes does not read `.github/agents/` or `.github/copilot-instructions.md`. Delegated work uses the `delegate_task` tool, not named presets: paste the role contract from [`.agents/skills/cavecrew/references/hermes-roles.md`](.agents/skills/cavecrew/references/hermes-roles.md) into each child's `context`, with the goal and every path.
 - **Copilot / preset hosts** keep using `.github/agents/` and `.github/copilot-instructions.md`; those files stay for them.

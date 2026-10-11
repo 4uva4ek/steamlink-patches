@@ -2,6 +2,7 @@
 
 Reference for conflict detection when importing external patches.
 Each entry lists the exact APK artifact and value(s) a patch writes or modifies.
+This catalog documents the Steam Link VR patch set (`com.valvesoftware.steamlinkvr`). Entries for the other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`, exact 2.0.22/20022), are added when that default-off set is finalized and cataloged.
 
 ## Current patch categories
 

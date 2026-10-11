@@ -8,6 +8,9 @@ Tells the main thread when to spawn a caveman-style subagent versus the vanilla 
 
 For this project, all build output, scratch checkouts and project caches always
 go under `../builds/steamlink-patches/`. See [the layout](../../../diagnostics/build-layout/README.md).
+The repository patches several apps (Steam Link VR, 4XVR) for the Galaxy XR; the root
+[`AGENTS.md`](../../../AGENTS.md) holds the per-app registry of packages, exact bases
+and source roots — pass the target app's row to every child.
 
 Three subagents:
 

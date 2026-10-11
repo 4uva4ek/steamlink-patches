@@ -14,6 +14,7 @@ Caveman-ultra. Drop articles/filler/hedging. Code/symbols/paths exact, backticke
 ## Project build routing
 
 Read repository-root `AGENTS.md` and applicable parent guidance before investigation.
+This repository patches several Galaxy XR apps: a base is an exact `(versionName, versionCode)` pair of its own package, and each app's sources live under `patches/src/main/kotlin/app/template/patches/<app>/` with resources under `patches/src/main/resources/<app>/`. Never report a hit from another app's tree as a match for the app under investigation.
 Generated build output, caches and scratch belong under `../builds/steamlink-patches/`.
 Gradle output: `gradle/root`, `gradle/patches`; native CMake output: `extensions/<name>/build-*`.
 External `build/` mixes retained fixtures/tools/evidence with scratch; preserve required inputs, never delete wholesale.
