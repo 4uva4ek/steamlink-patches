@@ -12,6 +12,7 @@ import app.template.patches.shared.PatchCategories
 @Suppress("unused")
 private val fourXvrGalaxyXrPatches = arrayOf(
     fourXvrLaunchCompatibilityPatch,
+    fourXvrLauncherIconPatch,
     fourXvrControllerModelsPatch,
     fourXvrRefreshProfilePatch,
     fourXvrHdrPipelinePatch,
@@ -24,11 +25,12 @@ private val fourXvrGalaxyXrPatches = arrayOf(
 @Suppress("unused")
 val fourXvrGalaxyXrSetPatch = rawResourcePatch(
     name = "Galaxy XR set (4XVR 2.0.22/20022)",
-    description = "Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch " +
-        "compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR " +
-        "pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle " +
-        "suite and the startup/UI continuity helper. Headset validation pending; the libplacebo " +
-        "source obligation is tracked in the implementation record.",
+    description = "Selects the 9-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch " +
+        "compatibility, the canonical launcher icon, controller models, the 72 Hz refresh " +
+        "profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced " +
+        "render dispatch, the subtitle suite and the startup/UI continuity helper. Headset " +
+        "validation pending; the libplacebo source obligation is tracked in the implementation " +
+        "record.",
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)

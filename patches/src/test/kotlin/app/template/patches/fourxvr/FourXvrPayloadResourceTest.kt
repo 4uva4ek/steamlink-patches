@@ -34,6 +34,18 @@ class FourXvrPayloadResourceTest {
             "compat/XR_APILAYER_4XVR_viewconfig_fix.json" to
                 "782a8263905cbc4d0771f6d9d7683740a94487b0284ef2fba4f53a60c41a5571",
             "licenses/NOTICE.txt" to "77e3bba6e452633bba4b8a3f8ecaa4485a068d2491b5268399419c5be59e7978",
+            "icon/ic_launcher.xml" to "b84b96df85272c211ed01b12c384fa856677b2c4120743066e2b31271002da71",
+            "icon/ic_launcher_round.xml" to "b84b96df85272c211ed01b12c384fa856677b2c4120743066e2b31271002da71",
+            "icon/ic_launcher_mdpi.png" to "90660bebcaae3e6217ad72b4f9ee904065e07137dec3c853892f4e19cd771651",
+            "icon/ic_launcher_hdpi.png" to "70cc8acfc358c1383ac5f4a53e87950858a8dfb3ff23eba2f502a4950675f814",
+            "icon/ic_launcher_xhdpi.png" to "75b94d02b95c18a959c1b5260a84e390ceed1f5cbcba348718ee7bd43d7c7b4f",
+            "icon/ic_launcher_xxhdpi.png" to "68467edc995c4164f4695bef36b07188a40e0129fc3ab7478d973e2cb656d47e",
+            "icon/ic_launcher_xxxhdpi.png" to "0becf74d16971a9e2354068da5af4111f3597824d5fe5f7b231ef8bc5ec4ca53",
+            "icon/ic_launcher_round_mdpi.png" to "b1ec20df325584df74e32c3ab99e8d0cd377b45b0b1d44d8d890bfce3ff1e851",
+            "icon/ic_launcher_round_hdpi.png" to "bcefe66f43b764a2280b61afa153048c2307a5e59defb85e4c03c5fcd7cb978b",
+            "icon/ic_launcher_round_xhdpi.png" to "b5b9c88955cb816ce13e54ece04f326b7e3f12814b8e1a8f1d991ae32a6e5252",
+            "icon/ic_launcher_round_xxhdpi.png" to "6ed123a11d880c90418f759757b20b831eeaf6481f8e63afe896a1e6b30d1973",
+            "icon/ic_launcher_round_xxxhdpi.png" to "3c5a1055a4bf455da6fc4e87e1b46fc2378ddcabd50c7abdc91034a372e5257d",
             "controllers/MetaQuestTouchPlus_Left_BaseColor_AO.png" to
                 "a084603d283d7628b2b2455b0ad28240872b69b6f4357dd6ba67cc89da5e8988",
             "controllers/MetaQuestTouchPlus_right_BaseColor_AO.png" to

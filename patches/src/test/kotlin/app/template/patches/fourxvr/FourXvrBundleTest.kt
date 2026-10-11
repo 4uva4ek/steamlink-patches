@@ -16,6 +16,7 @@ class FourXvrBundleTest {
     fun `4XVR patches are recommended by default and the experimental decoupling stays opt-in`() {
         val members = listOf(
             fourXvrLaunchCompatibilityPatch,
+            fourXvrLauncherIconPatch,
             fourXvrControllerModelsPatch,
             fourXvrRefreshProfilePatch,
             fourXvrHdrPipelinePatch,
@@ -24,7 +25,7 @@ class FourXvrBundleTest {
             fourXvrSubtitleSuitePatch,
             fourXvrToastContinuityPatch,
         )
-        assertEquals(8, members.size)
+        assertEquals(9, members.size)
         members.forEach { member -> assertTrue(member.default, member.name) }
         listOf(
             fourXvrHdrPayloadPatch,

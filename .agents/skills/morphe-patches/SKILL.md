@@ -123,6 +123,15 @@ Caused by: java.util.NoSuchElementException: Collection is empty.
   mis-anchors every wide-parameter method and silently matches nothing (regression: the 4XVR
   render-dispatch drain anchor; fixed by `parameterWordCount`, pinned by `FourXvrDexKitTest`).
 
+## Manager app tile icon
+
+Morphe Manager renders a stored APK's app tile from its manifest icon
+(`packageManager.getResourcesForApplication` + `ResourcesCompat.getDrawable(resources, appInfo.icon)`).
+A custom icon name or an adaptive XML in `mipmap-anydpi` without `-v26` can resolve to nothing and
+show a blank tile. Expose the artwork under the canonical `ic_launcher` / `ic_launcher_round` names
+(adaptive XML in `res/mipmap-anydpi-v26/` plus density PNGs) and point the manifest
+`android:icon`/`android:roundIcon` at them — see the 4XVR `Galaxy XR launcher icon` patch.
+
 ## Constants
 Use the exact `(versionName, versionCode)` model and primary `AppTarget` constructor documented in
 the repository-root `AGENTS.md`. Never replace the existing compatibility list when adding a base.

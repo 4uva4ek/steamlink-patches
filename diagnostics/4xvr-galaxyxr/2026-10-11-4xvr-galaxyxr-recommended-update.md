@@ -49,6 +49,25 @@ says to verify on device before enabling. Guidance updated to match: `AGENTS.md`
 - Still pending: phone retest on a build containing this fix. The G3 anchors after this point
   (SetDataSource transition, seekPosForce, ActResume) have not executed on device yet.
 
+## Morphe app-tile icon (same day, after dev.8)
+
+- Feedback: on the phone the Morphe Manager's 4XVR tile is blank while Steam Link shows its icon.
+- Mechanism found in the Manager source (`AppDataResolver.kt`): the tile icon loader resolves the
+  stored APK's manifest icon via `packageManager.getResourcesForApplication(appInfo)` +
+  `ResourcesCompat.getDrawable(resources, appInfo.icon, null)`. Steam Link's icon is the canonical
+  `ic_launcher` shape; stock 4XVR only ships the custom `@mipmap/ic_4xplayer_launch` with its
+  adaptive XML in a nonstandard `mipmap-anydpi` directory.
+- Fix: new G11 patch `Galaxy XR launcher icon (4XVR)` (recommended, in the set): re-exposes the
+  stock artwork from the decoded base under canonical names — `res/mipmap-anydpi-v26/ic_launcher.xml`
+  and `ic_launcher_round.xml` (referencing the existing `ic_4xplayer_launch_background/foreground`
+  layers) plus the stock density PNGs as `ic_launcher*.png` — and repoints the manifest
+  `android:icon` / `android:roundIcon` at them. Bundle payloads under `fourxvr/icon/` (12 files,
+  hashes pinned in `FourXvrPayloadResourceTest`); the set now has 9 members and the catalogs 15
+  4XVR entries.
+- Verified: local gate green; tests 158 executed + 12 skipped / 0 failures. Pending: phone check on
+  a release carrying this patch. Caveat: the tile for the *imported original* APK (before patching)
+  cannot be changed by any patch — a blank tile there would be Manager-side behavior.
+
 ## Verification (local, 2026-10-11, after the fix)
 
 - `:patches:test :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=experimental`:
