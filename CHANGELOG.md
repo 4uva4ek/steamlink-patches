@@ -1,3 +1,9 @@
+## [1.28.0-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.3...v1.28.0-dev.4) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* restore controller HAL pose horizon before added prediction ([cd38db4](https://github.com/AngelDark92/xr-porting-hub/commit/cd38db426b2380bc9743b6dcf53b15dc27d2fd2e))
+
 ## [1.28.0-dev.3](https://github.com/AngelDark92/steamlink-patches/compare/v1.28.0-dev.2...v1.28.0-dev.3) (2026-10-08)
 
 ### 🐛 Bug Fixes
