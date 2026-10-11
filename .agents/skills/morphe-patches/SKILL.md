@@ -122,6 +122,22 @@ Caused by: java.util.NoSuchElementException: Collection is empty.
   words, so in `RenderFrame(ZJJ)V` p1 sits 5 words below the register count, not 3. Counting types
   mis-anchors every wide-parameter method and silently matches nothing (regression: the 4XVR
   render-dispatch drain anchor; fixed by `parameterWordCount`, pinned by `FourXvrDexKitTest`).
+- dexlib2 inserts before a branch TARGET are skipped at runtime: a branch holds the target
+  instruction object, and inserting new instructions before that object leaves the jump landing on
+  the original instruction, so inserted code never runs on the incoming-branch path. Insert after
+  the label target or on a branch-free stretch, and confirm no label sits between the insert and
+  the first read of what it defines.
+- Never park a hook result in a stock scratch register across a merge point. Use only registers the
+  stock code provably rewrites before their next read on the same straight-line path, or bump the
+  register count and use a fresh local exactly as the shipped reference build does. A skipped or
+  merged insert turns the register into `Conflict` and ART rejects the whole class.
+- Unit tests do not run ART verification: every new or changed bytecode edit needs a device run.
+  A rejected class shows in logcat as `java.lang.VerifyError: Verifier rejected class ...
+  (base.apk!classesN.dex)` with the register and expected type; treat any such line as a hard patch
+  failure (frozen UI, dead playback pipeline), never as app flakiness.
+- Byte-hashed text payloads need an explicit `.gitattributes` `text eol=lf` pin. Without it a Windows
+  checkout (core.autocrlf) fails the sha256 payload tests while CI on Linux passes; add the pin and
+  re-checkout the file instead of touching the expected hash.
 
 ## Manager app tile icon
 
