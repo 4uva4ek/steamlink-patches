@@ -185,41 +185,64 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
 
         // ------------------------------------------------------------------
         // Vr4pMediaPlayer$MyVideoRunnable.run(): route the decoder output surface through the
-        // HDR bridge. The routed surface is parked in v10 (dead across the region) and moved
-        // into v2 where the stock code reloads the codec surface before MediaCodec.configure.
+        // HDR bridge. routeOutputSurface(codec, surface, format, listener) runs immediately after
+        // the stock "color-transfer" const-string and the returned surface replaces the stock
+        // reload feeding MediaCodec.configure. The const-string is the branch target of
+        // :cond_1d/:goto_b, and no label exists between it and MediaCodec.configure, so every
+        // path executes the block; scratch registers v2/v9/v10 are each rewritten by the stock
+        // code before their next read (const/4 v2,3 / const/4 v9,0 / const/4 v10,0), so the stock
+        // register count stays. Placing this call before the const-string instead (the reference
+        // build's placement, parking in its extra local v43) leaves the scratch merged to
+        // Conflict on the av01 path and the class fails ART verification — device evidence
+        // (Galaxy XR AFZ3, 4XVR 2.0.22/20022): "VerifyError ... MyVideoRunnable.run(): [0x345]
+        // register v2 has type Conflict but expected Reference: android.view.Surface".
         // ------------------------------------------------------------------
         val videoRunnable = mutableClassDefBy(V4_MEDIA_PLAYER_RUNNABLE)
         val run = videoRunnable.methods.first { it.name == "run" && it.parameterTypes.isEmpty() }
 
-        val colorTransferIndex = run.implementation!!.instructions.indexOfFirst { instruction ->
-            val reference = (instruction as? ReferenceInstruction)?.reference
-            reference is StringReference && reference.string == "color-transfer"
+        val colorTransferIndexes = run.implementation!!.instructions.withIndex()
+            .filter { (_, instruction) ->
+                val reference = (instruction as? ReferenceInstruction)?.reference
+                reference is StringReference && reference.string == "color-transfer"
+            }
+            .map { it.index }
+        check(colorTransferIndexes.size == 1) {
+            "Expected one color-transfer const-string in MyVideoRunnable.run; " +
+                "found ${colorTransferIndexes.size}"
         }
-        check(colorTransferIndex >= 0) { "Missing color-transfer const-string in MyVideoRunnable.run" }
+        val colorTransferIndex = colorTransferIndexes.single()
+        val transferConstant = run.implementation!!.instructions[colorTransferIndex + 1]
+        check(
+            transferConstant.opcode == Opcode.CONST_4 &&
+                (transferConstant as? com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction)
+                    ?.registerA == 2 &&
+                (transferConstant as? com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction)
+                    ?.narrowLiteral == 3,
+        ) { "Unexpected transfer constant after the color-transfer const-string in run()" }
 
         run.addInstructions(
-            colorTransferIndex,
+            colorTransferIndex + 1,
             listOf(
-                igetObject(0, 1, V4_MEDIA_PLAYER_RUNNABLE, "this\$0", V4_MEDIA_PLAYER),
+                igetObject(2, 1, V4_MEDIA_PLAYER_RUNNABLE, "this\$0", V4_MEDIA_PLAYER),
+                igetObject(2, 2, V4_MEDIA_PLAYER, "m_Listener", "Lcn/vr4p/vr4pmovieplayer/Vr4pMediaPlayer\$MyOnFrameAvailableListener;"),
+                igetObject(9, 1, V4_MEDIA_PLAYER_RUNNABLE, "this\$0", V4_MEDIA_PLAYER),
                 invokeStatic35c(
                     V4_MEDIA_PLAYER,
                     "access\$200",
                     listOf(V4_MEDIA_PLAYER),
                     "Landroid/media/MediaCodec;",
-                    listOf(0),
+                    listOf(9),
                 ),
-                moveResult(0, objectResult = true),
-                igetObject(2, 1, V4_MEDIA_PLAYER_RUNNABLE, "this\$0", V4_MEDIA_PLAYER),
+                moveResult(9, objectResult = true),
+                igetObject(10, 1, V4_MEDIA_PLAYER_RUNNABLE, "this\$0", V4_MEDIA_PLAYER),
                 invokeStatic35c(
                     V4_MEDIA_PLAYER,
                     "access\$1500",
                     listOf(V4_MEDIA_PLAYER),
                     "Landroid/view/Surface;",
-                    listOf(2),
+                    listOf(10),
                 ),
-                moveResult(2, objectResult = true),
-                igetObject(9, 1, V4_MEDIA_PLAYER_RUNNABLE, "this\$0", V4_MEDIA_PLAYER),
-                igetObject(9, 9, V4_MEDIA_PLAYER, "m_Listener", "Lcn/vr4p/vr4pmovieplayer/Vr4pMediaPlayer\$MyOnFrameAvailableListener;"),
+                moveResult(10, objectResult = true),
                 invokeStatic35c(
                     HDR_BRIDGE,
                     "routeOutputSurface",
@@ -230,16 +253,17 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
                         "Ljava/lang/Object;",
                     ),
                     "Landroid/view/Surface;",
-                    listOf(0, 2, 7, 9),
+                    listOf(9, 10, 7, 2),
                 ),
-                moveResult(10, objectResult = true),
+                moveResult(9, objectResult = true),
             ),
         )
 
         // Replace the stock surface reload right before MediaCodec.configure with the routed
-        // surface. run() has four access$1500 surface loads; exactly one feeds the video
-        // configure through the [move-result-object v2, const/4 v9, const/4 v10] tail — the
-        // same block the reference build swaps for its routed surface.
+        // surface parked in v9 by the block above. run() has four access$1500 surface loads;
+        // exactly one feeds the video configure through the [move-result-object v2,
+        // const/4 v9, const/4 v10] tail — the same block the reference build swaps for its
+        // routed surface (it parks in v43 with a 43->44 register bump; v9 needs none).
         val surfaceReloadAnchors = run.implementation!!.instructions.withIndex()
             .filter { (index, instruction) ->
                 val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
@@ -289,7 +313,7 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
                 (reloadResult as? com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction)
                     ?.registerA == 2,
         ) { "Unexpected move-result after the access\$1500 surface reload in run()" }
-        run.replaceInstruction(surfaceReload - 1, moveObject(2, 10))
+        run.replaceInstruction(surfaceReload - 1, moveObject(2, 9))
         run.replaceInstruction(surfaceReload, nop())
         run.replaceInstruction(surfaceReload + 1, nop())
 
