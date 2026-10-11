@@ -1,3 +1,9 @@
+## [1.28.0-dev.11](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.10...v1.28.0-dev.11) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Keep 4XVR HDR surface routing verifiable so video playback runs ([01c1d3e](https://github.com/AngelDark92/xr-porting-hub/commit/01c1d3edfa2b287cb9a4caa5a58fa510596b8c43))
+
 ## [1.28.0-dev.10](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.9...v1.28.0-dev.10) (2026-10-11)
 
 ### 🐛 Bug Fixes
