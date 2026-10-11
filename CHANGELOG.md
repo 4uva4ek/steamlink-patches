@@ -1,3 +1,9 @@
+## [1.28.0-dev.6](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.5...v1.28.0-dev.6) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Refactor patch descriptions for clarity and conciseness across multiple files ([540ebc1](https://github.com/AngelDark92/xr-porting-hub/commit/540ebc171be2153820269f1bda8c25dc0bcf811a))
+
 ## [1.28.0-dev.5](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.4...v1.28.0-dev.5) (2026-10-11)
 
 ### ✨ New Features
