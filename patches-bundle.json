@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-11T09:58:21",
-  "description": "## [1.28.0-dev.6](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.5...v1.28.0-dev.6) (2026-10-11)\n\n### 🐛 Bug Fixes\n\n* Refactor patch descriptions for clarity and conciseness across multiple files ([540ebc1](https://github.com/AngelDark92/xr-porting-hub/commit/540ebc171be2153820269f1bda8c25dc0bcf811a))",
-  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.6/patches-1.28.0-dev.6.mpp",
+  "created_at": "2026-10-11T10:48:26",
+  "description": "## [1.28.0-dev.7](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.6...v1.28.0-dev.7) (2026-10-11)\n\n### ✨ New Features\n\n* Add SubtitleStyleListener and Cue classes, HdrBridge, and native libraries for 4XVR ([bd02cd5](https://github.com/AngelDark92/xr-porting-hub/commit/bd02cd545f19ff7b4b0e114133071442e4531b4a))",
+  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.7/patches-1.28.0-dev.7.mpp",
   "signature_download_url": "",
-  "version": "1.28.0-dev.6"
+  "version": "1.28.0-dev.7"
 }

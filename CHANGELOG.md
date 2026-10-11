@@ -1,3 +1,9 @@
+## [1.28.0-dev.7](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.6...v1.28.0-dev.7) (2026-10-11)
+
+### ✨ New Features
+
+* Add SubtitleStyleListener and Cue classes, HdrBridge, and native libraries for 4XVR ([bd02cd5](https://github.com/AngelDark92/xr-porting-hub/commit/bd02cd545f19ff7b4b0e114133071442e4531b4a))
+
 ## [1.28.0-dev.6](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.5...v1.28.0-dev.6) (2026-10-11)
 
 ### 🐛 Bug Fixes

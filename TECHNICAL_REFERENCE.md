@@ -64,7 +64,68 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.6](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.6)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;36 patches total
+> **[v1.28.0-dev.7](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.7)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
+<details open>
+<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 2.0.22 (20022) |
+| :---: |
+| 4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending. |
+
+#### Recommended sets
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Galaxy XR set (4XVR 2.0.22/20022)](#galaxy-xr-set-4xvr-2-0-22-20022) | Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Gated on a pristine 2.0.22/20022 source APK and libplacebo source availability; headset validation pending. | 20022 |  |
+
+#### Image quality
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [HDR pipeline payload (4XVR)](#hdr-pipeline-payload-4xvr) | Installs the modified libplacebo 7.360.1 (LGPL-2.1-or-later), the 4XVR HDR bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022. | 20022 |  |
+| [libplacebo HDR pipeline (4XVR)](#libplacebo-hdr-pipeline-4xvr) | Loads the HDR bridge, routes the decoder output surface through it for the FP16 hand-off, detects HLG from the video MediaFormat and keeps the bridge informed of movie/seek transitions for exact 4XVR 2.0.22 build 20022. Headset validation pending. | 20022 |  |
+
+#### Tracking & audio
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [5.1-channel audio bridge (4XVR)](#5-1-channel-audio-bridge-4xvr) | Routes the AAudio calls of Vr4pMediaPlayer and its audio runnable through the bundled 5.1-channel bridge, initializes the bridge in Main4XActivity and refreshes the subtitle style on the playback-speed tick for exact 4XVR 2.0.22 build 20022. Headset validation pending. | 20022 |  |
+| [Audio bridge payload (4XVR)](#audio-bridge-payload-4xvr) | Installs the bundled 5.1-channel AAudio bridge native for exact 4XVR 2.0.22 build 20022. | 20022 |  |
+| [Galaxy XR controller models (4XVR)](#galaxy-xr-controller-models-4xvr) | Replaces the four Quest 3 controller assets with the Galaxy XR reference models (2048x2048 textures, re-authored meshes) for exact 4XVR 2.0.22 build 20022. Static asset swap; headset validation pending. | 20022 |  |
+
+#### Startup & permissions
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Galaxy XR launch compatibility (4XVR)](#galaxy-xr-launch-compatibility-4xvr) | Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. | 20022 |  |
+| [Startup and UI continuity helper (4XVR)](#startup-and-ui-continuity-helper-4xvr) | Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build 20022. Headless validation pending. | 20022 |  |
+
+#### Advanced XR compatibility
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Frame-synced render dispatch (4XVR)](#frame-synced-render-dispatch-4xvr) | Drains the render dispatch queue before every frame, hands scene switches to RenderDispatch.requestScene instead of the retired render runnable, and routes window teardown through the dispatch for exact 4XVR 2.0.22 build 20022. Headset validation pending. | 20022 |  |
+| [Galaxy XR refresh profile (72 Hz, 4XVR)](#galaxy-xr-refresh-profile-72-hz-4xvr) | Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation. | 20022 |  |
+| [Render dispatch payload (4XVR)](#render-dispatch-payload-4xvr) | Installs the 4XVR render dispatch native (frame-synced scene queue and adaptive theater background updates) for exact 4XVR 2.0.22 build 20022. | 20022 |  |
+
+#### Experiments
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Meta platform decoupling (4XVR, experimental)](#meta-platform-decoupling-4xvr-experimental) | Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime; launch-criticality is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling. | 20022 |  |
+
+#### Subtitles & playback
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Subtitle suite (4XVR)](#subtitle-suite-4xvr) | Adds the subtitle position controls row, the enlarged subtitle panel height, immediate config persistence on color-tab changes, the custom subtitle font load and the wrapped-cue size clamp for exact 4XVR 2.0.22 build 20022. Headset validation pending. | 20022 |  |
+| [Subtitle suite payload (4XVR)](#subtitle-suite-payload-4xvr) | Installs the subtitle position native library used by the 4XVR subtitle suite controls on exact 4XVR 2.0.22 build 20022. | 20022 |  |
+
+</details>
+
 <details open>
 <summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;26 patches</summary>
 <br>
