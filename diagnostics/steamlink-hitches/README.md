@@ -4,7 +4,7 @@ These tools capture an already-running USB-authorized Android device and analyze
 
 ## Capture
 
-Current finding: [UDP 8 MiB trial failed; freezes worsened](UDP-RESULTS-2026-09-15.md). Before recommending another change, read the [tried-experiment ledger](TRIED-EXPERIMENTS.md), including the unsuccessful UDP increase, decoder staging, and `asyncSend=true` tests.
+Current finding: [2026-10-11 live capture](CAPTURE-2026-10-11-live-evidence.md) — the hitches are packet-loss bursts (36 per ~5 min, median 7 s apart) that make the client lose FEC recovery, reset the stream and idle the decode pipeline 0.02-2.3 s while the host re-inits NVENC (186/session). Client scheduler, compositor and the retired patch families are ruled out; loss origin is upstream (host NIC path and/or air side). Before recommending another change, read the [tried-experiment ledger](TRIED-EXPERIMENTS.md), including the unsuccessful UDP increase, decoder staging, FEC guard, Uber-rescan and `asyncSend=true` tests.
 
 **All three standalone experiments (decoder input buffering, FEC duplicate reservation guard, UDP receive buffer) were tested, did not solve the hitching, and were removed from source on 2026-09-19 — see the [tried-experiment ledger](TRIED-EXPERIMENTS.md) and the retired-experiments section of [AGENTS.md](../../AGENTS.md) before proposing any retry.** The [FEC experiment record](EXPERIMENT-2026-09-15-fec-duplicate-reservation.md) and [original proposal](RECOVERY-PATCH-PROPOSAL-2026-09-15.md) remain as evidence; the host throttle/retransmit-history and legacy-transport candidates they describe were never shipped and remain unproven.
 

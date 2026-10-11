@@ -9,11 +9,11 @@ This is a multi-app patch set: every app keeps its own package, exact supported 
 | App | Package | Supported exact builds | Status |
 |---|---|---|---|
 | Steam Link VR | `com.valvesoftware.steamlinkvr` | 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363 | released patch set, 5 recommended bundles (documented below) |
-| 4XVR | `cn.vr4p.oculus4xvrplayerov` | 2.0.22/20022 | default-off patch set from a static cross-build analysis, in no bundle; not released, runtime validation pending |
+| 4XVR | `cn.vr4p.oculus4xvrplayerov` | 2.0.22/20022 | 14-patch Galaxy XR set, recommended by default (the experimental Meta decoupling stays opt-in); decoded-base design, headset validation pending |
 
 The Steam Link VR patches adapt Steam Link for Android XR and provide build-specific fixes for resolution, color, microphone input, tracking, permissions, and startup. Recommended bundles select the patches appropriate for your Steam Link build. Optional face tracking works with VRCFaceTracking and the Galaxy XR LinkFT module. Exact older builds use the full GXR face bridge, while exact build 2.0.23/5002363 uses a native tongue-only bridge that preserves Valve's built-in Android XR face mappings.
 
-The 4XVR set is 6 default-off patches as of 2026-10-11 (launch compatibility, controller models, HDR pipeline payload, libplacebo HDR pipeline, refresh profile 72 Hz, and the experimental Meta platform decoupling); a `subtitles/lib4xvr_subtitle_position.so` payload is staged in resources with no patch yet. All target exact 2.0.22/20022 only. Their [diff and patch plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) is static-only evidence: no pristine stock 4XVR APK is available yet, the bundled `libplacebo.so` payload is LGPL-2.1-or-later and its `NOTICE.txt` claims a `libplacebo-source.zip` that is not present in the reference APK, and nothing has been executed on a headset. Do not expect a documented install flow for 4XVR yet.
+The 4XVR set is 14 patches as of 2026-10-11 and recommended by default (the experimental Meta platform decoupling stays opt-in): launch compatibility, controller models, the libplacebo HDR pipeline with its payload, the 72 Hz refresh profile, the 5.1-channel audio bridge with payload, the frame-synced render dispatch with payload, the subtitle suite with payload, the startup/UI continuity helper, and the Galaxy XR set. All target exact 2.0.22/20022 only. Their [diff and patch plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) and [implementation record](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-implementation.md) are static-only evidence: no pristine stock 4XVR APK is available in the workspace yet, the bundled `libplacebo.so` payload is LGPL-2.1-or-later and its `NOTICE.txt` claims a `libplacebo-source.zip` that is not present in the reference APK, and headset validation is pending.
 
 This repository contains the patch source and downloadable `.mpp` patch bundles, which Morphe applies to the APK of any supported app above (Steam Link VR `com.valvesoftware.steamlinkvr`, 4XVR `cn.vr4p.oculus4xvrplayerov`).
 
@@ -78,7 +78,6 @@ layer. Select either or both. Each accepts declared 8-bit or 10-bit input and us
 bundles. If also selecting OLED color calibration, leave both VD-like toggles off.
 Headset quality remains unverified; see the [layer options and validation](diagnostics/steamlink-background-blue-noise/README.md).
 
-**Uber link rescan disable (experimental)** is a separate, default-off patch for exact 2.0.23/5002363 only. It stops the Uber transport's post-startup interface rescans (hidden NETLINK thread and the 2 s Tick fallback). The stream cannot discover new links after startup, so do not switch networks while a stream is active. No bundle includes it; headset outcome pending. [Experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md).
 
 ### Supported builds and recommended selection
 
@@ -88,7 +87,7 @@ Headset quality remains unverified; see the [layer options and validation](diagn
 | 2.0.20 / 5001812 | Galaxy XR recommended set (2.0.20/5001812) | Same 17 legacy patches |
 | 2.0.21 / 5001968 | Galaxy XR recommended set (2.0.21/5001968) | Same 17 legacy patches |
 | 2.0.22 / 5002244 | Galaxy XR legacy foundation (through 2.0.22/5002244) | Same 17 legacy patches |
-| 2.0.23 / 5002363 | Galaxy XR recommended set (2.0.23/5002363) | 6 native Android XR patches + 1 experimental |
+| 2.0.23 / 5002363 | Galaxy XR recommended set (2.0.23/5002363) | 6 native Android XR patches |
 
 These are the 5 exact supported pairs. The 2 new bases each expose the same **22 individual patches** as 2.0.20/5001712: 20 stable and 2 experimental blue-noise patches. Every individual patch is off by default; each exact base has 1 default-enabled bundle. Existing option defaults remain unchanged, including Quest Pro identity for legacy bundles, Voice Recognition microphone, Final balanced OLED, neutral foveal gamma, and 60 ms Visual Delay.
 
@@ -139,7 +138,7 @@ Install **VRCFaceTracking** and the matching [Galaxy XR LinkFT module](https://g
 
 The [2.0.20/5001812 and 2.0.21/5001968 audit](diagnostics/steamlink-legacy-1812-1968/README.md) records exact native layouts, source APK identities, option transitions, bundle parity, and local Morphe results. The 5001712 reference is an analysis reconstruction; it is not pristine-source APK evidence.
 
-The [2.0.23/5002363 audit](diagnostics/steamlink-5002363/README.md) records the original APK, native addresses, patch scope, option checks and remaining headset validation. Its 7 stable individual adaptations and 2 optional blue-noise patches remain available; the decoder input buffering, UDP receive buffering and FEC duplicate reservation guard experiments were tested, did not work, and were removed from source on 2026-09-19. The default-off experimental **Uber link rescan disable** patch is additionally available for this build; headset outcome pending. [Experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md). The 14 legacy patches remain excluded because this base already uses Valve's native Android XR paths.
+The [2.0.23/5002363 audit](diagnostics/steamlink-5002363/README.md) records the original APK, native addresses, patch scope, option checks and remaining headset validation. Its 7 stable individual adaptations and 2 optional blue-noise patches remain available; the decoder input buffering, UDP receive buffering and FEC duplicate reservation guard experiments were tested, did not work, and were removed from source on 2026-09-19. The default-off experimental **Uber link rescan disable** patch was tested on the headset on 2026-10-11 (hitches unchanged) and was removed from source the same day. [Experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md). The 14 legacy patches remain excluded because this base already uses Valve's native Android XR paths.
 
 ## Agent instructions
 

@@ -38,7 +38,7 @@ internal val fourXvrHdrPayloadPatch = rawResourcePatch(
     name = "HDR pipeline payload (4XVR)",
     description = "Installs the modified libplacebo 7.360.1 (LGPL-2.1-or-later), the 4XVR HDR " +
         "bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
@@ -58,7 +58,7 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
     description = "Loads the HDR bridge, routes the decoder output surface through it for the " +
         "FP16 hand-off, detects HLG from the video MediaFormat and keeps the bridge informed of " +
         "movie/seek transitions for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())

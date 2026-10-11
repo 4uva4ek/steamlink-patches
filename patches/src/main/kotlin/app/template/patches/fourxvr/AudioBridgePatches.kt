@@ -40,7 +40,7 @@ internal val fourXvrAudioBridgePayloadPatch = rawResourcePatch(
     name = "Audio bridge payload (4XVR)",
     description = "Installs the bundled 5.1-channel AAudio bridge native for exact 4XVR 2.0.22 " +
         "build 20022.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
@@ -59,7 +59,7 @@ internal val fourXvrAudioBridgePatch = bytecodePatch(
         "bundled 5.1-channel bridge, initializes the bridge in Main4XActivity and refreshes the " +
         "subtitle style on the playback-speed tick for exact 4XVR 2.0.22 build 20022. " +
         "Headset validation pending.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())

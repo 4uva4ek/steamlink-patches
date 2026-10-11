@@ -39,7 +39,7 @@ internal val fourXvrRenderDispatchPayloadPatch = rawResourcePatch(
     name = "Render dispatch payload (4XVR)",
     description = "Installs the 4XVR render dispatch native (frame-synced scene queue and " +
         "adaptive theater background updates) for exact 4XVR 2.0.22 build 20022.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
@@ -58,7 +58,7 @@ internal val fourXvrRenderDispatchPatch = bytecodePatch(
         "RenderDispatch.requestScene instead of the retired render runnable, and routes window " +
         "teardown through the dispatch for exact 4XVR 2.0.22 build 20022. Headset validation " +
         "pending.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
@@ -75,17 +75,23 @@ internal val fourXvrRenderDispatchPatch = bytecodePatch(
         // ------------------------------------------------------------------
         val mainActivity = mutableClassDefBy(MAIN_ACTIVITY)
         val renderFrame = mainActivity.methods.first { it.name == "RenderFrame" && it.parameterTypes.size == 3 }
-        val drainCandidates = renderFrame.invocationIndexes(V4_RENDER, "RenderFrame").filter { index ->
-            val branch = renderFrame.implementation!!.instructions.getOrNull(index - 2)
-            branch?.opcode == Opcode.IF_EQZ &&
-                (branch as? OneRegisterInstruction)?.registerA == renderFrame.pRegister(1)
+        val drainCallIndexes = renderFrame.invocationIndexes(V4_RENDER, "RenderFrame")
+        check(drainCallIndexes.size == 1) {
+            "Expected exactly one V4Render->RenderFrame call in Main4XActivity.RenderFrame; " +
+                "found ${drainCallIndexes.size}"
         }
-        check(drainCandidates.size == 1) {
-            "Expected one V4Render->RenderFrame call behind the p1 branch in Main4XActivity.RenderFrame; " +
-                "found ${drainCandidates.size}"
+        val drainIndex = drainCallIndexes.single()
+        val drainBranch = renderFrame.implementation!!.instructions.getOrNull(drainIndex - 2)
+        check(
+            drainBranch?.opcode == Opcode.IF_EQZ &&
+                (drainBranch as? OneRegisterInstruction)?.registerA == renderFrame.pRegister(1),
+        ) {
+            "Unexpected branch before the V4Render->RenderFrame call in Main4XActivity.RenderFrame " +
+                "(${drainBranch?.opcode}, register ${(drainBranch as? OneRegisterInstruction)?.registerA}, " +
+                "expected IF_EQZ on p1 = ${renderFrame.pRegister(1)})"
         }
         renderFrame.addInstruction(
-            drainCandidates.single() - 2,
+            drainIndex - 2,
             invokeStaticNoArgs(RENDER_DISPATCH, "drain", "V"),
         )
 

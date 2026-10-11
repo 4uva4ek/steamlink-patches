@@ -3,16 +3,17 @@ package app.template.patches.fourxvr
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
- * Mandatory portable checks: every 4XVR patch stays default-off, and the Galaxy XR set is an
- * opt-in selection only. The app's patches remain outside the default-on recommended sets until
- * a pristine stock 2.0.22/20022 APK and the modified libplacebo source availability are resolved.
+ * Mandatory portable checks: the 4XVR Galaxy XR set is recommended by default (owner decision
+ * 2026-10-11) and every member patch plus payload is default-on; the experimental Meta platform
+ * decoupling stays opt-in until it is verified on device.
  */
 class FourXvrBundleTest {
 
     @Test
-    fun `4XVR patches stay default-off and the Galaxy XR set is opt-in`() {
+    fun `4XVR patches are recommended by default and the experimental decoupling stays opt-in`() {
         val members = listOf(
             fourXvrLaunchCompatibilityPatch,
             fourXvrControllerModelsPatch,
@@ -24,7 +25,14 @@ class FourXvrBundleTest {
             fourXvrToastContinuityPatch,
         )
         assertEquals(8, members.size)
-        members.forEach { member -> assertFalse(member.default, member.name) }
-        assertFalse(fourXvrGalaxyXrSetPatch.default, fourXvrGalaxyXrSetPatch.name)
+        members.forEach { member -> assertTrue(member.default, member.name) }
+        listOf(
+            fourXvrHdrPayloadPatch,
+            fourXvrAudioBridgePayloadPatch,
+            fourXvrRenderDispatchPayloadPatch,
+            fourXvrSubtitleSuitePayloadPatch,
+        ).forEach { payload -> assertTrue(payload.default, payload.name) }
+        assertTrue(fourXvrGalaxyXrSetPatch.default, fourXvrGalaxyXrSetPatch.name)
+        assertFalse(fourXvrPlatformDecouplingPatch.default, fourXvrPlatformDecouplingPatch.name)
     }
 }

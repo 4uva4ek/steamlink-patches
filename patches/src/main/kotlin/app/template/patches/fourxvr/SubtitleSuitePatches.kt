@@ -48,7 +48,7 @@ internal val fourXvrSubtitleSuitePayloadPatch = rawResourcePatch(
     name = "Subtitle suite payload (4XVR)",
     description = "Installs the subtitle position native library used by the 4XVR subtitle " +
         "suite controls on exact 4XVR 2.0.22 build 20022.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.SUBTITLES_AND_PLAYBACK)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
@@ -66,7 +66,7 @@ internal val fourXvrSubtitleSuitePatch = bytecodePatch(
     description = "Adds the subtitle position controls row, the enlarged subtitle panel height, " +
         "immediate config persistence on color-tab changes, the custom subtitle font load and " +
         "the wrapped-cue size clamp for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.SUBTITLES_AND_PLAYBACK)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())

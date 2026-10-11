@@ -7,8 +7,10 @@ can go through them together.
 
 This guide covers the **Steam Link VR** app only (`com.valvesoftware.steamlinkvr`).
 The other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`), has no
-log-tag contract here yet; its patch set is default-off and has never been run on a
-headset, so any debugging of it starts from its [plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md).
+log-tag contract here yet; its patch set is recommended by default as of 2026-10-11 and
+headset validation is still pending, so any debugging of it starts from its
+[plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) and the
+[implementation record](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-implementation.md).
 
 ## 0. Prerequisites
 

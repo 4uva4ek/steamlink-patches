@@ -2,11 +2,11 @@
 
 Reference for conflict detection when importing external patches.
 Each entry lists the exact APK artifact and value(s) a patch writes or modifies.
-This catalog documents the Steam Link VR patch set (`com.valvesoftware.steamlinkvr`). Entries for the other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`, exact 2.0.22/20022), are added when that default-off set is finalized and cataloged.
+This catalog documents the Steam Link VR patch set (`com.valvesoftware.steamlinkvr`). Entries for the other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`, exact 2.0.22/20022), are recommended by default as of 2026-10-11; see the [README](README.md) status table and `patches-list.json`.
 
 ## Current patch categories
 
-All 36 selectable patches use 7 categories in Morphe Manager 1.30.0 or newer.
+All 35 selectable patches use 7 categories in Morphe Manager 1.30.0 or newer.
 Categories organize the list; exact-build guards, bundle dependencies and defaults remain authoritative.
 The retired entries below are historical records and are not selectable.
 
@@ -18,15 +18,17 @@ The retired entries below are historical records and are not selectable.
 | Startup & permissions | 4 | [Startup permission requests (before 5002322)](#startup-permission-requests-before-5002322-xrstartuppermissionspatch); [Startup splash and XR launch mode (before 5002322)](#startup-splash-and-xr-launch-mode-before-5002322-xrlauncherbootstrappatch); [Unrestricted battery usage](#unrestricted-battery-usage-unrestrictedbatteryusagepatch); [Appear on top (legacy)](#appear-on-top-legacy-appearontoppatch) |
 | App & device identity | 2 | [Change package name](#change-package-name-changepackagenamepatch); [Device identity](#device-identity-deviceidentitypatch) |
 | Advanced XR compatibility | 7 | [XR Core Runtime](#xr-core-runtime-xrcoreruntimepatch); [XR Device Config Baseline](#xr-device-config-baseline-xrdeviceconfigbaselinepatch); [XR Manifest Capability Pack](#xr-manifest-capability-pack-xrmanifestcapabilitypackpatch); [Android XR native permission names; Force HMD initialization gates; Force lobby permission-state gate; Force stream XR gates](#native-xr-compatibility-gates) |
-| Experiments | 4 | [Background blue-noise dithering](#background-blue-noise-dithering-backgroundbluenoisepatch-experimental); [Foveal blue-noise dithering](#foveal-blue-noise-dithering-fovealbluenoisepatch-experimental); [Full-FOV foveal canvas](diagnostics/steamlink-foveal-canvas/README.md); [Uber link rescan disable](#uber-link-rescan-disable-experimental) (all experimental) |
+| Experiments | 3 | [Background blue-noise dithering](#background-blue-noise-dithering-backgroundbluenoisepatch-experimental); [Foveal blue-noise dithering](#foveal-blue-noise-dithering-fovealbluenoisepatch-experimental); [Full-FOV foveal canvas](diagnostics/steamlink-foveal-canvas/README.md) (all experimental) |
 
-## Uber link rescan disable (experimental)
+## Uber link rescan disable (experimental) — RETIRED 2026-10-11 (tested, did not work; removed from source)
+
+**Status: tested on the headset with hitches unchanged; removed from `patches/src/main` on 2026-10-11. Do not re-add or re-derive this patch for the hitch regression.**
 
 Separate, default-off patch with no dependencies/options for exact **2.0.23/5002363** only. No recommended bundle includes it. Stops the post-startup interface rescans of the Uber UDP transport: NOPs the `bl ScanForLinkChanges` call sites at `0x174c74` (hidden NETLINK monitoring thread) and `0x16fdf8` (2.000001 s `Uber::Tick` fallback inside `SendCurrentAddressList`). The initial scan in `SetupScanningForLinkChanges` and the periodic address-list send stay intact.
 
 - Only `lib/arm64-v8a/libvrlink_scene.so` changes: exactly 8 bytes, `17a30294`/`b6b60294` to `1f2003d5` at the two offsets; patched library SHA-256 `836803ef2140d347772eebe1118d4ad69b1e3e59f06570a1b46b55a06c6ca91b`.
 - Exact version/build pair, size 2,292,008, raw GNU build ID `c31bb979123b76736930d3c820d8d0619fb5bed2`, both unique 32-byte stock windows and the containing region hashes (`0x174b8c`+476, `0x16fdb8`+464) guard the change; changed layouts fail closed and excluded builds return unchanged.
-- After startup the stream cannot discover new links; do not switch networks while a stream is active. Headset outcome pending. [Experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md).
+- After startup the stream cannot discover new links; do not switch networks while a stream is active. **Headset trial 2026-10-11 on the exact 2.0.23/5002363 patched APK: hitches unchanged — the interface-rescan family is ruled out.** [Experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md).
 
 ## FEC duplicate reservation guard (experimental) — RETIRED 2026-09-19 (tested, did not work; removed from source)
 

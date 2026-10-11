@@ -26,7 +26,7 @@ internal val fourXvrControllerModelsPatch = rawResourcePatch(
     description = "Replaces the four Quest 3 controller assets with the Galaxy XR reference " +
         "models (2048x2048 textures, re-authored meshes) for exact 4XVR 2.0.22 build 20022. " +
         "Static asset swap; headset validation pending.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())

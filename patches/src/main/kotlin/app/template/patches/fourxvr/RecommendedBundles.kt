@@ -4,9 +4,10 @@ import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_FOUR_XVR
 import app.template.patches.shared.PatchCategories
 
-// 4XVR stays outside the default-on recommended sets until a pristine stock 2.0.22/20022 APK and
-// the modified libplacebo (LGPL-2.1-or-later) source availability are resolved. This opt-in set
-// exists so the whole Galaxy XR adaptation can be selected in one step once those gates clear.
+// Owner decision 2026-10-11: the full 4XVR Galaxy XR set is recommended by default so the whole
+// adaptation applies in one step while iterating on-device. The libplacebo (LGPL-2.1-or-later)
+// source obligation and the pristine-stock-APK verification stay open — see
+// diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-recommended-update.md.
 
 @Suppress("unused")
 private val fourXvrGalaxyXrPatches = arrayOf(
@@ -26,9 +27,9 @@ val fourXvrGalaxyXrSetPatch = rawResourcePatch(
     description = "Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch " +
         "compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR " +
         "pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle " +
-        "suite and the startup/UI continuity helper. Gated on a pristine 2.0.22/20022 source APK " +
-        "and libplacebo source availability; headset validation pending.",
-    default = false,
+        "suite and the startup/UI continuity helper. Headset validation pending; the libplacebo " +
+        "source obligation is tracked in the implementation record.",
+    default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())

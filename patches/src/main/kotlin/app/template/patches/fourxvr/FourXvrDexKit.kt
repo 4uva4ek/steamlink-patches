@@ -40,12 +40,21 @@ internal fun loadFourXvrResource(name: String): ByteArray =
 internal fun ByteArray.sha256Hex(): String =
     MessageDigest.getInstance("SHA-256").digest(this).joinToString("") { "%02x".format(it) }
 
-/** Register index of parameter [index] (p0..) inside the method's register file. */
+/**
+ * Register index of parameter word [index] (p0..) inside the method's register file.
+ * Wide parameters (J/D) occupy 2 register words, so the offset counts words, not parameter
+ * types: RenderFrame(ZJJ)V has 5 parameter words plus `this` at the stock register count.
+ */
 internal fun MutableMethod.pRegister(index: Int): Int {
     val registerCount = implementation!!.registerCount
-    val parameterWords = parameterTypes.size + if (AccessFlags.STATIC.isSet(accessFlags)) 0 else 1
+    val parameterWords = parameterWordCount(parameterTypes) +
+        if (AccessFlags.STATIC.isSet(accessFlags)) 0 else 1
     return registerCount - parameterWords + index
 }
+
+/** Parameter register words: long/double occupy 2, everything else 1. */
+internal fun parameterWordCount(parameterTypes: List<CharSequence>): Int =
+    parameterTypes.sumOf { type -> if (type.toString() == "J" || type.toString() == "D") 2 else 1 }
 
 /** invoke-static/range {start .. start+count-1} for the given method reference. */
 internal fun invokeStaticRange(

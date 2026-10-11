@@ -120,7 +120,7 @@ internal val fourXvrRefreshProfilePatch = rawResourcePatch(
     description = "Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) " +
         "so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. " +
         "Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())

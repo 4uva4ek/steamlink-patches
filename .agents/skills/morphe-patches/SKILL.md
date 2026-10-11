@@ -118,6 +118,10 @@ Caused by: java.util.NoSuchElementException: Collection is empty.
 ```
 - Structural fingerprints or exact class/method lookups are allowed when validated against every
   declared base. Keep mutation preconditions build-aware and fail closed.
+- Parameter register offsets must count register WORDS, not parameter types: `J` and `D` occupy two
+  words, so in `RenderFrame(ZJJ)V` p1 sits 5 words below the register count, not 3. Counting types
+  mis-anchors every wide-parameter method and silently matches nothing (regression: the 4XVR
+  render-dispatch drain anchor; fixed by `parameterWordCount`, pinned by `FourXvrDexKitTest`).
 
 ## Constants
 Use the exact `(versionName, versionCode)` model and primary `AppTarget` constructor documented in
