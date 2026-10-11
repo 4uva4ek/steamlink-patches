@@ -139,6 +139,15 @@ Caused by: java.util.NoSuchElementException: Collection is empty.
   checkout (core.autocrlf) fails the sha256 payload tests while CI on Linux passes; add the pin and
   re-checkout the file instead of touching the expected hash.
 
+## On-device APK sources (headset pulls)
+
+The headset's Morphe Manager keeps each patched app's pristine original and the patched output under
+`/data/data/app.morphe.manager/app_original-apks/<pkg>_<version>[_original].apk` and
+`app_patched-apps/<pkg>_<version>.apk` — that is where a missing stock base (for example 4XVR
+2.0.22/20022) can be recovered. `/sdcard/Download` copies are `media_rw`-owned and `adb pull` as
+shell fails with Permission denied: `su -c 'cp <src> /data/local/tmp/<name>; chmod 644 <name>'`
+first, then pull; delete the stage copy afterwards. Verify the pulled bytes with sha256 before use.
+
 ## Manager app tile icon
 
 Morphe Manager renders a stored APK's app tile from its manifest icon
