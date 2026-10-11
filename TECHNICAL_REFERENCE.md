@@ -64,7 +64,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.11](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.11)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
+> **[v1.28.0-dev.11](https://github.com/AngelDark92/steamlink-patches/releases/tag/v1.28.0-dev.11)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;52 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
 <br>
@@ -196,20 +196,21 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
 <br>
 
 **🎯 Supported versions:**
 
-| 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.20 (5001712) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.20 (5001812) |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Exact native blue-noise adaptation 2.0.20/5001812; static validation only. | Exact native blue-noise adaptation 2.0.21/5001968; static validation only. | Exact native blue-noise adaptation 2.0.20/5001712; static validation only. | Exact native blue-noise adaptation 2.0.22/5002244; static validation only. | Exact native blue-noise adaptation 2.0.23/5002363; static validation only. | Experimental patches for Steam Link 2.0.20 build 5001712. | Experimental patches for Steam Link 2.0.20 build 5001812. | Experimental patches for Steam Link 2.0.21 build 5001968. | Experimental patches for Steam Link 2.0.22 build 5002244. | Experimental patches for Steam Link 2.0.23 build 5002363. | Controller pose extrapolation layer for exact Steam Link 2.0.20/5001712; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.23/5002363; measured on a Galaxy XR headset. | Controller velocity frame layer for exact Steam Link 2.0.23/5002363; measured on a Galaxy XR headset. | Controller velocity frame layer for exact Steam Link 2.0.20/5001712; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Controller velocity frame layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Controller velocity frame layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Controller velocity frame layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending. |
+| 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.20 (5001712) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.20 (5001812) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Exact native blue-noise adaptation 2.0.20/5001812; static validation only. | Exact native blue-noise adaptation 2.0.21/5001968; static validation only. | Exact native blue-noise adaptation 2.0.20/5001712; static validation only. | Exact native blue-noise adaptation 2.0.22/5002244; static validation only. | Exact native blue-noise adaptation 2.0.23/5002363; static validation only. | Angular adapter for corrected base-space velocities; requires active runtime correction. | Experimental patches for Steam Link 2.0.20 build 5001712. | Experimental patches for Steam Link 2.0.20 build 5001812. | Experimental patches for Steam Link 2.0.21 build 5001968. | Experimental patches for Steam Link 2.0.22 build 5002244. | Experimental patches for Steam Link 2.0.23 build 5002363. | Controller pose extrapolation layer for exact Steam Link 2.0.20/5001712; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base. | Controller pose extrapolation layer for exact Steam Link 2.0.23/5002363; measured on a Galaxy XR headset. | Controller velocity frame layer for exact Steam Link 2.0.23/5002363; measured on a Galaxy XR headset. | Controller velocity frame layer for exact Steam Link 2.0.20/5001712; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Controller velocity frame layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Controller velocity frame layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Controller velocity frame layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base. Do not combine with Controller velocity fix. | Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending. |
 
 #### Experiments
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
 | [Background blue-noise dithering (experimental)](#background-blue-noise-dithering-experimental) | Adds static blue noise after video colour processing and fade, on the background/base layer only; 8-bit or 10-bit input, always 8-bit sRGB output. Selectable per layer, but turn OLED's VD-like fovea options off when combining. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
+| [Controller angular world to local, 2.0.23 (experimental)](#controller-angular-world-to-local-2-0-23-experimental) | Adapts already corrected OpenXR angular velocity to Steam Link 2.0.23's local controller axes. Requires the active Galaxy XR OpenXR Velocity Frame runtime module; do not use with stock runtime velocities or old HAL/velocity/extrapolation APK layers. Changes angular velocity only, not poses, linear velocity or prediction. Exact 2.0.23/5002363 only; headset A/B validation pending. | 5002363 |  |
 | [Controller grip haptics through Shizuku (experimental)](#controller-grip-haptics-through-shizuku-experimental) | Routes controller vibration to the grip vibrator instead of the trigger, which Galaxy XR uses for every OpenXR vibration. The grip one needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without it vibration is stock. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 | [Controller pose extrapolation (experimental)](#controller-pose-extrapolation-experimental) | Makes the Galaxy XR runtime extrapolate controller poses to the time VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose. Adds an OpenXR API layer; no Steam Link code changes. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 | [Controller tracking from the controller HAL through Shizuku (experimental)](#controller-tracking-from-the-controller-hal-through-shizuku-experimental) | Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime, removing the runtime's ~35 ms sample lag, and filters jitter out of pose and velocity. The HAL needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without Shizuku tracking stays as it is. Steam Link 2.0.23: angular velocity is reported local to the grip pose. | 5002363 |  |
@@ -218,6 +219,24 @@ This section is generated from the patch catalog during releases.
 | [Controller velocity frame, 2.0.20 - 2.0.22 (experimental)](#controller-velocity-frame-2-0-20-2-0-22-experimental) | Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads, so thrown objects leave in the right direction. Stock, they arrive in a controller-attached frame. Adds an OpenXR API layer; no Steam Link code is changed. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. | 5001712, 5001812, 5001968, 5002244 |  |
 | [Foveal blue-noise dithering (experimental)](#foveal-blue-noise-dithering-experimental) | Adds static blue noise after video colour processing and fade, on the foveal layer only; 8-bit or 10-bit input, always 8-bit sRGB output. Selectable per layer, but turn OLED's VD-like fovea options off when combining. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
 | [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation. | 5001812 |  |
+
+</details>
+
+<details open>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 2.0.23 (5002363) |
+| :---: |
+| Angular adapter for corrected base-space velocities; requires active runtime correction. |
+
+#### Experiments
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Controller angular world to local, 2.0.23 (experimental)](#controller-angular-world-to-local-2-0-23-experimental) | Adapts already corrected OpenXR angular velocity to Steam Link 2.0.23's local controller axes. Requires the active Galaxy XR OpenXR Velocity Frame runtime module; do not use with stock runtime velocities or old HAL/velocity/extrapolation APK layers. Changes angular velocity only, not poses, linear velocity or prediction. Exact 2.0.23/5002363 only; headset A/B validation pending. | 5002363 |  |
 
 </details>
 
