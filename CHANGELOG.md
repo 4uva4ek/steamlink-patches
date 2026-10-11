@@ -1,3 +1,9 @@
+## [1.28.0-dev.9](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.8...v1.28.0-dev.9) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Enhance HdrPipelinePatches to improve MediaCodec surface reload handling ([47eeea7](https://github.com/AngelDark92/xr-porting-hub/commit/47eeea7bbac74a34accd7556970e825ee4bbd110))
+
 ## [1.28.0-dev.8](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.7...v1.28.0-dev.8) (2026-10-11)
 
 ### ✨ New Features
