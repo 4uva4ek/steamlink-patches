@@ -2724,6 +2724,38 @@
       "options": []
     },
     {
+      "name": "Uber link rescan disable (experimental)",
+      "description": "Stops the post-startup interface rescans of the Uber UDP transport for exact Steam Link 2.0.23/5002363. After startup the stream cannot discover new links, so do not switch networks while a stream is active. Experimental; no options; headset validation pending.",
+      "category": "Experiments",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link Experimental",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.23",
+              "versionCodes": {
+                "ARM64_V8A": 5002363,
+                "ARMEABI_V7A": 5002363,
+                "X86_64": 5002363,
+                "X86": 5002363
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Experimental patches for Steam Link 2.0.23 build 5002363."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Unrestricted battery usage",
       "description": "Opens Android's per-app Battery usage page at startup so Unrestricted can be selected for XR streaming.",
       "category": "Startup & permissions",

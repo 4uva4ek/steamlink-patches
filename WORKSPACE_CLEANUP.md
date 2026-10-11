@@ -439,4 +439,10 @@ Results: all 59 targets absent; 0 missing or altered retained files (with archiv
 - Preserve original/decoded APK inputs, canonical sources/resources, current MPP,
   compact receipts and shared tooling. Regenerate via the cached audit compiler and
   the isolated `git archive`/JUnit procedure documented in the CI receipt. Remove
-  only these exact owned outputs after fresh safety checks when policy permits.
+  Remove only these exact owned outputs after fresh safety checks when policy permits.
+
+  ### 2026-10-11 — Uber link rescan disable experiment
+
+  - Created the separate default-off experimental patch for exact **2.0.23/5002363** (NOPs the two post-startup `ScanForLinkChanges` call sites in `lib/arm64-v8a/libvrlink_scene.so`, `0x174c74` and `0x16fdf8`), with its Kotlin test/standalone audit and Build/Cleanup runners. Existing bundles, stable catalog content and older adaptations remain unchanged.
+  - Published `patches-1.28.0-dev.3-uber-link-rescan-disable-local.mpp` (SHA-256 `606bff82587cae1deb3b50b1f6ef46e08621aa3da3ae2bcd8259cbd692acc2f8`) to `../builds/steamlink-patches/gradle/patches/libs/` after 5 genuine-APK Morphe cases (local JUnit: 167 executed / 0 skipped / 0 failures; isolated no-fixture copy: 153 executed / 14 `BLOCKED` skips / 0 failures) and the catalog regression passed. Receipt: `diagnostics/steamlink-hitches/uber-link-rescan-disable-validation.json`; [experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md).
+  - Retain the audited run `build/uber-link-rescan-disable/archive-20261011-111527-b6631178` plus compact receipts. The superseded first run `archive-20261011-111355-52ecc2b4` (harness aborted on Morphe stderr logging before any publish; fixed in `Invoke-CheckedJava`) is the only new cleanup candidate; scoped cleanup via `Cleanup-UberRescanDisableExperiment.ps1`. No APK installation, ADB, device or host-setting change occurred.

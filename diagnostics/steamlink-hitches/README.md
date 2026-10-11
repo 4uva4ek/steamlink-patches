@@ -52,6 +52,7 @@ Inspect trace-health errors before interpreting absent events. Android SurfaceFl
 
 ## Current investigation
 
+- [Uber link rescan disable: implementation and trial record](EXPERIMENT-2026-10-11-uber-link-rescan-disable.md)
 - [Decoder staging v1: implementation, reasoning, and runtime outcome record](EXPERIMENT-2026-09-15-decoder-staging-v1.md)
 - [Proposed experimental patch and implementation requirements](PATCH-PROPOSAL.md)
 - [Decoder input ownership and recovery evidence](proposal-codec.md)
