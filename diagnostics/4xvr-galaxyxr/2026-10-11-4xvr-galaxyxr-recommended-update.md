@@ -30,6 +30,25 @@ says to verify on device before enabling. Guidance updated to match: `AGENTS.md`
   opcode/register on mismatch. Regression test: `FourXvrDexKitTest` (portable, no APK).
 - Still pending: re-run on the phone against a build that contains the fix (needs a new release).
 
+## Second on-device run (source 1.28.0-dev.8) and follow-up fix
+
+- Same setup; `Galaxy XR set` failed inside its dependency `libplacebo HDR pipeline (4XVR)`:
+  `IllegalStateException: Expected one access$1500 surface reload before MediaCodec.configure in run(); found 2`.
+- Root cause (ours): the discriminator accepted any `access$1500` load with a `configure` within
+  6 instructions. `MyVideoRunnable.run()` has four `access$1500` loads and two of them sit near a
+  `MediaCodec.configure` (decoded stock indices 582→586 and 959→962). The reference build swaps only
+  the first — the one with the `[move-result-object v2, const/4 v9, const/4 v10]` tail. The decoded
+  tree matches the phone's dex at both sites; dev.8 had already passed every earlier anchor
+  (Main4XActivity.RenderFrame drain, the color-transfer insert), so the anchor logic, not the base,
+  was wrong.
+- Fix: the anchor now requires the exact tail `[move-result-object v2, const/4 v9 0, const/4 v10 0,
+  configure on MediaCodec]` — exactly one site matches. The replacement stays `move-object v2, v10`
+  (routed surface parked by the color-transfer block) plus two nops, matching the reference swap's
+  semantics. Local gate re-run (`:patches:test :patches:buildAndroid :patches:generatePatchesList`):
+  BUILD SUCCESSFUL.
+- Still pending: phone retest on a build containing this fix. The G3 anchors after this point
+  (SetDataSource transition, seekPosForce, ActResume) have not executed on device yet.
+
 ## Verification (local, 2026-10-11, after the fix)
 
 - `:patches:test :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=experimental`:

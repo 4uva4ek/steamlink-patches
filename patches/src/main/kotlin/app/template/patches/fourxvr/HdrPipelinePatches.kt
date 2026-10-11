@@ -237,24 +237,43 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
         )
 
         // Replace the stock surface reload right before MediaCodec.configure with the routed
-        // surface. Locate the access$1500 invocation whose next six instructions contain the
-        // configure call (unique among the four access$1500 sites in run()).
-        val configureIndexes = run.implementation!!.instructions.withIndex()
-            .filter { (_, instruction) ->
-                val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-                reference?.definingClass == "Landroid/media/MediaCodec;" && reference.name == "configure"
-            }
-            .map { it.index }
+        // surface. run() has four access$1500 surface loads; exactly one feeds the video
+        // configure through the [move-result-object v2, const/4 v9, const/4 v10] tail — the
+        // same block the reference build swaps for its routed surface.
         val surfaceReloadAnchors = run.implementation!!.instructions.withIndex()
             .filter { (index, instruction) ->
                 val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-                reference?.definingClass == V4_MEDIA_PLAYER && reference.name == "access\$1500" &&
-                    configureIndexes.any { configure -> configure > index && configure <= index + 6 }
+                if (reference?.definingClass != V4_MEDIA_PLAYER || reference.name != "access\$1500") {
+                    return@filter false
+                }
+                val following = run.implementation!!.instructions
+                val moveResult = following.getOrNull(index + 1)
+                val constNine = following.getOrNull(index + 2)
+                val constTen = following.getOrNull(index + 3)
+                val configure = following.getOrNull(index + 4)
+                moveResult?.opcode == Opcode.MOVE_RESULT_OBJECT &&
+                    (moveResult as? com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction)
+                        ?.registerA == 2 &&
+                    constNine?.opcode == Opcode.CONST_4 &&
+                    (constNine as? com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction)
+                        ?.registerA == 9 &&
+                    (constNine as? com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction)
+                        ?.narrowLiteral == 0 &&
+                    constTen?.opcode == Opcode.CONST_4 &&
+                    (constTen as? com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction)
+                        ?.registerA == 10 &&
+                    (constTen as? com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction)
+                        ?.narrowLiteral == 0 &&
+                    (configure as? ReferenceInstruction)?.reference?.let { configureReference ->
+                        configureReference is MethodReference &&
+                            configureReference.definingClass == "Landroid/media/MediaCodec;" &&
+                            configureReference.name == "configure"
+                    } == true
             }
             .map { it.index }
         check(surfaceReloadAnchors.size == 1) {
-            "Expected one access\$1500 surface reload before MediaCodec.configure in run(); " +
-                "found ${surfaceReloadAnchors.size}"
+            "Expected one access\$1500 surface reload feeding the MediaCodec.configure v9/v10 " +
+                "const tail in run(); found ${surfaceReloadAnchors.size}"
         }
         val surfaceReload = surfaceReloadAnchors.single()
         val reloadPrecondition = run.implementation!!.instructions[surfaceReload - 1]
