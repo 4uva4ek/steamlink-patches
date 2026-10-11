@@ -70,7 +70,7 @@ private fun configuredVelocityLibrary(
 @Suppress("unused")
 val controllerVelocityPatch = rawResourcePatch(
     name = "Controller velocity fix",
-    description = "Derives current controller linear and angular velocity from grip/aim pose history and can reduce VRLink's stock four controller pose sends per display frame.",
+    description = "Derives controller linear and angular velocity from grip/aim pose history, and can cut VRLink's 4 controller pose sends per display frame to 2 or 1.",
     default = false,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)

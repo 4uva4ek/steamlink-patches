@@ -121,7 +121,7 @@ private val changePackageNameBytecodePatch = bytecodePatch {
 @Suppress("unused")
 val changePackageNamePatch = resourcePatch(
     name = "Change package name",
-    description = "Renames the manifest package and Steam Link's internal VR-launch component so the patched app can coexist with the original installation.",
+    description = "Renames the package and Steam Link's internal VR-launch component, so the patched app can be installed next to the original.",
     default = false,
 ) {
     category(PatchCategories.APP_AND_DEVICE_IDENTITY)

@@ -36,7 +36,7 @@ private val controllerHalPoseExtensionPatch = bytecodePatch {
 }
 
 private const val CONTROLLER_HAL_POSE_DESCRIPTION =
-    "Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime. The runtime hands an application one controller pose per display frame, about 35 ms behind the HAL; the HAL fuses the controller's IMU about 1000 times per second and predicts a pose for the requested time. The layer reads its pose and velocities 360 times per second, as often as Steam Link sends them, and filters jitter out of both. The HAL is reachable only with shell rights, so this needs Shizuku running and its permission granted to Steam Link. Without Shizuku tracking stays as it is."
+    "Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime, removing the runtime's ~35 ms sample lag, and filters jitter out of pose and velocity. The HAL needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without Shizuku tracking stays as it is."
 
 private fun controllerHalPosePatchFor(
     name: String,
@@ -78,7 +78,7 @@ private fun controllerHalPosePatchFor(
 @Suppress("unused")
 val controllerHalPosePatch = controllerHalPosePatchFor(
     name = "Controller tracking from the controller HAL through Shizuku (experimental)",
-    baseNote = "Steam Link 2.0.23: the angular velocity is reported local to the grip pose, as its VRLink reads it.",
+    baseNote = "Steam Link 2.0.23: angular velocity is reported local to the grip pose.",
     compatibilities = COMPATIBILITIES_STEAM_LINK_NATIVE_XR_EXPERIMENTAL,
     angularWorld = false,
     isBuild = { version, versionCode -> isNativeXrSteamLinkBuild(version, versionCode) },
@@ -87,7 +87,7 @@ val controllerHalPosePatch = controllerHalPosePatchFor(
 @Suppress("unused")
 val controllerHalPoseLegacyPatch = controllerHalPosePatchFor(
     name = "Controller tracking from the controller HAL through Shizuku, 2.0.20 - 2.0.22 (experimental)",
-    baseNote = "Steam Link 2.0.20 - 2.0.22: the angular velocity is reported in the base space, as their VRLink reads it.",
+    baseNote = "Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space.",
     compatibilities = COMPATIBILITIES_STEAM_LINK_LEGACY_EXPERIMENTAL,
     angularWorld = true,
     isBuild = { version, versionCode -> isLegacyXrFoundationSteamLinkBuild(version, versionCode) },

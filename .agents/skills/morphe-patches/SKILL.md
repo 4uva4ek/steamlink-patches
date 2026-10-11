@@ -69,6 +69,22 @@ Caused by: com.android.tools.smali.dexlib2.util.DexUtil$InvalidFile: Unexpected 
 ```
 This historical failure does not make every DEX 040 file a multi-DEX container.
 
+## Patch descriptions
+
+Patch `description` text is user-facing (Morphe Manager list) and is copied verbatim into
+the tracked `patches-list*.json` catalogs. Tests pin some wording:
+
+- `AndroidSurfaceTriggerResourceTest` asserts `patchSource.contains("future RGB10_A2")`
+  against `OptionalXrPatches.kt`.
+- `ControllerHalPosePatchTest` / `ControllerVelocityFramePatchTest` assert `needs Shizuku`,
+  `local to the grip pose`, `local to the streamed pose`, `in the base space`.
+- `UberLinkRescanDisablePatchTest` asserts `2.0.23/5002363` and `Experimental`.
+
+Rewriting a description therefore needs a matching test update (or keep the phrase), then
+`:patches:generatePatchesList` to rewrite all 4 root catalogs, and `:patches:test`. The
+`build` task pulls in `check`/`test`, so a failing test also stops catalog regeneration.
+Option and AppTarget descriptions are not covered by these assertions.
+
 ## Bytecode editing
 
 - Prefer typed dexlib2 builders such as `BuilderInstruction21c` and the repository's

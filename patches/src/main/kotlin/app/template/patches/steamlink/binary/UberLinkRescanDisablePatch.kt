@@ -200,9 +200,9 @@ internal fun patchUberLinkRescanDisable(bytes: ByteArray, version: String, code:
 @Suppress("unused")
 val uberLinkRescanDisablePatch = rawResourcePatch(
     name = "Uber link rescan disable (experimental)",
-    description = "Stops the post-startup interface rescans of the Uber UDP transport for exact Steam Link " +
-        "2.0.23/5002363. After startup the stream cannot discover new links, so do not switch networks while " +
-        "a stream is active. Experimental; no options; headset validation pending.",
+    description = "Stops the Uber UDP transport's post-startup link rescans on exact Steam Link " +
+        "2.0.23/5002363. The stream then cannot discover new links, so do not switch networks while " +
+        "streaming. Experimental; headset validation pending.",
     default = false,
 ) {
     category(PatchCategories.EXPERIMENTS)

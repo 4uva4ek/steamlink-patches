@@ -56,7 +56,7 @@ private val legacyRecommendedPatches = arrayOf(
 @Suppress("unused")
 val galaxyXrRecommended5001712Patch = rawResourcePatch(
     name = "Galaxy XR recommended set (2.0.20/5001712)",
-    description = "Applies the 17-patch Galaxy XR legacy set for exact Steam Link 2.0.20 build 5001712, including explicit startup permissions and splash, Meta Quest Pro identity, permission-free high resolution, and the Final balanced tested OLED profile.",
+    description = "Applies the 17-patch Galaxy XR set for exact 2.0.20/5001712: startup permissions and splash, Meta Quest Pro identity, high-resolution fix and the tested balanced OLED profile.",
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)
@@ -67,7 +67,7 @@ val galaxyXrRecommended5001712Patch = rawResourcePatch(
 @Suppress("unused")
 val galaxyXrRecommended5001812Patch = rawResourcePatch(
     name = "Galaxy XR recommended set (2.0.20/5001812)",
-    description = "Applies the same 17-patch Galaxy XR legacy set as 2.0.20/5001712 for exact Steam Link 2.0.20 build 5001812, including explicit startup permissions and splash, Meta Quest Pro identity, permission-free high resolution, and the Final balanced tested OLED profile. Native and APK adaptation; headset validation pending.",
+    description = "Applies the same 17-patch set as 5001712, for exact 2.0.20/5001812. Headset validation pending.",
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)
@@ -78,7 +78,7 @@ val galaxyXrRecommended5001812Patch = rawResourcePatch(
 @Suppress("unused")
 val galaxyXrRecommended5001968Patch = rawResourcePatch(
     name = "Galaxy XR recommended set (2.0.21/5001968)",
-    description = "Applies the same 17-patch Galaxy XR legacy set as 2.0.20/5001712 for exact Steam Link 2.0.21 build 5001968, including explicit startup permissions and splash, Meta Quest Pro identity, permission-free high resolution, and the Final balanced tested OLED profile. Native and APK adaptation; headset validation pending.",
+    description = "Applies the same 17-patch set as 5001712, for exact 2.0.21/5001968. Headset validation pending.",
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)
@@ -89,7 +89,7 @@ val galaxyXrRecommended5001968Patch = rawResourcePatch(
 @Suppress("unused")
 val galaxyXrRecommended5002363Patch = rawResourcePatch(
     name = "Galaxy XR recommended set (2.0.23/5002363)",
-    description = "Applies the 6-patch Galaxy XR set for exact Steam Link 2.0.23 build 5002363. Preserves stock startup and permission requests except battery settings; includes the Final balanced OLED profile. Decoded-base validation; headset validation pending.",
+    description = "Applies the 6-patch Galaxy XR set for exact 2.0.23/5002363: high resolution, tongue bridge, battery page, Visual Delay and the balanced OLED profile. Keeps stock startup permissions. Headset validation pending.",
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)
@@ -107,7 +107,7 @@ val galaxyXrRecommended5002363Patch = rawResourcePatch(
 @Suppress("unused")
 val galaxyXrLegacyFoundationPatch = rawResourcePatch(
     name = "Galaxy XR legacy foundation (through 2.0.22/5002244)",
-    description = "Selects the 17-patch Galaxy XR legacy set, including Meta Quest Pro identity, native gates, face bridge, OLED calibration, microphone, battery, Visual Delay, explicit startup permissions and splash, and XR foundation. High-resolution output is guarded to verified layouts.",
+    description = "Selects the 17-patch Galaxy XR legacy set for builds through 2.0.22/5002244: identity, native gates, face bridge, OLED, microphone, battery, Visual Delay, startup permissions and splash.",
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)

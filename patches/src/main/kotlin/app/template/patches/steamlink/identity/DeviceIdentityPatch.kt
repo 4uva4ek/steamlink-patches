@@ -368,10 +368,9 @@ private val nativeIdentityResourceIdsPatch = resourcePatch {
 @Suppress("unused")
 val deviceIdentityPatch = rawResourcePatch(
     name = "Device identity",
-    description = "Overrides the HMD identity reported to SteamVR. Recommended selects Meta Quest Pro " +
-        "for exact legacy bundle targets through 5002244, including 2.0.20/5001712; otherwise Galaxy XR. The Galaxy profile installs its " +
-        "complete transport identity while preserving stock controller/hand routing and extensions. " +
-        "Optional on 2.0.23/5002363; explicit Quest Pro and Pico profiles populate exact Galaxy XR product entries.",
+    description = "Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the " +
+        "legacy targets through 5002244, Galaxy XR otherwise. Explicit profiles override that. " +
+        "Optional on 2.0.23/5002363.",
     default = false,
 ) {
     category(PatchCategories.APP_AND_DEVICE_IDENTITY)
