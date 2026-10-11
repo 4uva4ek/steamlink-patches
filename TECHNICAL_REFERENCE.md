@@ -64,9 +64,9 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.9](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.9)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
+> **[v1.28.0-dev.10](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.10)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
 <details open>
-<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
+<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -79,7 +79,7 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Galaxy XR set (4XVR 2.0.22/20022)](#galaxy-xr-set-4xvr-2-0-22-20022) | Selects the 8-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Headset validation pending; the libplacebo source obligation is tracked in the implementation record. | 20022 |  |
+| [Galaxy XR set (4XVR 2.0.22/20022)](#galaxy-xr-set-4xvr-2-0-22-20022) | Selects the 9-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, the canonical launcher icon, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Headset validation pending; the libplacebo source obligation is tracked in the implementation record. | 20022 |  |
 
 #### Image quality
 
@@ -101,6 +101,7 @@ This section is generated from the patch catalog during releases.
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
 | [Galaxy XR launch compatibility (4XVR)](#galaxy-xr-launch-compatibility-4xvr) | Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. | 20022 |  |
+| [Galaxy XR launcher icon (4XVR)](#galaxy-xr-launcher-icon-4xvr) | Re-exposes the stock 4XVR launcher artwork under the canonical ic_launcher/ic_launcher_round names (adaptive icon plus density PNGs) and points the manifest at them, matching the Steam Link icon shape for exact 4XVR 2.0.22 build 20022. | 20022 |  |
 | [Startup and UI continuity helper (4XVR)](#startup-and-ui-continuity-helper-4xvr) | Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build 20022. Headless validation pending. | 20022 |  |
 
 #### Advanced XR compatibility
