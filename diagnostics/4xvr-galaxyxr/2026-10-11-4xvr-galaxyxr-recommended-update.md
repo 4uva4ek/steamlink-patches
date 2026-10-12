@@ -81,3 +81,19 @@ says to verify on device before enabling. Guidance updated to match: `AGENTS.md`
   decoupling `default: false`.
 - Evidence labels: static + local Gradle only. The phone run above was against the previous
   release (before this fix); the headset has not run this build.
+
+## Update 2026-10-12 (owner decision): the set wrapper is deleted
+
+- `fourxvr/RecommendedBundles.kt` and the `Galaxy XR set (4XVR 2.0.22/20022)` wrapper are removed,
+  mirroring the Steam Link wrapper deletion. 4XVR now exposes 14 patches with 13 individual
+  defaults (9 members + 4 payloads); `Meta platform decoupling (4XVR, experimental)` stays off.
+- The shared `RECOMMENDED_SETS` constant and the generator's `CATEGORY_ORDER` entry are gone; no
+  catalog or `TECHNICAL_REFERENCE.md` renders a `Recommended sets` group. `FourXvrBundleTest`
+  keeps the member and payload default checks; `test_generate_patches_readme.py` fixtures move to
+  the remaining categories.
+- Regenerated: `patches-list*.json` (42 entries, 30 default-true; stable 34) and
+  `TECHNICAL_REFERENCE.md` via the repository script.
+- Local verification: `:patches:test :patches:buildAndroid :patches:generatePatchesList
+  -PreleaseChannel=experimental` BUILD SUCCESSFUL; 169 tests, 156 executed + 13 skipped, 0
+  failures/errors; `test_generate_patches_readme.py` 4/4. Headset runtime acceptance remains
+  pending; no runtime claim in this record.

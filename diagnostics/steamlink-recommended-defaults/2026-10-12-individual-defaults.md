@@ -22,4 +22,7 @@ Update 2026-10-12 (later, device-confirmed): the 5 wrapper sets were deleted.
 - Recommended defaults remain the 18 individual patches. Catalog simulation of the regenerated `patches-list-all.json` reproduces 17/17/17/17 legacy and 6 on 5002363; the catalogs now carry 47 patch objects (32 Steam Link + 15 4XVR, 37 stable).
 - `DecodedSteamLinkPatchAudit` lost the `recommended` audit kind and its 5 fixtures; `FovealCanvasMorpheAudit` selects the 17 individual patches explicitly; `Run-MorpheAudits.py`, the resolution-trace-layer README, `LEGACY_VS_MORPHE_PATCHES.md` and `TECHNICAL_REFERENCE.md` were updated. Dated diagnostics records keep their original text; commands that used the removed `recommended` kind are superseded by this note.
 - The shared `RECOMMENDED_SETS` category constant remains for the 4XVR set patch, which is untouched.
+  Update 2026-10-12 (later 2): the 4XVR set wrapper is also deleted and the shared `RECOMMENDED_SETS`
+  constant is removed with it; see
+  [the 4XVR record](../4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-recommended-update.md).
 - Local gate after the deletion: 174 tests, 0 failures, 13 skipped decoded-base audits.

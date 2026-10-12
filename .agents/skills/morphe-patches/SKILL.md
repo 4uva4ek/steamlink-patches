@@ -181,7 +181,10 @@ and retained evidence use mixed `build/`; native CMake output uses
 `extensions/<name>/build-*`. Keep release catalogs and canonical source/resources
 in the checkout. Use the wrappers' configured paths; update release consumers
 with output changes. Never create a local `build`, `patches/build`, `.gradle`,
-`.kotlin` or Zig cache tree. Read [the layout and validation](../../../diagnostics/build-layout/README.md)
+`.kotlin` or Zig cache tree. A lowercase-drive argument (`d:/...`) reaching a native tool or Java
+resolves as relative on this host and creates a literal `d/` tree inside the checkout that the
+`.gradle` ignore rule hides from `git status`: check for it, delete it, and keep `D:/` spellings in
+wrapper arguments. Read [the layout and validation](../../../diagnostics/build-layout/README.md)
 when building or relocating artifacts. Saved classpaths/receipts must be resolved
 through the known relocation map; regenerate moved CMake configure state.
 

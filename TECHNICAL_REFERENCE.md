@@ -64,9 +64,9 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.17](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.17)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;44 patches total
+> **[v1.28.0-dev.17](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.17)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;43 patches total
 <details open>
-<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
+<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -74,12 +74,6 @@ This section is generated from the patch catalog during releases.
 | 2.0.22 (20022) |
 | :---: |
 | 4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending. |
-
-#### Recommended sets
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
-|----------|----------------|----------------|-----------|
-| [Galaxy XR set (4XVR 2.0.22/20022)](#galaxy-xr-set-4xvr-2-0-22-20022) | Selects the 9-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, the canonical launcher icon, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Headset validation pending; the libplacebo source obligation is tracked in the implementation record. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Image quality
 

@@ -106,7 +106,6 @@ def patches_table(patches):
 
 
 CATEGORY_ORDER = (
-    "Recommended sets",
     "Image quality",
     "Tracking & audio",
     "Startup & permissions",

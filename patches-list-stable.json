@@ -1250,48 +1250,6 @@
       "options": []
     },
     {
-      "name": "Galaxy XR set (4XVR 2.0.22/20022)",
-      "description": "Selects the 9-patch Galaxy XR set for exact 4XVR 2.0.22/20022: launch compatibility, the canonical launcher icon, controller models, the 72 Hz refresh profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced render dispatch, the subtitle suite and the startup/UI continuity helper. Headset validation pending; the libplacebo source obligation is tracked in the implementation record. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
-      "category": "Recommended sets",
-      "default": true,
-      "dependencies": [
-        "ResourcePatch",
-        "RawResourcePatch",
-        "RawResourcePatch",
-        "RawResourcePatch",
-        "BytecodePatch",
-        "BytecodePatch",
-        "BytecodePatch",
-        "BytecodePatch",
-        "BytecodePatch"
-      ],
-      "compatiblePackages": [
-        {
-          "packageName": "cn.vr4p.oculus4xvrplayerov",
-          "name": "4XVR",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#6C4BB6",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "2.0.22",
-              "versionCodes": {
-                "ARM64_V8A": 20022,
-                "ARMEABI_V7A": 20022,
-                "X86_64": 20022,
-                "X86": 20022
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "HDR pipeline payload (4XVR)",
       "description": "Installs the modified libplacebo 7.360.1 (LGPL-2.1-or-later), the 4XVR HDR bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
       "category": "Image quality",
