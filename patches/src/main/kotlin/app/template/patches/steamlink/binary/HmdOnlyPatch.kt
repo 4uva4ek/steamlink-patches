@@ -428,7 +428,7 @@ val hmdOnlyPatch = rawResourcePatch(
     name = "Visual Delay Fix",
     description = "Offsets the HMD OpenXR pose-query time and zeroes the exported HMD velocity fields, " +
         "so head tracking leads the rendered frame. Controllers are unaffected.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())

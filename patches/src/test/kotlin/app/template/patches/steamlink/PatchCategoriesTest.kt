@@ -4,6 +4,7 @@ import app.morphe.patcher.patch.Patch
 import app.template.patches.steamlink.androidxr.*
 import app.template.patches.steamlink.binary.*
 import app.template.patches.steamlink.identity.changePackageNamePatch
+import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
 import com.google.gson.JsonParser
 import kotlin.test.Test
@@ -29,7 +30,9 @@ class PatchCategoriesTest {
             xrStartupPermissionsPatch, xrLauncherBootstrapPatch,
             unrestrictedBatteryUsagePatch, appearOnTopPatch,
         ),
-        "App & device identity" to listOf(changePackageNamePatch, deviceIdentityPatch),
+        "App & device identity" to listOf(
+            changePackageNamePatch, deviceIdentityPatch, deviceIdentityNativeXrPatch,
+        ),
         "Advanced XR compatibility" to listOf(
             xrCoreRuntimePatch, xrDeviceConfigBaselinePatch, xrManifestCapabilityPackPatch,
             androidXrNativePermissionNamesPatch, forceHmdInitializationGatesPatch,
@@ -46,14 +49,27 @@ class PatchCategoriesTest {
 
     @Test
     fun `every public patch carries its agreed category and default`() {
-        assertEquals(36, publicPatches.size)
-        assertEquals(listOf(5, 2, 6, 4, 2, 7, 10), groups.values.map { it.size })
+        assertEquals(37, publicPatches.size)
+        assertEquals(listOf(5, 2, 6, 4, 3, 7, 10), groups.values.map { it.size })
         groups.forEach { (category, patches) ->
             patches.forEach { patch ->
                 assertEquals(category, patch.category, patch.name)
-                assertEquals(category == "Recommended sets", patch.default, patch.name)
             }
         }
+        assertEquals(
+            setOf(
+                androidXrNativePermissionNamesPatch, forceHmdInitializationGatesPatch,
+                forceLobbyPermissionStateGatePatch, forceStreamXrGatesPatch,
+                gxrFacebridgePatch, gxrModernTongueBridgePatch,
+                xrGalaxyXrHighResolutionPatch, microphoneInputPresetPatch,
+                oledCalibrationPatch, unrestrictedBatteryUsagePatch,
+                hmdOnlyPatch, xrCoreRuntimePatch, xrDeviceConfigBaselinePatch,
+                xrInputRoutingConfigPatch, xrLauncherBootstrapPatch,
+                xrStartupPermissionsPatch, xrManifestCapabilityPackPatch,
+                deviceIdentityPatch,
+            ),
+            publicPatches.filter { it.default }.toSet(),
+        )
         val visited = mutableSetOf<Patch<*>>()
         fun visit(patch: Patch<*>) {
             if (!visited.add(patch)) return
@@ -74,7 +90,7 @@ class PatchCategoriesTest {
             val name = channel.name
             assertEquals(channel.name.lowercase(), generated.get("channel").asString)
             val entries = generated.getAsJsonArray("patches").map { it.asJsonObject }
-            assertEquals(if (channel == ReleaseChannel.STABLE) 26 else 36, entries.size, name)
+            assertEquals(if (channel == ReleaseChannel.STABLE) 27 else 37, entries.size, name)
             val names = entries.map { it.get("name").asString }
             assertEquals(names.sorted(), names, name)
             assertEquals(names.size, names.toSet().size, name)

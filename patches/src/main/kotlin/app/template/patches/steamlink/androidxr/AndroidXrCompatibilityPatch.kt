@@ -112,7 +112,7 @@ private val androidXrLibPatch = resourcePatch {
 val xrCoreRuntimePatch = bytecodePatch(
     name = "XR Core Runtime",
     description = "Installs the XR runtime bridge resources and extension DEX that the other XR patches need.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -123,7 +123,7 @@ val xrCoreRuntimePatch = bytecodePatch(
 val xrDeviceConfigBaselinePatch = rawResourcePatch(
     name = "XR Device Config Baseline",
     description = "Installs baseline Galaxy XR HMD, controller and default config payloads plus the dashboard bootstrap assets.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -189,7 +189,7 @@ internal fun adaptLegacyHmdConfigForBuild(
 val xrManifestCapabilityPackPatch = resourcePatch(
     name = "XR Manifest Capability Pack",
     description = "Adds the Android XR/OpenXR permissions, features and app properties Steam Link needs.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -495,7 +495,7 @@ internal val xrStartupSplashUiPatch = bytecodePatch {
 val xrLauncherBootstrapPatch = resourcePatch(
     name = "Startup splash and XR launch mode (before 5002322)",
     description = "Adds the Launching Steam Link splash and unmanaged VRLink startup on older builds. Requests no permissions; pick Startup permission requests for those.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_EARLIER_STARTUP.toTypedArray())
@@ -657,7 +657,7 @@ val xrLauncherBootstrapPatch = resourcePatch(
 val xrInputRoutingConfigPatch = rawResourcePatch(
     name = "XR Input Routing Config",
     description = "Installs ui_config.json so XR pointer and button input reaches the launcher UI.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -696,7 +696,7 @@ internal val xrStartupPermissionDeclarationsPatch = resourcePatch {
 val xrStartupPermissionsPatch = bytecodePatch(
     name = "Startup permission requests (before 5002322)",
     description = "Requests hand, eye, face, microphone and Bluetooth permissions at startup on older builds. Battery settings and the splash are separate patches.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_EARLIER_STARTUP.toTypedArray())

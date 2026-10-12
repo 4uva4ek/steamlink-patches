@@ -51,6 +51,7 @@ import app.template.patches.steamlink.galaxyXrRecommended5001968Patch
 import app.template.patches.steamlink.galaxyXrRecommended5001712Patch
 import app.template.patches.steamlink.galaxyXrRecommended5002363Patch
 import app.template.patches.steamlink.identity.changePackageNamePatch
+import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
 import app.template.patches.steamlink.identity.patchNativeGalaxyIdentity
 import app.template.patches.steamlink.identity.patchHmdModelIdentity
@@ -113,7 +114,7 @@ private val recommendedBundleFixtures = listOf(
 )
 
 private val publicPatchesFor5002363: List<Patch<*>> = listOf(
-    deviceIdentityPatch, gxrModernTongueBridgePatch, xrGalaxyXrHighResolutionPatch,
+    deviceIdentityNativeXrPatch, gxrModernTongueBridgePatch, xrGalaxyXrHighResolutionPatch,
     microphoneInputPresetPatch, oledCalibrationPatch, unrestrictedBatteryUsagePatch, hmdOnlyPatch,
 )
 
@@ -456,8 +457,8 @@ private fun verifyModernPublicOutput(
             val path = "assets/config/$name"
             if (original.getEntry(path) == null) continue
             val bytes = original.requireEntryBytes(path)
-            val expected = if (patch == deviceIdentityPatch && name == "hmd_config.json") {
-                patchHmdModelIdentity(bytes.decodeToString(), "meta-quest-pro", exactProductLookup = true).encodeToByteArray()
+            val expected = if (patch == deviceIdentityNativeXrPatch && name == "hmd_config.json") {
+                patchHmdModelIdentity(bytes.decodeToString(), "samsung-galaxy-xr", exactProductLookup = true).encodeToByteArray()
             } else bytes
             check(result.requireEntryBytes(path).contentEquals(expected)) { "${patch.name}: changed $path unexpectedly" }
         }

@@ -13,7 +13,7 @@ bundle. See the [adaptation and validation record](diagnostics/steamlink-legacy-
 
 ## Steam Link 2.0.23 / 5002363
 
-The new exact base supports the 7 modern individual patches and **Galaxy XR recommended set (2.0.23/5002363)**, with independently verified native addresses and stock Java startup. Device identity remains optional. The 14 legacy patches stay excluded. See the [5002363 audit](diagnostics/steamlink-5002363/README.md) for source APK provenance, exact addresses, mutation/option tests, APK patching and remaining runtime gaps.
+The new exact base exposes the 7 modern individual patches with independently verified native addresses and stock Java startup. Its 6-patch recommended set is default-enabled, and Morphe Manager auto-selects it for this exact build; the **Galaxy XR recommended set (2.0.23/5002363)** entry and **Device identity (2.0.23/5002363)** remain optional one-step selections. The 14 legacy patches stay excluded. See the [5002363 audit](diagnostics/steamlink-5002363/README.md) for source APK provenance, exact addresses, mutation/option tests, APK patching and remaining runtime gaps.
 
 ## Compatibility and implementation notes
 
@@ -26,13 +26,13 @@ Steam Link VR (`com.valvesoftware.steamlinkvr`) was not built for Android XR. Th
 
 Target APK: `com.valvesoftware.steamlinkvr`. Exact compatibility metadata and guarded adaptations include v2.0.20/5001712, v2.0.20/5001812, v2.0.21/5001968, v2.0.22/5002244, and v2.0.23/5002363. The permission-free high-resolution fix accepts exactly those 5 builds; 5001712 and 5002244 have verified layouts, while 5002363 is a decoded-base adaptation with pending headset validation. Reconstruction, quad-view, permission-matrix, warm-up/omit, and DFR re-arm experiments are retired.
 
-Use Morphe Manager 1.30.0 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is global, so 5 exact-build dependency bundles provide version-aware recommendations while every individual patch remains default-off. All 4 legacy bundles (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244) select the same [17-patch set](PATCH_CATALOG.md#recommendation-bundles), including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches. 2.0.23/5002363 selects only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, and Visual Delay Fix (60 ms). The full GXR face bridge is restricted to the 4 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
+Use Morphe Manager 1.30.0 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is one global value per patch, so the recommended defaults live on the individual patches: all 4 legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244) default-enable the same [17 individual patches](PATCH_CATALOG.md#recommendation-bundles), including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches, and Morphe Manager auto-selects them for the detected build. 2.0.23/5002363 default-enables only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, and Visual Delay Fix (60 ms). The 5 Galaxy XR recommended set entries remain available as optional one-step selections. The full GXR face bridge is restricted to the 4 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
 
-**Startup permission requests (before 5002322)** and **Startup splash and XR launch mode (before 5002322)** are independently selectable and default-off. Each accepts only exact 2.0.20/5001712 and 2.0.22/5002244. The permission patch declares missing hand, eye, face, microphone and Bluetooth permissions and enables their startup requests. The splash patch enables the black startup screen and unmanaged VRLink start-mode override; older legacy builds also receive panel sizing. The shared helper defaults both behaviors off. Earlier battery/overlay settings flows use a transparent bootstrap unless those explicit patches are selected.
+**Startup permission requests (before 5002322)** and **Startup splash and XR launch mode (before 5002322)** are members of the legacy recommended set, default-enabled on all 4 legacy bases and independently deselectable. The permission patch declares missing hand, eye, face, microphone and Bluetooth permissions and enables their startup requests. The splash patch enables the black startup screen and unmanaged VRLink start-mode override; older legacy builds also receive panel sizing. The shared helper defaults both behaviors off. Earlier battery/overlay settings flows use a transparent bootstrap unless those explicit patches are selected.
 
 For exact 2.0.23/5002363, the recommended set preserves stock launcher, splash, XR start mode and runtime permission handling. The battery patch alone inserts a battery-settings helper call after stock `SteamLink.onCreate` calls its superclass, before parameter registers are reused. Face/tongue bridges and high resolution no longer pull in startup permission requests or splash changes; high resolution no longer forces unmanaged Full Space.
 
-For the legacy bundles, **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, leave **HMD identity** on **Recommended for this build** or explicitly choose **Meta Quest Pro**. The spoof reports `Oculus Quest Pro` while retaining Galaxy XR tracking/controller routing. Existing saved explicit Samsung, Stock, or Pico choices are respected, so change those if necessary. On 2.0.23/5002363, Device identity remains optional and resolves to the Galaxy XR identity.
+For the legacy bundles, **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, leave **HMD identity** on **Recommended for this build** or explicitly choose **Meta Quest Pro**. The spoof reports `Oculus Quest Pro` while retaining Galaxy XR tracking/controller routing. Existing saved explicit Samsung, Stock, or Pico choices are respected, so change those if necessary. On 2.0.23/5002363, **Device identity (2.0.23/5002363)** remains optional, is not part of the recommended set, and resolves to the Galaxy XR identity.
 
 Bundle selection does not broaden native compatibility: the high-resolution edit safely skips instead of guessing a native layout, and unsupported builds remain unchanged. All 4 exact legacy targets have the complete legacy set available.
 
@@ -64,7 +64,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.12](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.12)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;52 patches total
+> **[v1.28.0-dev.12](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.12)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;53 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
 <br>
@@ -128,14 +128,14 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;26 patches</summary>
+<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;27 patches</summary>
 <br>
 
 **🎯 Supported versions:**
 
-| 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) |
+| 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.23 (5002363) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Verified Steam Link 2.0.20 build 5001712. | Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending. | Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending. | Verified Steam Link 2.0.22 build 5002244. | Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending. | Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending. | Exact Steam Link 2.0.20/5001712 high-resolution target with its isolated 2-projection to 3-layer payload. The topology correction has prior user-reported startup and delayed-frame runtime evidence; this rebuilt binary remains uninstalled. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.20 build 5001812; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.21 build 5001968; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.22 build 5002244; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.23 build 5002363; headset validation pending. |
+| Verified Steam Link 2.0.20 build 5001712. | Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending. | Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending. | Verified Steam Link 2.0.22 build 5002244. | Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending. | Exact Steam Link 2.0.20/5001712 high-resolution target with its isolated 2-projection to 3-layer payload. The topology correction has prior user-reported startup and delayed-frame runtime evidence; this rebuilt binary remains uninstalled. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.20 build 5001812; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.21 build 5001968; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.22 build 5002244; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.23 build 5002363; headset validation pending. | Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending. |
 
 #### Recommended sets
 
@@ -179,7 +179,8 @@ This section is generated from the patch catalog during releases.
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
 | [Change package name](#change-package-name) | Renames the package and Steam Link's internal VR-launch component, so the patched app can be installed next to the original. | 5001712, 5001812, 5001968, 5002244 | • Package name |
-| [Device identity](#device-identity) | Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the legacy targets through 5002244, Galaxy XR otherwise. Explicit profiles override that. Optional on 2.0.23/5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 | • HMD identity |
+| [Device identity](#device-identity) | Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the legacy targets through 5002244. Explicit profiles override that. | 5001712, 5001812, 5001968, 5002244 | • HMD identity |
+| [Device identity (2.0.23/5002363)](#device-identity-2-0-23-5002363) | Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; not part of the recommended set. Explicit profiles override that. | 5002363 | • HMD identity |
 
 #### Advanced XR compatibility
 
@@ -282,7 +283,7 @@ Release automation refreshes the full patch list in this file and commits it wit
 
 ```powershell
 $env:PYTHONIOENCODING = 'utf-8'
-python .github/scripts/generate_patches_readme.py AngelDark92/steamlink-patches main patches-list-all.json TECHNICAL_REFERENCE.md
+python .github/scripts/generate_patches_readme.py AngelDark92/xr-porting-hub main patches-list-all.json TECHNICAL_REFERENCE.md
 ```
 
 The generator also defaults to `TECHNICAL_REFERENCE.md` when no output path is supplied. Keep the README focused on user setup; update its bundle guidance when patch recommendations change.

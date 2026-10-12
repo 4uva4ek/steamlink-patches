@@ -62,13 +62,13 @@ N.D.: Delete the depot folder every time you switch to a new depot or the .apk w
 
 1. Open Morphe Manager and load this repository's patch source or downloaded `.mpp` bundle.
 2. Select the Steam Link VR APK. Keep compatibility checks enabled so Morphe can filter by both version and build number.
-3. Select the **single recommended bundle** for your APK from the table below. Leave its patch options at their recommended values unless you need a specific adjustment.
+3. Keep the recommended selection: Morphe Manager auto-selects the recommended set for the detected exact version and build — the 17 individual patches on 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244, or the 6 on 2.0.23/5002363. The **Recommended sets** entries in the table below are optional one-step alternatives and are off by default. Leave patch options at their recommended values unless you need a specific adjustment.
 4. Run patching, then install the resulting APK using Morphe Manager.
 5. Launch the patched Steam Link, complete its permission prompts, and connect to SteamVR on your PC. If the Battery usage page opens, select **Unrestricted** and return to Steam Link.
 
 See the [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) before selecting patches manually. Do not assume another build is compatible because it has the same version name.
 
-With category grouping enabled in Morphe Manager, find your bundle under **Recommended sets**. Individual patches appear under Image quality, Tracking & audio, Startup & permissions, App & device identity, Advanced XR compatibility, and Experiments. Grouping does not change the selected patches or their defaults.
+With category grouping enabled in Morphe Manager, the default-enabled recommended patches appear under Image quality, Tracking & audio, Startup & permissions, App & device identity, Advanced XR compatibility, and Experiments. The optional one-step recommended set entries stay in the **Recommended sets** category. Grouping does not change the selected patches or their defaults.
 
 Optional blue-noise dithering has 2 separate experimental patches:
 **Foveal blue-noise dithering (experimental)** affects only the foveal layer;
@@ -81,23 +81,23 @@ Headset quality remains unverified; see the [layer options and validation](diagn
 
 ### Supported builds and recommended selection
 
-| Exact Steam Link version / build | Single recommended bundle | Direct patches |
+| Exact Steam Link version / build | Default-enabled recommended set (auto-selected) | Optional one-step set (off by default) |
 |---|---|---|
-| 2.0.20 / 5001712 | Galaxy XR recommended set (2.0.20/5001712) | 17 legacy patches |
-| 2.0.20 / 5001812 | Galaxy XR recommended set (2.0.20/5001812) | Same 17 legacy patches |
-| 2.0.21 / 5001968 | Galaxy XR recommended set (2.0.21/5001968) | Same 17 legacy patches |
-| 2.0.22 / 5002244 | Galaxy XR legacy foundation (through 2.0.22/5002244) | Same 17 legacy patches |
-| 2.0.23 / 5002363 | Galaxy XR recommended set (2.0.23/5002363) | 6 native Android XR patches |
+| 2.0.20 / 5001712 | 17 individual legacy patches | Galaxy XR recommended set (2.0.20/5001712) |
+| 2.0.20 / 5001812 | Same 17 individual legacy patches | Galaxy XR recommended set (2.0.20/5001812) |
+| 2.0.21 / 5001968 | Same 17 individual legacy patches | Galaxy XR recommended set (2.0.21/5001968) |
+| 2.0.22 / 5002244 | Same 17 individual legacy patches | Galaxy XR legacy foundation (through 2.0.22/5002244) |
+| 2.0.23 / 5002363 | 6 individual native Android XR patches | Galaxy XR recommended set (2.0.23/5002363) |
 
-These are the 5 exact supported pairs. The 2 new bases each expose the same **22 individual patches** as 2.0.20/5001712: 20 stable and 2 experimental blue-noise patches. Every individual patch is off by default; each exact base has 1 default-enabled bundle. Existing option defaults remain unchanged, including Quest Pro identity for legacy bundles, Voice Recognition microphone, Final balanced OLED, neutral foveal gamma, and 60 ms Visual Delay.
+These are the 5 exact supported pairs. The 2 new bases each expose the same **22 individual patches** as 2.0.20/5001712: 20 stable and 2 experimental blue-noise patches. The individual patches in the recommended set — 17 on the legacy builds, 6 on 2.0.23/5002363 — are now default-enabled and selected automatically for the detected exact version and build (checked in Expert mode, applied in Simple mode). The 5 recommended set entries remain listed as optional one-step alternatives and are off by default. Existing option defaults remain unchanged, including Quest Pro identity for legacy builds, Voice Recognition microphone, Final balanced OLED, neutral foveal gamma, and 60 ms Visual Delay.
 
 The new bases have independent native addresses and guards, not just compatibility labels. Their [validation record](diagnostics/steamlink-legacy-1812-1968/README.md) covers local static checks and pristine-source Morphe patching. Headset validation remains pending; this does not assert publication of a release.
 
-### Patches loaded by each bundle
+### Patches in each recommended set
 
-A bundle is a pure selector: selecting it loads exactly the patches listed below and performs no additional mutation of its own. Patch names match Morphe's patch list. A listed patch remains a no-op on a build where its own layout guard does not match.
+The lists below are the default-enabled recommended sets; Morphe Manager selects them automatically for the detected exact version and build. Each recommended set entry is a pure selector: selecting it loads exactly the same patches and performs no additional mutation of its own. Patch names match Morphe's patch list. A listed patch remains a no-op on a build where its own layout guard does not match.
 
-The 4 legacy bundles for **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244** all select these same 17 patches:
+On **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, these same 17 individual patches are default-enabled and auto-selected; the optional legacy recommended sets load the same 17:
 
 1. Android XR native permission names
 2. Device identity
@@ -117,7 +117,7 @@ The 4 legacy bundles for **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/500196
 16. XR Input Routing Config
 17. XR Manifest Capability Pack
 
-**Galaxy XR recommended set (2.0.23/5002363)** — 6 patches:
+On **2.0.23/5002363**, these 6 individual patches are default-enabled and auto-selected:
 
 1. GXR tongue bridge (version 5002322 and above)
 2. Galaxy XR high-resolution 3-projection fix

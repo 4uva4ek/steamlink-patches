@@ -1,11 +1,13 @@
 package app.template.patches.steamlink.identity
 
 import app.template.patches.shared.PatchCategories
+import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.rawResourcePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
-import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_LEGACY
 import app.template.patches.shared.Constants.isLegacyRecommendedSteamLinkBuild
 import app.template.patches.shared.Constants.isModernTongueBridgeSteamLinkBuild
 import app.template.patches.shared.Constants.isNativeXrSteamLinkBuild
@@ -365,16 +367,18 @@ private val nativeIdentityResourceIdsPatch = resourcePatch {
     }
 }
 
-@Suppress("unused")
-val deviceIdentityPatch = rawResourcePatch(
-    name = "Device identity",
-    description = "Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the " +
-        "legacy targets through 5002244, Galaxy XR otherwise. Explicit profiles override that. " +
-        "Optional on 2.0.23/5002363.",
-    default = false,
+private fun createDeviceIdentityPatch(
+    name: String,
+    description: String,
+    default: Boolean,
+    compatibilities: List<Compatibility>,
+) = rawResourcePatch(
+    name = name,
+    description = description,
+    default = default,
 ) {
     category(PatchCategories.APP_AND_DEVICE_IDENTITY)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
+    compatibleWith(*compatibilities.toTypedArray())
     // Morphe executes dependencies without checking their compatibility. The legacy foundation is
     // therefore build-aware and becomes a mutation no-op on native builds, while older builds retain the
     // same automatic XR baseline that Device identity historically installed.
@@ -391,7 +395,7 @@ val deviceIdentityPatch = rawResourcePatch(
             "PICO 4 Pro" to "pico-4-pro",
         ),
         title = "HMD identity",
-        description = "Recommended uses Meta Quest Pro on exact legacy bundle targets through 5002244 (including 5001712), and Galaxy XR otherwise. Explicit profiles override that choice. Native-XR routing and verified legacy payloads are preserved.",
+        description = "Recommended selects this build's recommended profile: Meta Quest Pro on the legacy targets through 5002244 (including 5001712), and the Galaxy XR identity on 2.0.23/5002363. Explicit profiles override that choice. Native-XR routing and verified legacy payloads are preserved.",
         required = true,
     )
 
@@ -433,3 +437,21 @@ val deviceIdentityPatch = rawResourcePatch(
         if (patched != original) file.writeText(patched)
     }
 }
+
+@Suppress("unused")
+val deviceIdentityPatch = createDeviceIdentityPatch(
+    name = "Device identity",
+    description = "Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the " +
+        "legacy targets through 5002244. Explicit profiles override that.",
+    default = true,
+    compatibilities = COMPATIBILITIES_STEAM_LINK_LEGACY,
+)
+
+@Suppress("unused")
+val deviceIdentityNativeXrPatch = createDeviceIdentityPatch(
+    name = "Device identity (2.0.23/5002363)",
+    description = "Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; " +
+        "not part of the recommended set. Explicit profiles override that.",
+    default = false,
+    compatibilities = COMPATIBILITIES_STEAM_LINK_5002363,
+)

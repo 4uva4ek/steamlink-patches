@@ -37,7 +37,7 @@ private val unrestrictedBatteryManifestPatch = resourcePatch {
 val unrestrictedBatteryUsagePatch = bytecodePatch(
     name = "Unrestricted battery usage",
     description = "Opens Android's Battery usage page at startup so Unrestricted can be selected for XR streaming.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
@@ -309,7 +309,7 @@ private val androidSurfaceTriggerResourcesPatch = androidSurfaceTriggerResources
 val xrGalaxyXrHighResolutionPatch = resourcePatch(
     name = "Galaxy XR high-resolution 3-projection fix",
     description = "Permission-free high-resolution fix: appends a static 2x2 Android-surface compositor trigger and leaves each build's native projection layers and formats, including future RGB10_A2, untouched. No image copy. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_HIGH_RESOLUTION.toTypedArray())

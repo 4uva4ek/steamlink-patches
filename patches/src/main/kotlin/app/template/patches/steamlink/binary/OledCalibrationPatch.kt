@@ -347,7 +347,7 @@ internal fun setProjectionSwapchainFormat(
 val oledCalibrationPatch = rawResourcePatch(
     name = "OLED color calibration",
     description = "Applies OLED gamma/saturation calibration with 8-bit sRGB output, plus optional VD-like SDR foveal processing and a separate foveal gamma. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363; visible improvement needs headset verification.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())

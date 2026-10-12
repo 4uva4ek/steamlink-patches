@@ -100,7 +100,7 @@ internal fun patchModernTongueTransport(
 val gxrModernTongueBridgePatch = rawResourcePatch(
     name = "GXR tongue bridge (version 5002322 and above)",
     description = "Adds Galaxy XR tongue out/left/right/up/down on exact 2.0.23/5002363, keeping Valve's native face expressions and standard TongueOut, for the Galaxy XR VRCFT module.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE.toTypedArray())
