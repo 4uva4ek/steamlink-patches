@@ -47,6 +47,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew clean :patches:test :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=${{ github.ref_name == 'main' && 'stable' || 'experimental' }} --no-daemon
 
+      # Keep the verified branch bundle available for intentional on-device testing.
+      # This does not publish a release or activate a headset patch.
+      - name: Resolve verified branch bundle
+        if: github.ref_name != 'main' && github.ref_name != 'dev'
+        id: branch_bundle
+        run: |
+          export RELEASE_VERSION="$(sed -n 's/^version[[:space:]]*=[[:space:]]*//p' gradle.properties | tr -d '\r')"
+          node .github/scripts/resolve_release_artifact.cjs
+
+      - name: Save verified branch bundle
+        if: github.ref_name != 'main' && github.ref_name != 'dev'
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphe-branch-${{ github.sha }}
+          path: ${{ steps.branch_bundle.outputs.path }}
+          if-no-files-found: error
+          retention-days: 7
+
       # Semantic release runs its own Gradle build command.
       # Only dev and main branch will generate a release as specified by .releaserc
       - name: Release

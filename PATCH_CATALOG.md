@@ -6,7 +6,7 @@ This catalog documents the Steam Link VR patch set (`com.valvesoftware.steamlink
 
 ## Current patch categories
 
-All 35 selectable patches use 7 categories in Morphe Manager 1.30.0 or newer.
+All 36 selectable patches use 7 categories in Morphe Manager 1.30.0 or newer.
 Categories organize the list; exact-build guards, bundle dependencies and defaults remain authoritative.
 The retired entries below are historical records and are not selectable.
 
@@ -18,7 +18,7 @@ The retired entries below are historical records and are not selectable.
 | Startup & permissions | 4 | [Startup permission requests (before 5002322)](#startup-permission-requests-before-5002322-xrstartuppermissionspatch); [Startup splash and XR launch mode (before 5002322)](#startup-splash-and-xr-launch-mode-before-5002322-xrlauncherbootstrappatch); [Unrestricted battery usage](#unrestricted-battery-usage-unrestrictedbatteryusagepatch); [Appear on top (legacy)](#appear-on-top-legacy-appearontoppatch) |
 | App & device identity | 2 | [Change package name](#change-package-name-changepackagenamepatch); [Device identity](#device-identity-deviceidentitypatch) |
 | Advanced XR compatibility | 7 | [XR Core Runtime](#xr-core-runtime-xrcoreruntimepatch); [XR Device Config Baseline](#xr-device-config-baseline-xrdeviceconfigbaselinepatch); [XR Manifest Capability Pack](#xr-manifest-capability-pack-xrmanifestcapabilitypackpatch); [Android XR native permission names; Force HMD initialization gates; Force lobby permission-state gate; Force stream XR gates](#native-xr-compatibility-gates) |
-| Experiments | 3 | [Background blue-noise dithering](#background-blue-noise-dithering-backgroundbluenoisepatch-experimental); [Foveal blue-noise dithering](#foveal-blue-noise-dithering-fovealbluenoisepatch-experimental); [Full-FOV foveal canvas](diagnostics/steamlink-foveal-canvas/README.md) (all experimental) |
+| Experiments | 10 | Background/foveal blue-noise, full-FOV foveal canvas, controller extrapolation, two velocity-frame variants, grip haptics, two HAL-pose variants, and [Steam Link 23 angular adapter](extensions/controller-angular-local/README.md). All experimental and default off. |
 
 ## Uber link rescan disable (experimental) — RETIRED 2026-10-11 (tested, did not work; removed from source)
 
@@ -232,6 +232,15 @@ No Steam Link code, shader or config is changed. The layer also wraps `xrLocateS
 Measured on a Galaxy XR headset with 2.0.23/5002363 on 2026-10-04: stock, the runtime returned 90 distinct controller poses per second for VRLink's 360 `xrLocateSpace` calls and the same pose for "now" and "now + 30 ms"; with the flag forced, all 360 calls returned distinct poses and the pose depended on the requested time. Velocity still updates 90 times per second, so the added poses are the runtime's extrapolation, not new measurements. See the [layer notes](extensions/controller-extrapolation-layer/README.md).
 
 ---
+
+### Controller angular world to local, 2.0.23 (`controllerAngularLocalPatch`, experimental)
+
+**Default: disabled** — exact 2.0.23/5002363, original package and `.x_23` clone.
+Requires the OpenXR Velocity Frame runtime correction to be active in the app.
+Converts corrected base-space angular velocity into local controller axes, with
+no pose, linear-velocity or prediction changes. Rejects legacy HAL/velocity/
+extrapolation APK layers and unknown consumer bytes. Physical A/B testing remains
+pending. [Source, validation and rollback](extensions/controller-angular-local/README.md).
 
 ### Controller velocity frame (`controllerVelocityFramePatch` / `controllerVelocityFrameLegacyPatch`, experimental)
 **Default: disabled** (experimental) — no dependencies. Two patches with the same layer, one per VRLink generation: `Controller velocity frame (experimental)` for 2.0.23/5002363 and `Controller velocity frame, 2.0.20 - 2.0.22 (experimental)` for legacy 5001712/5001812/5001968/5002244. They differ only in the frame the angular velocity is reported in, written into the library's config block (`GXRVFRCFG0000001`, `angularWorld` at +20). The legacy bases use the same pose action and, with this repository's `controller_config.json`, the same controller pose offset; the angles were measured on 5002363 only and the layer itself was not run on a legacy base (on 2.0.20/5001712 it was installed together with the controller HAL tracking patch, which supplies the velocities there). Do not combine with Controller velocity fix, which replaces the same velocities.
