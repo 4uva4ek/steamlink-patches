@@ -1,3 +1,9 @@
+## [1.28.0-dev.13](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.12...v1.28.0-dev.13) (2026-10-12)
+
+### ✨ New Features
+
+* recommended defaults on individual patches (Steam Link) ([111e6eb](https://github.com/AngelDark92/xr-porting-hub/commit/111e6ebd21f933f8395e59580681baa539937939))
+
 ## [1.28.0-dev.12](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.11...v1.28.0-dev.12) (2026-10-12)
 
 ### ✨ New Features
