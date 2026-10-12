@@ -2,9 +2,6 @@ package app.template.patches.steamlink.binary
 
 import app.morphe.patcher.patch.PatchException
 import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
-import app.template.patches.steamlink.galaxyXrLegacyFoundationPatch
-import app.template.patches.steamlink.galaxyXrRecommended5001712Patch
-import app.template.patches.steamlink.galaxyXrRecommended5002363Patch
 import kotlin.test.*
 
 class BlueNoisePatchTest {
@@ -12,8 +9,6 @@ class BlueNoisePatchTest {
     fun `blue noise is separate default off and restricted to exact pairs`() {
         assertFalse(fovealBlueNoisePatch.default)
         assertTrue(fovealBlueNoisePatch.dependencies.isEmpty())
-        listOf(galaxyXrLegacyFoundationPatch, galaxyXrRecommended5001712Patch, galaxyXrRecommended5002363Patch)
-            .forEach { assertFalse(fovealBlueNoisePatch in it.dependencies) }
         assertEquals(setOf("2.0.20" to 5001712,
                 "2.0.20" to 5001812,
                 "2.0.21" to 5001968, "2.0.22" to 5002244, "2.0.23" to 5002363),

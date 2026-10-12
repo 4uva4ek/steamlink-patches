@@ -222,7 +222,7 @@ tasks {
 
     register<JavaExec>("auditDecodedSteamLinkPatches") {
         group = "verification"
-        description = "Audit public 5001712/5001812/5001968/5002363 patches, high resolution and Visual Delay on 5 bases, and 5 recommendation fixtures"
+        description = "Audit public 5001712/5001812/5001968/5002363 patches, high resolution and Visual Delay on 5 bases"
 
         dependsOn(classes)
         classpath = sourceSets["main"].runtimeClasspath

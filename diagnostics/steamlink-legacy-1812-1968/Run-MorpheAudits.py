@@ -15,7 +15,6 @@ p = argparse.ArgumentParser()
 p.add_argument('classpath', type=Path, help='File containing the compiled/archive runtime classpath')
 p.add_argument('output', type=Path, help='Fresh output directory')
 p.add_argument('--java', default='F:/Runtimes/Java21/bin/java.exe')
-p.add_argument('--bundles-only', action='store_true')
 args = p.parse_args()
 root = Path(__file__).resolve().parents[2]
 import sys
@@ -45,26 +44,24 @@ cases = []
 def decoded(kind, index):
     name=f'{kind}-{index}'
     cases.append((name, ['util.DecodedSteamLinkPatchAudit', str(fixtures), str(out / name), kind, str(index)]))
+for i in range(20,60):
+    decoded('public', i)
 for i in range(5):
-    decoded('recommended', i)
-if not args.bundles_only:
-    for i in range(20,60):
-        decoded('public', i)
-    for i in range(5):
-        decoded('high-resolution', i)
-    decoded('startup-excluded', 0)
-    for version, code in versions[3:]:
-        apk=fixtures/f'decoded-apk-android-steamlinkvr-release-base-{version}-{code}.apk'
-        for depth,gamma in [('off','1.30'),('8-bit','1.02'),('10-bit','1.30')]:
-            name=f'vd-{code}-{depth}'
-            cases.append((name,['util.VdSdrMorpheAudit',str(apk),str(out/name),depth,gamma]))
-        for depth in ['8-bit','10-bit']:
-            for layer,oled,order,gamma in [('fovea','false','blue-first','1.00'),
-                                          ('background','false','blue-first','1.00'),
-                                          ('both-fovea-first','true','blue-first','1.02'),
-                                          ('both-background-first','true','oled-first','1.30')]:
-                name=f'blue-{code}-{depth}-{layer}'
-                cases.append((name,['util.BlueNoiseMorpheAudit',str(apk),str(out/name),depth,oled,order,layer,gamma]))
+    decoded('high-resolution', i)
+decoded('startup-excluded', 0)
+for version, code in versions[3:]:
+    apk=fixtures/f'decoded-apk-android-steamlinkvr-release-base-{version}-{code}.apk'
+    for depth,gamma in [('off','1.30'),('8-bit','1.02'),('10-bit','1.30')]:
+        name=f'vd-{code}-{depth}'
+        cases.append((name,['util.VdSdrMorpheAudit',str(apk),str(out/name),depth,gamma]))
+    for depth in ['8-bit','10-bit']:
+        for layer,oled,order,gamma in [('fovea','false','blue-first','1.00'),
+                                      ('background','false','blue-first','1.00'),
+                                      ('both-fovea-first','true','blue-first','1.02'),
+                                      ('both-background-first','true','oled-first','1.30')]:
+            name=f'blue-{code}-{depth}-{layer}'
+            cases.append((name,['util.BlueNoiseMorpheAudit',str(apk),str(out/name),depth,oled,order,layer,gamma]))
+assert cases, 'no audit cases selected'
 def run(case):
     name, arguments=case
     log=out/f'{name}.log'

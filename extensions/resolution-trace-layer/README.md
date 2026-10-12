@@ -12,9 +12,9 @@ on 2026-09-07 after the user reported "It's not working." Its code, target and
 helper are removed; no runtime failure cause is inferred. See the
 [historical record](../../diagnostics/steamlink-surface-fovea/README.md).
 
-The existing high-resolution patch installs this shared API layer. Recommendation
-bundles already depend on that patch; they do not contain separate copies of its
-implementation and do not need membership changes. Repatch the APK using the updated
+The existing high-resolution patch installs this shared API layer. The recommended
+set already depends on that patch; it does not contain separate copies of its
+implementation and does not need membership changes. Repatch the APK using the updated
 `.mpp` to receive the new native library; existing installed APKs do not update themselves.
 
 ## Behavior and scope
@@ -38,7 +38,7 @@ CPU change does not establish lower runtime GPU composition cost or improved 10-
 
 Validation for this revision: both Android builds, all 83 Gradle tests, all 3 CTest
 targets (also repeated 20 times each), all 6 decoded-base high-resolution audits,
-and all 4 decoded-base recommendation-bundle audits passed. The generated
+and the 4 decoded-base audits passed. The generated
 `patches-1.12.1-dev.1.mpp` contains both rebuilt helpers byte-for-byte. Decoded-base
 audits are offline patching evidence, not pristine-source APK or headset validation.
 
@@ -76,10 +76,6 @@ foreach ($gxrIndex in 0..5) {
     .\gradlew.bat :patches:auditDecodedSteamLinkPatches -PdecodedAuditKind=high-resolution "-PdecodedAuditIndex=$gxrIndex"
     if ($LASTEXITCODE -ne 0) { throw 'High-resolution audit failed' }
 }
-foreach ($gxrIndex in 0..3) {
-    .\gradlew.bat :patches:auditDecodedSteamLinkPatches -PdecodedAuditKind=recommended "-PdecodedAuditIndex=$gxrIndex"
-    if ($LASTEXITCODE -ne 0) { throw 'Recommendation-bundle audit failed' }
-}
 ```
 
 The host tests exercise negative-cache invalidation, handle reuse, cleanup, owned
@@ -102,4 +98,4 @@ resolution. These binaries have not been installed or tested on a headset by thi
 
 To revert, rebuild from the previous source revision or use the previous `.mpp`
 and repatch the same clean APK with the same selections. Do not stack old and new
-native helpers or change recommendation bundles to roll back this CPU-only update.
+native helpers or change the recommended selection to roll back this CPU-only update.

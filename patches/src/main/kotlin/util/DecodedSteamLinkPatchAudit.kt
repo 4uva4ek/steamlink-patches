@@ -8,13 +8,9 @@ import app.morphe.patcher.patch.Patch
 import app.template.patches.steamlink.androidxr.ANDROID_SURFACE_TRIGGER_5001712_BUILD_ID
 import app.template.patches.steamlink.androidxr.ANDROID_SURFACE_TRIGGER_BUILD_ID
 import app.template.patches.steamlink.androidxr.ANDROID_SURFACE_TRIGGER_MANIFEST
-import app.template.patches.steamlink.androidxr.MODERN_TONGUE_REPLACEMENT
-import app.template.patches.steamlink.androidxr.MODERN_TONGUE_VADDR_5002363
 import app.template.patches.steamlink.androidxr.gxrModernTongueBridgePatch
 import app.template.patches.steamlink.androidxr.patchModernTongueTransport
-import app.template.patches.shared.Constants.isModernTongueBridgeSteamLinkBuild
 import app.template.patches.steamlink.androidxr.androidSurfaceTriggerResourceLibraryForBuild
-import app.template.patches.steamlink.androidxr.adaptLegacyHmdConfigForBuild
 import app.template.patches.steamlink.androidxr.ensureIdsXml
 import app.template.patches.steamlink.androidxr.appearOnTopPatch
 import app.template.patches.steamlink.androidxr.controllerVelocityPatch
@@ -44,18 +40,11 @@ import app.template.patches.steamlink.binary.microphoneInputPresetPatch
 import app.template.patches.steamlink.binary.oledCalibrationPatch
 import app.template.patches.steamlink.binary.patchNativeMicrophonePreset
 import app.template.patches.steamlink.binary.patchVisualDelay
-import app.template.patches.steamlink.galaxyXrLegacyFoundationPatch
 import app.template.patches.shared.Constants.isTwoProjectionSteamLinkBuild
-import app.template.patches.steamlink.galaxyXrRecommended5001812Patch
-import app.template.patches.steamlink.galaxyXrRecommended5001968Patch
-import app.template.patches.steamlink.galaxyXrRecommended5001712Patch
-import app.template.patches.steamlink.galaxyXrRecommended5002363Patch
 import app.template.patches.steamlink.identity.changePackageNamePatch
 import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
-import app.template.patches.steamlink.identity.patchNativeGalaxyIdentity
 import app.template.patches.steamlink.identity.patchHmdModelIdentity
-import app.template.patches.steamlink.util.BinaryPatchHelper.vaddrToFileOffset
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -69,7 +58,6 @@ private data class HighResolutionFixture(
 )
 
 private val permissionOriginal = "ff8301d1fd7b01a9".hexBytes()
-private val permissionReplacement = "20008052c0035fd6".hexBytes()
 
 private val highResolutionFixtures = listOf(
     HighResolutionFixture("2.0.20", "5001712", 0x142c0c, true),
@@ -77,11 +65,6 @@ private val highResolutionFixtures = listOf(
     HighResolutionFixture("2.0.23", "5002363", 0x149874, false),
     HighResolutionFixture("2.0.20", "5001812", 0x142c84, true),
     HighResolutionFixture("2.0.21", "5001968", 0x13ec7c, true),
-)
-
-private data class RecommendedBundleFixture(
-    val base: HighResolutionFixture,
-    val patch: Patch<*>,
 )
 
 private val visualDelayFixtures = highResolutionFixtures
@@ -94,23 +77,6 @@ private val legacySites = mapOf(
     "5001712" to LegacyNativeSites(0x99924, 0xa1a7f, 0xf6468, 0xf4584, 0x1014e8, listOf(0xffe20, 0xffe28, 0x10db10, 0x116564, 0x11656c, 0x116620)),
     "5001812" to LegacyNativeSites(0x99862, 0xa1985, 0xf6324, 0xf4484, 0x101648, listOf(0xffc5c, 0xffc64, 0x10dc70, 0x1166c4, 0x1166cc, 0x116780)),
     "5001968" to LegacyNativeSites(0x9334f, 0x9b7ab, 0xf2180, 0xefdb4, 0xfd5f0, listOf(0xfbc04, 0xfbc0c, 0x109bf0, 0x112644, 0x11264c, 0x112700)),
-)
-
-private val recommendedBundleFixtures = listOf(
-    RecommendedBundleFixture(
-        highResolutionFixtures.single { it.versionCode == "5001712" },
-        galaxyXrRecommended5001712Patch,
-    ),
-    RecommendedBundleFixture(
-        highResolutionFixtures.single { it.versionCode == "5002244" },
-        galaxyXrLegacyFoundationPatch,
-    ),
-    RecommendedBundleFixture(
-        highResolutionFixtures.single { it.versionCode == "5002363" },
-        galaxyXrRecommended5002363Patch,
-    ),
-    RecommendedBundleFixture(highResolutionFixtures.single { it.versionCode == "5001812" }, galaxyXrRecommended5001812Patch),
-    RecommendedBundleFixture(highResolutionFixtures.single { it.versionCode == "5001968" }, galaxyXrRecommended5001968Patch),
 )
 
 private val publicPatchesFor5002363: List<Patch<*>> = listOf(
@@ -145,9 +111,9 @@ private val publicPatchesFor5001712: List<Patch<*>> = listOf(
  * Offline integration audit for apktool-rebuilt decoded Steam Link bases.
  *
  * This deliberately does not sign, install, deploy, or contact a device. It executes every
- * compatible public patch independently on 2.0.20/5001712, produces 3 unsigned high-resolution
- * APKs, checks Visual Delay on the 3 exact bases, and applies the 3 recommendation bundles to
- * the decoded bases that are available. It does not turn decoded-fixture success into runtime proof.
+ * compatible public patch independently on 2.0.20/5001712, runs modern public audits on
+ * 2.0.23/5002363, and verifies the high-resolution and Visual Delay outputs on their decoded
+ * bases. It does not turn decoded-fixture success into runtime proof.
  */
 object DecodedSteamLinkPatchAudit {
     @JvmStatic
@@ -175,9 +141,6 @@ private fun runIsolatedAudits(fixtureDirectory: String, outputDirectory: String)
     }
     visualDelayFixtures.indices.forEach { index ->
         runAuditChild(fixtureDirectory, outputDirectory, "visual-delay", index)
-    }
-    recommendedBundleFixtures.indices.forEach { index ->
-        runAuditChild(fixtureDirectory, outputDirectory, "recommended", index)
     }
 }
 
@@ -285,20 +248,6 @@ private suspend fun runSingleAudit(args: Array<String>) {
             executePatch(input, hmdOnlyPatch, File(caseDirectory, "temporary"), output)
             verifyVisualDelayOutput(input, output, fixture)
             println("PASS ${fixture.versionName}/${fixture.versionCode} Visual Delay output: $output")
-        }
-
-        "recommended" -> {
-            val selection = recommendedBundleFixtures[index]
-            val fixture = selection.base
-            val input = fixtureFile(fixtureDirectory, fixture)
-            require(input.isFile) { "Missing decoded APK fixture: $input" }
-            val caseDirectory = File(outputDirectory, "recommended-${fixture.versionCode}")
-            val output = File(caseDirectory, "steamlink-${fixture.versionCode}-recommended-unsigned.apk")
-            output.parentFile.mkdirs()
-            executePatch(input, selection.patch, File(caseDirectory, "temporary"), output)
-            verifyRecommendedBundleOutput(input, output, fixture)
-            verifyVisualDelayOutput(input, output, fixture)
-            println("PASS ${fixture.versionName}/${fixture.versionCode} recommended bundle output: $output")
         }
 
         else -> error("Unknown audit kind: ${args[2]}")
@@ -517,10 +466,9 @@ private suspend fun executePatch(
 private fun verifyHighResolutionOutput(
     outputApk: File,
     fixture: HighResolutionFixture,
-    recommended: Boolean = false,
 ) {
     ZipFile(outputApk).use { apk ->
-        verifyHighResolutionZip(apk, fixture, recommended)
+        verifyHighResolutionZip(apk, fixture)
     }
 }
 
@@ -566,118 +514,9 @@ private fun verifyVisualDelayOutput(
     }
 }
 
-private fun verifyRecommendedBundleOutput(inputApk: File, outputApk: File, fixture: HighResolutionFixture) {
-    ZipFile(outputApk).use { apk ->
-        val manifest = apk.requireEntryBytes("AndroidManifest.xml")
-        val scene = apk.requireEntryBytes("lib/arm64-v8a/libvrlink_scene.so")
-        manifest.requireEncodedString("org.khronos.openxr.permission.OPENXR")
-        manifest.requireEncodedString("android.permission.HAND_TRACKING")
-        manifest.requireEncodedString("android.permission.FACE_TRACKING")
-        manifest.requireEncodedString("android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS")
-        if (isModernTongueBridgeSteamLinkBuild(fixture.versionName, fixture.versionCode)) {
-            check(apk.getEntry("lib/arm64-v8a/libgxr_face_bridge.so") == null) {
-                "5002363: modern tongue recommendation installed the legacy full face bridge"
-            }
-            scene.requireBytesAt(
-                vaddrToFileOffset(scene, MODERN_TONGUE_VADDR_5002363, MODERN_TONGUE_REPLACEMENT.size),
-                MODERN_TONGUE_REPLACEMENT,
-            )
-        } else {
-            apk.requireElf("lib/arm64-v8a/libgxr_face_bridge.so")
-        }
-        check(!manifest.containsEncodedString("android.permission.SYSTEM_ALERT_WINDOW")) {
-            "${fixture.versionCode}: recommended bundle requested SYSTEM_ALERT_WINDOW"
-        }
-        // Check emitted shader/preset bytes, not just the bundle membership. OLED must not
-        // re-enable dithering after removal of the public Video dither patch.
-        scene.requireEncodedString("const float DITHER_ENABLE=0.;")
-        scene.requireEncodedString("vec3(1.20)")
-        scene.requireEncodedString("c,1.45)")
-        check(scene.containsSubsequence("e00b40f9c1008052".hexBytes())) {
-            "${fixture.versionCode}: Voice Recognition AAudio preset not found"
-        }
-        // Original pose load followed by MOVZ/MOVK X16 for exactly 60,000,000 ns, ADD X2.
-        check(scene.containsSubsequence("e20740f910e090d27072a0f24200108b".hexBytes())) {
-            "${fixture.versionCode}: 60 ms Visual Delay trampoline not found"
-        }
-        if (fixture.versionCode == "5002363") scene.requireBytesAt(0xF44C0, "c1008052".hexBytes())
-        if (isModernTongueBridgeSteamLinkBuild(fixture.versionName, fixture.versionCode)) {
-            manifest.requireEncodedString("com.valvesoftware.steamlink.SteamLink")
-            manifest.requireEncodedString("android.intent.category.LAUNCHER")
-            manifest.requireEncodedString("com.oculus.intent.category.2D")
-            check(!manifest.containsEncodedString("GalaxyXRPermissionActivity")) {
-                "5002363: recommended bundle installed a replacement launcher activity"
-            }
-            check(!manifest.containsEncodedString("android.window.PROPERTY_XR_ACTIVITY_START_MODE")) {
-                "5002363: recommended bundle changed the stock XR activity start mode"
-            }
-            ZipFile(inputApk).use { original -> verifyNativeStartupBoundary(original, apk) }
-        } else {
-            manifest.requireEncodedString("GalaxyXRPermissionActivity")
-            manifest.requireEncodedString("XR_ACTIVITY_START_MODE_FULL_SPACE_UNMANAGED")
-            apk.requireStartupFlags(splash = true, permissions = true)
-        }
-        if (fixture.versionCode != "5002363") {
-            apk.requireEntryBytes("lib/arm64-v8a/libgxr_xr_bridge.so")
-            apk.requireEntryBytes("assets/config/ui_config.json")
-            val hmdConfig = apk.requireEntryBytes("assets/config/hmd_config.json")
-            val questPayload = requireNotNull(DecodedSteamLinkPatchAudit::class.java.getResourceAsStream(
-                "/steamlink/identity/hmd_config_meta_quest_pro.json",
-            )).use { it.readBytes() }
-            val expectedHmdConfig = adaptLegacyHmdConfigForBuild(
-                questPayload, fixture.versionName, fixture.versionCode,
-            )
-            check(hmdConfig.contentEquals(expectedHmdConfig)) {
-                "${fixture.versionCode}: legacy bundle did not retain the complete Quest Pro identity payload"
-            }
-            check(Regex("\"sModelNumber\": \"Oculus Quest Pro\"").findAll(hmdConfig.decodeToString()).count() == 3) {
-                "${fixture.versionCode}: expected Quest Pro spoof on all 3 runtime-selected HMD entries"
-            }
-            if (fixture.versionCode == "5001712") hmdConfig.require5001712RequestedExtensionsObject()
-                else check(com.google.gson.JsonParser.parseString(hmdConfig.decodeToString()).asJsonObject["requestedExtensions"].isJsonArray)
-            scene.requireEncodedString("android.permission.EYE_TRACKING_FINE")
-            val gateOffsets = when (fixture.versionCode) {
-                "5001712" -> listOf(0xFFE20, 0xFFE28, 0x10DB10, 0x116564, 0x11656C, 0x116620)
-                "5001812", "5001968" -> legacySites.getValue(fixture.versionCode).gates
-                "5002244" -> listOf(0xFD040, 0xFD048, 0x10B658, 0x1140AC, 0x1140B4, 0x114168)
-                else -> error("Missing legacy gate audit for ${fixture.versionCode}")
-            }
-            gateOffsets.forEach { scene.requireBytesAt(it, "1f2003d5".hexBytes()) }
-            verifyLegacyPointerRouting(apk, fixture)
-        } else {
-            // Automatic legacy identity must not change the native recommendation.
-            val original = ZipFile(inputApk).use { it.requireEntryBytes("assets/config/hmd_config.json") }
-            val expected = original
-            check(apk.requireEntryBytes("assets/config/hmd_config.json").contentEquals(expected)) {
-                "${fixture.versionCode}: native HMD identity changed from its existing recommendation"
-            }
-        }
-    }
-    verifyHighResolutionOutput(outputApk, fixture, recommended = true)
-}
-
-private fun verifyLegacyPointerRouting(apk: ZipFile, fixture: HighResolutionFixture) {
-    if (!isTwoProjectionSteamLinkBuild(fixture.versionName, fixture.versionCode)) return
-    val routes = listOf(
-        Triple("Lorg/libsdl/app/SDLSurface;", "onTouch", "routeXrPointerAsMouse5001712"),
-        Triple("Lorg/libsdl/app/SDLGenericMotionListener_API14;", "onGenericMotion", "routeXrPointerAsMouseGeneric5001712"),
-    )
-    val bridge = apk.requireDexClass("Lorg/libsdl/app/GxrSdlBridge;")
-    for ((type, methodName, route) in routes) {
-        val method = apk.requireDexClass(type).methods.single { it.name == methodName }
-        val calls = method.implementation!!.instructions.filterIsInstance<ReferenceInstruction>()
-            .mapNotNull { it.reference as? MethodReference }
-        check(calls.any { it.definingClass == bridge.type && it.name == route }) {
-            "${fixture.versionCode}: missing mouse-only route in $type->$methodName"
-        }
-        check(bridge.methods.any { it.name == route && it.parameterTypes.map { p -> p.toString() } == listOf("Landroid/view/MotionEvent;") && it.returnType == "V" })
-    }
-}
-
 private fun verifyHighResolutionZip(
     apk: ZipFile,
     fixture: HighResolutionFixture,
-    recommended: Boolean = false,
 ) {
     check(apk.getEntry("lib/arm64-v8a/libgxr_ast_underside.so") == null)
     check(apk.getEntry("assets/openxr/1/api_layers/implicit.d/" +
@@ -710,7 +549,7 @@ private fun verifyHighResolutionZip(
         fixture.permissionOffset,
         fixture.permissionOffset + permissionOriginal.size,
     )
-    val expected = if (recommended && fixture.permissionMustBePatched) permissionReplacement else permissionOriginal
+    val expected = permissionOriginal
     check(actual.contentEquals(expected)) {
         "${fixture.versionCode}: permission routine at 0x" +
             fixture.permissionOffset.toString(16) + " was ${actual.toHex()}, expected ${expected.toHex()}"

@@ -6,13 +6,12 @@ This catalog documents the Steam Link VR patch set (`com.valvesoftware.steamlink
 
 ## Current patch categories
 
-All 37 selectable patches use 7 categories in Morphe Manager 1.30.0 or newer.
-Categories organize the list; exact-build guards, bundle dependencies and defaults remain authoritative.
+All 32 selectable patches use 6 categories in Morphe Manager 1.30.0 or newer.
+Categories organize the list; exact-build guards, patch dependencies and defaults remain authoritative.
 The retired entries below are historical records and are not selectable.
 
 | Category | Count | Current patches |
 |---|---:|---|
-| Recommended sets | 5 | [Galaxy XR recommended sets for 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.23/5002363; legacy foundation through 2.0.22/5002244](#recommendation-bundles) — optional one-step selections, off by default |
 | Image quality | 2 | [Galaxy XR high-resolution 3-projection fix](#galaxy-xr-high-resolution-3-projection-fix-xrgalaxyxrhighresolutionpatch); [OLED color calibration](#oled-color-calibration-oledcalibrationpatch) |
 | Tracking & audio | 6 | [Visual Delay Fix](#visual-delay-fix-hmdonlypatch); [Controller velocity fix](#controller-velocity-fix-controllervelocitypatch); [GXR face bridge (version 5002318 and below)](#gxr-face-bridge-version-5002318-and-below-gxrfacebridgepatch); [GXR tongue bridge (version 5002322 and above)](#gxr-tongue-bridge-version-5002322-and-above-gxrmoderntonguebridgepatch); [XR Input Routing Config](#xr-input-routing-config-xrinputroutingconfigpatch); [Microphone input preset](#microphone-input-preset-microphoneinputpresetpatch) |
 | Startup & permissions | 4 | [Startup permission requests (before 5002322)](#startup-permission-requests-before-5002322-xrstartuppermissionspatch); [Startup splash and XR launch mode (before 5002322)](#startup-splash-and-xr-launch-mode-before-5002322-xrlauncherbootstrappatch); [Unrestricted battery usage](#unrestricted-battery-usage-unrestrictedbatteryusagepatch); [Appear on top (legacy)](#appear-on-top-legacy-appearontoppatch) |
@@ -24,7 +23,7 @@ The retired entries below are historical records and are not selectable.
 
 **Status: tested on the headset with hitches unchanged; removed from `patches/src/main` on 2026-10-11. Do not re-add or re-derive this patch for the hitch regression.**
 
-Separate, default-off patch with no dependencies/options for exact **2.0.23/5002363** only. No recommended bundle includes it. Stops the post-startup interface rescans of the Uber UDP transport: NOPs the `bl ScanForLinkChanges` call sites at `0x174c74` (hidden NETLINK monitoring thread) and `0x16fdf8` (2.000001 s `Uber::Tick` fallback inside `SendCurrentAddressList`). The initial scan in `SetupScanningForLinkChanges` and the periodic address-list send stay intact.
+Separate, default-off patch with no dependencies/options for exact **2.0.23/5002363** only. Not included in the recommended set. Stops the post-startup interface rescans of the Uber UDP transport: NOPs the `bl ScanForLinkChanges` call sites at `0x174c74` (hidden NETLINK monitoring thread) and `0x16fdf8` (2.000001 s `Uber::Tick` fallback inside `SendCurrentAddressList`). The initial scan in `SetupScanningForLinkChanges` and the periodic address-list send stay intact.
 
 - Only `lib/arm64-v8a/libvrlink_scene.so` changes: exactly 8 bytes, `17a30294`/`b6b60294` to `1f2003d5` at the two offsets; patched library SHA-256 `836803ef2140d347772eebe1118d4ad69b1e3e59f06570a1b46b55a06c6ca91b`.
 - Exact version/build pair, size 2,292,008, raw GNU build ID `c31bb979123b76736930d3c820d8d0619fb5bed2`, both unique 32-byte stock windows and the containing region hashes (`0x174b8c`+476, `0x16fdb8`+464) guard the change; changed layouts fail closed and excluded builds return unchanged.
@@ -34,7 +33,7 @@ Separate, default-off patch with no dependencies/options for exact **2.0.23/5002
 
 **Status: tested on the headset and did not resolve the hitching problem; removed from `patches/src/main` on 2026-09-19. Do not re-add or re-derive this patch for the hitch regression.**
 
-Separate, default-off patch with no dependencies/options for exact **2.0.22/5002322** and **2.0.23/5002363**. No recommended bundle includes it. Changes the verified duplicate-check bypass to NOP at `0x167094` / `0x167f60`; all 4 instruction bytes are guarded with full-function identity and executable mapping checks.
+Separate, default-off patch with no dependencies/options for exact **2.0.22/5002322** and **2.0.23/5002363**. Not included in the recommended set. Changes the verified duplicate-check bypass to NOP at `0x167094` / `0x167f60`; all 4 instruction bytes are guarded with full-function identity and executable mapping checks.
 
 Use with the matching bundle and current **Observe + pipeline telemetry**, starting from an original APK with stock UDP. Plain v1 decoder helper modes are rejected with this guard because their runtime function guards do not accept it. Older adaptations and the original v1 payloads remain unchanged. Runtime effectiveness was tested and did not resolve the regression; the skipped-frame allocation route and possible PC-side recovery delays remain unresolved. [Experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-09-15-fec-duplicate-reservation.md).
 
@@ -42,28 +41,28 @@ Use with the matching bundle and current **Observe + pipeline telemetry**, start
 
 **Status: live trial on 2.0.23/5002363 failed (freezes worse and longer); removed from `patches/src/main` on 2026-09-19. Do not re-add or re-derive this patch for the hitch regression.**
 
-Separate, default-off patch with no dependencies/options for exact **2.0.22/5002322** and **2.0.23/5002363**. No recommended bundle includes it. Requests **8 MiB instead of 1 MiB** for the active VR UDP receive socket.
+Separate, default-off patch with no dependencies/options for exact **2.0.22/5002322** and **2.0.23/5002363**. Not included in the recommended set. Requests **8 MiB instead of 1 MiB** for the active VR UDP receive socket.
 
 - Only `lib/arm64-v8a/libvrlink_scene.so` changes: instruction `08 02 a0 52` → `08 10 a0 52` at `0x1745a8` (5002322) or `0x1757a8` (5002363). The actual byte difference is at offset +1.
 - Exact metadata, ELF mapping, size, GNU build ID and normalized full-function hash guard the change. Reapplication is idempotent; unknown/changed target layouts fail closed. Excluded exact builds return unchanged before file access.
-- Coexists with recommended bundles and **Observe + pipeline telemetry**; no new native payload, manifest edit or host setting. **Failed live trial on 2.0.23/5002363: freezes worsened despite 0 measured socket drops. Not recommended as a remedy.** Retained for reproducibility; 2.0.22/5002322 runtime remains untested. [Live result and rollback](diagnostics/steamlink-hitches/UDP-RESULTS-2026-09-15.md).
+- Coexists with the recommended set and **Observe + pipeline telemetry**; no new native payload, manifest edit or host setting. **Failed live trial on 2.0.23/5002363: freezes worsened despite 0 measured socket drops. Not recommended as a remedy.** Retained for reproducibility; 2.0.22/5002322 runtime remains untested. [Live result and rollback](diagnostics/steamlink-hitches/UDP-RESULTS-2026-09-15.md).
 
 ## Decoder input buffering (experimental) — RETIRED 2026-09-19 (tested, did not work; removed from source)
 
 **Status: tested on 2.0.23/5002363 — whole-view freezes persisted; removed from `patches/src/main` on 2026-09-19. Do not re-add or re-derive this patch (including telemetry-only variants) for the hitch regression.**
 
-Separate, default-off experiment for exact **2.0.22/5002322** and **2.0.23/5002363**. It has no dependencies and is absent from every recommended bundle. Select it separately alongside the matching bundle. **Buffered** stages incomplete compressed frames in bounded memory before synchronous codec submission; **Observe** adds counters to stock input handling.
+Separate, default-off experiment for exact **2.0.22/5002322** and **2.0.23/5002363**. It has no dependencies and is absent from the recommended set. Select it separately alongside the matching bundle. **Buffered** stages incomplete compressed frames in bounded memory before synchronous codec submission; **Observe** adds counters to stock input handling.
 
 - APK mutations: scene `DT_NEEDED` string at file offset `0x69656` (5002322) or `0x69925` (5002363), `libmediandk.so` → `libgxr_dbuf.so`; adds `lib/arm64-v8a/libgxr_dbuf.so` with a build-specific helper and configured mode.
 - Runtime: plain modes retain the original v1 helper and its 11 guarded vtable/GOT pointers. Optional **Observe + pipeline telemetry** / **Buffered + pipeline telemetry** use a separate v2 resource and 18 guarded pointers, adding codec/image API timing and native fault-source tracing. No executable instructions, output images, shaders or OpenXR layers change. Conflicts fail activation; the original media dependency remains available.
 - Limits: 24 lazy 4 MiB staging allocations per codec, 96 MiB maximum; real input capacity checked before copying. The stock 20 ms complete-frame acquisition wait and real-error recovery remain.
-- [Exact layouts and hashes](diagnostics/steamlink-hitches/decoder-hook-layouts.json), [v1 tried record](diagnostics/steamlink-hitches/EXPERIMENT-2026-09-15-decoder-staging-v1.md), [v2 diagnostic capture](diagnostics/steamlink-hitches/TELEMETRY-2026-09-15.md). V1 did not solve the reported freezes. It was an 8th modern individual selection without changing the existing 6-patch bundles, until retirement on 2026-09-19.
+- [Exact layouts and hashes](diagnostics/steamlink-hitches/decoder-hook-layouts.json), [v1 tried record](diagnostics/steamlink-hitches/EXPERIMENT-2026-09-15-decoder-staging-v1.md), [v2 diagnostic capture](diagnostics/steamlink-hitches/TELEMETRY-2026-09-15.md). V1 did not solve the reported freezes. It was an 8th modern individual selection without changing the existing 6-patch recommended set, until retirement on 2026-09-19.
 
 ## Current adaptations
 
 The current catalog supports exactly **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, **2.0.22/5002244**, and **2.0.23/5002363**. Compatibility uses the exact version name and build code, never a version range. Historical references to 5001740, 5002296, 5002313, 5002318, and 5002322 below do not make those builds selectable.
 
-The new 5001812 and 5001968 adaptations each expose the same **22 individual patches** as 5001712: **20 stable + 2 experimental blue-noise patches**. The 17-patch legacy recommended set now lives as defaults on the individual patches, with the same dependency closure and option defaults, and Morphe Manager auto-selects it for the detected exact version and build. The 5 recommended set entries remain as optional one-step selections that are off by default. The optional 5 patches are Appear on top, Change package name, Controller Velocity Fix, and both blue-noise layers.
+The new 5001812 and 5001968 adaptations each expose the same **22 individual patches** as 5001712: **20 stable + 2 experimental blue-noise patches**. The 17-patch legacy recommended set now lives as defaults on the individual patches, with the same dependency closure and option defaults, and Morphe Manager auto-selects it for the detected exact version and build. The optional 5 patches are Appear on top, Change package name, Controller Velocity Fix, and both blue-noise layers.
 
 Native addresses were independently adapted for both new bases. The [exact-base validation record](diagnostics/steamlink-legacy-1812-1968/README.md) covers local static/native checks and pristine-source Morphe validation; headset validation remains pending and publication is not claimed. The 5001712 reference is an analysis reconstruction, so its regression checks do not establish pristine-source APK patching.
 
@@ -75,19 +74,11 @@ This exact pair exposes 7 stable individual patches plus 2 optional blue-noise p
 
 See the [5002363 validation](diagnostics/steamlink-5002363/README.md), [native targets](diagnostics/steamlink-5002363/native-targets.md), and [Java/config targets](diagnostics/steamlink-5002363/surface-targets.md).
 
-### Recommendation bundles
+### Recommended set per exact build
 
-These 5 sets remain as optional one-step selections and are off by default; the recommended defaults now live on the individual patches, and Morphe Manager auto-selects the recommended set for the detected exact version and build code.
+The recommended set is the individual patches themselves, default-enabled and auto-selected for the detected exact version and build code.
 
-| Bundle | Exact target | Direct patch set |
-|---|---|---|
-| `Galaxy XR recommended set (2.0.20/5001712)` | 2.0.20/5001712 | 17-patch legacy set below |
-| `Galaxy XR recommended set (2.0.20/5001812)` | 2.0.20/5001812 | Same 17-patch legacy set |
-| `Galaxy XR recommended set (2.0.21/5001968)` | 2.0.21/5001968 | Same 17-patch legacy set |
-| `Galaxy XR legacy foundation (through 2.0.22/5002244)` | 2.0.22/5002244 | Same 17-patch legacy set |
-| `Galaxy XR recommended set (2.0.23/5002363)` | 2.0.23/5002363 | 6 native Android XR patches above |
-
-The 4 legacy sets directly select the same 17 patches that are default-enabled on 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244:
+The 17 individual patches below are default-enabled and auto-selected on 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244:
 
 1. Android XR native permission names
 2. Force HMD initialization gates
@@ -115,7 +106,7 @@ routing; only the 3 runtime-selected HMD model values change to `Oculus Quest Pr
 Private/transitive support dependencies are deduplicated by Morphe; the counts above describe
 direct public selections, not all internal tasks.
 
-Selecting a bundle never broadens verified build guards. The early 5001712/5001812/5001968 builds use the independently verified 2-projection payload; 5002244/5002363 use the 3-projection payload. The 2 new bases retain array-shaped `requestedExtensions`; only 5001712 uses the special device-keyed conversion. Headset behavior remains a separate validation gate.
+The recommended selection never broadens verified build guards. The early 5001712/5001812/5001968 builds use the independently verified 2-projection payload; 5002244/5002363 use the 3-projection payload. The 2 new bases retain array-shaped `requestedExtensions`; only 5001712 uses the special device-keyed conversion. Headset behavior remains a separate validation gate.
 
 ---
 
@@ -378,7 +369,7 @@ extra 2×2 quad. It was distinct from the earlier static-black underside test.
 
 The selectable patch, native helper, build target and runnable diagnostic are
 removed. Mode/library identifiers remain only for stale-resource cleanup. The
-working high-resolution fix and recommended bundles are unchanged. No new trace
+working high-resolution fix and the recommended set are unchanged. No new trace
 was supplied; the failure mechanism and GPU cost are not established. Do not
 repeat this as an untried idea. See [historical record](diagnostics/steamlink-surface-fovea/README.md).
 
@@ -553,7 +544,7 @@ Custom host replacements can still bypass the embedded shader modification.
 
 ### Foveal blue-noise dithering (`fovealBlueNoisePatch`, experimental)
 
-**Separate patch; default off; excluded from recommendation bundles and the stable catalog.**
+**Separate patch; default off; excluded from the recommended set and the stable catalog.**
 Exact bases: **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, **2.0.22/5002244**, **2.0.23/5002363**.
 
 | Option | Default | Behavior |
@@ -577,8 +568,8 @@ See the [original algorithm](diagnostics/steamlink-blue-noise-ditering/README.md
 
 ### Background blue-noise dithering (`backgroundBlueNoisePatch`, experimental)
 
-**Separate patch; background/base layer only; default off; excluded from recommendation
-bundles and the stable catalog.** Exact bases and options match the foveal patch:
+**Separate patch; background/base layer only; default off; excluded from the recommended set
+and the stable catalog.** Exact bases and options match the foveal patch:
 **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, **2.0.22/5002244**, **2.0.23/5002363**; `inputDepth` defaults to
 `10-bit` and also accepts `8-bit`. Output is always 8-bit sRGB.
 

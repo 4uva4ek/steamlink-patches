@@ -6,7 +6,7 @@ The comparison below is historical evidence about the 2 named APK artifacts, not
 the current generated patch bundle. Its enabled dithering, `78` ms pose offset, and missing-hook
 findings must not be read as current release defaults or fresh runtime results.
 
-Both legacy recommendation bundles now directly select the same 16 public patches: Android XR
+Both archived legacy builds selected the same 16 public patches: Android XR
 native permission names; Force HMD initialization gates; Force lobby permission-state gate; Force
 stream XR gates; GXR face bridge; Galaxy XR high-resolution 3-projection fix; Microphone input
 preset; OLED color calibration; Unrestricted battery usage; Visual Delay Fix; XR Core Runtime;
@@ -44,10 +44,10 @@ See the [current HEVC 10-bit audit](diagnostics/steamlink-vd-hevc10/README.md); 
 The historical unregistered helper remains
 `patches/src/main/kotlin/app/template/patches/steamlink/binary/VideoDither.kt`.
 
-Bundle membership does not broaden native guards: high-resolution adaptation is unavailable on
+Recommended membership does not broaden native guards: high-resolution adaptation is unavailable on
 5001740. Those
 mutations remain no-ops rather than assuming a neighboring build's topology or offsets. See the
-[current recommendation catalog](PATCH_CATALOG.md#recommendation-bundles) for exact scope.
+[current recommendation catalog](PATCH_CATALOG.md#recommended-set-per-exact-build) for exact scope.
 
 ## Scope
 

@@ -8,10 +8,10 @@ This is a multi-app patch set: every app keeps its own package, exact supported 
 
 | App | Package | Supported exact builds | Status |
 |---|---|---|---|
-| Steam Link VR | `com.valvesoftware.steamlinkvr` | 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363 | released patch set, 5 recommended bundles (documented below) |
+| Steam Link VR | `com.valvesoftware.steamlinkvr` | 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363 | released patch set; the recommended set is the individual patches themselves, default-enabled and auto-selected for the detected exact version and build code (documented below) |
 | 4XVR | `cn.vr4p.oculus4xvrplayerov` | 2.0.22/20022 | 14-patch Galaxy XR set, recommended by default (the experimental Meta decoupling stays opt-in); decoded-base design, headset validation pending |
 
-The Steam Link VR patches adapt Steam Link for Android XR and provide build-specific fixes for resolution, color, microphone input, tracking, permissions, and startup. Recommended bundles select the patches appropriate for your Steam Link build. Optional face tracking works with VRCFaceTracking and the Galaxy XR LinkFT module. Exact older builds use the full GXR face bridge, while exact build 2.0.23/5002363 uses a native tongue-only bridge that preserves Valve's built-in Android XR face mappings.
+The Steam Link VR patches adapt Steam Link for Android XR and provide build-specific fixes for resolution, color, microphone input, tracking, permissions, and startup. The recommended set is the individual patches themselves, default-enabled and auto-selected for the detected exact version and build code. Optional face tracking works with VRCFaceTracking and the Galaxy XR LinkFT module. Exact older builds use the full GXR face bridge, while exact build 2.0.23/5002363 uses a native tongue-only bridge that preserves Valve's built-in Android XR face mappings.
 
 The 4XVR set is 15 patches as of 2026-10-11 and recommended by default (the experimental Meta platform decoupling stays opt-in): launch compatibility, the canonical launcher icon, controller models, the libplacebo HDR pipeline with its payload, the 72 Hz refresh profile, the 5.1-channel audio bridge with payload, the frame-synced render dispatch with payload, the subtitle suite with payload, the startup/UI continuity helper, and the Galaxy XR set. All target exact 2.0.22/20022 only. Their [diff and patch plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) and [implementation record](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-implementation.md) are static-only evidence: no pristine stock 4XVR APK is available in the workspace yet, the bundled `libplacebo.so` payload is LGPL-2.1-or-later and its `NOTICE.txt` claims a `libplacebo-source.zip` that is not present in the reference APK, and headset validation is pending.
 
@@ -62,42 +62,42 @@ N.D.: Delete the depot folder every time you switch to a new depot or the .apk w
 
 1. Open Morphe Manager and load this repository's patch source or downloaded `.mpp` bundle.
 2. Select the Steam Link VR APK. Keep compatibility checks enabled so Morphe can filter by both version and build number.
-3. Keep the recommended selection: Morphe Manager auto-selects the recommended set for the detected exact version and build — the 17 individual patches on 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244, or the 6 on 2.0.23/5002363. The **Recommended sets** entries in the table below are optional one-step alternatives and are off by default. Leave patch options at their recommended values unless you need a specific adjustment.
+3. Keep the recommended selection: Morphe Manager auto-selects the recommended set for the detected exact version and build — the 17 individual patches on 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244, or the 6 on 2.0.23/5002363. Leave patch options at their recommended values unless you need a specific adjustment.
 4. Run patching, then install the resulting APK using Morphe Manager.
 5. Launch the patched Steam Link, complete its permission prompts, and connect to SteamVR on your PC. If the Battery usage page opens, select **Unrestricted** and return to Steam Link.
 
 See the [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) before selecting patches manually. Do not assume another build is compatible because it has the same version name.
 
-With category grouping enabled in Morphe Manager, the default-enabled recommended patches appear under Image quality, Tracking & audio, Startup & permissions, App & device identity, Advanced XR compatibility, and Experiments. The optional one-step recommended set entries stay in the **Recommended sets** category. Grouping does not change the selected patches or their defaults.
+With category grouping enabled in Morphe Manager, the default-enabled recommended patches appear under Image quality, Tracking & audio, Startup & permissions, App & device identity, Advanced XR compatibility, and Experiments. Grouping does not change the selected patches or their defaults.
 
 Optional blue-noise dithering has 2 separate experimental patches:
 **Foveal blue-noise dithering (experimental)** affects only the foveal layer;
 **Background blue-noise dithering (experimental)** affects only the background/base
 layer. Select either or both. Each accepts declared 8-bit or 10-bit input and uses
-8-bit sRGB output. Both are off by default and are not included in recommended
-bundles. If also selecting OLED color calibration, leave both VD-like toggles off.
+8-bit sRGB output. Both are off by default and are not included in the recommended
+set. If also selecting OLED color calibration, leave both VD-like toggles off.
 Headset quality remains unverified; see the [layer options and validation](diagnostics/steamlink-background-blue-noise/README.md).
 
 
 ### Supported builds and recommended selection
 
-| Exact Steam Link version / build | Default-enabled recommended set (auto-selected) | Optional one-step set (off by default) |
-|---|---|---|
-| 2.0.20 / 5001712 | 17 individual legacy patches | Galaxy XR recommended set (2.0.20/5001712) |
-| 2.0.20 / 5001812 | Same 17 individual legacy patches | Galaxy XR recommended set (2.0.20/5001812) |
-| 2.0.21 / 5001968 | Same 17 individual legacy patches | Galaxy XR recommended set (2.0.21/5001968) |
-| 2.0.22 / 5002244 | Same 17 individual legacy patches | Galaxy XR legacy foundation (through 2.0.22/5002244) |
-| 2.0.23 / 5002363 | 6 individual native Android XR patches | Galaxy XR recommended set (2.0.23/5002363) |
+| Exact Steam Link version / build | Default-enabled recommended set (auto-selected) |
+|---|---|
+| 2.0.20 / 5001712 | 17 individual legacy patches |
+| 2.0.20 / 5001812 | Same 17 individual legacy patches |
+| 2.0.21 / 5001968 | Same 17 individual legacy patches |
+| 2.0.22 / 5002244 | Same 17 individual legacy patches |
+| 2.0.23 / 5002363 | 6 individual native Android XR patches |
 
-These are the 5 exact supported pairs. The 2 new bases each expose the same **22 individual patches** as 2.0.20/5001712: 20 stable and 2 experimental blue-noise patches. The individual patches in the recommended set — 17 on the legacy builds, 6 on 2.0.23/5002363 — are now default-enabled and selected automatically for the detected exact version and build (checked in Expert mode, applied in Simple mode). The 5 recommended set entries remain listed as optional one-step alternatives and are off by default. Existing option defaults remain unchanged, including Quest Pro identity for legacy builds, Voice Recognition microphone, Final balanced OLED, neutral foveal gamma, and 60 ms Visual Delay.
+These are the 5 exact supported pairs. The 2 new bases each expose the same **22 individual patches** as 2.0.20/5001712: 20 stable and 2 experimental blue-noise patches. The recommended set is the individual patches themselves — 17 on the legacy builds, 6 on 2.0.23/5002363 — default-enabled and auto-selected for the detected exact version and build (checked in Expert mode, applied in Simple mode). Existing option defaults remain unchanged, including Quest Pro identity for legacy builds, Voice Recognition microphone, Final balanced OLED, neutral foveal gamma, and 60 ms Visual Delay.
 
 The new bases have independent native addresses and guards, not just compatibility labels. Their [validation record](diagnostics/steamlink-legacy-1812-1968/README.md) covers local static checks and pristine-source Morphe patching. Headset validation remains pending; this does not assert publication of a release.
 
 ### Patches in each recommended set
 
-The lists below are the default-enabled recommended sets; Morphe Manager selects them automatically for the detected exact version and build. Each recommended set entry is a pure selector: selecting it loads exactly the same patches and performs no additional mutation of its own. Patch names match Morphe's patch list. A listed patch remains a no-op on a build where its own layout guard does not match.
+The lists below are the default-enabled recommended sets; Morphe Manager selects them automatically for the detected exact version and build. Patch names match Morphe's patch list. A listed patch remains a no-op on a build where its own layout guard does not match.
 
-On **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, these same 17 individual patches are default-enabled and auto-selected; the optional legacy recommended sets load the same 17:
+On **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, these same 17 individual patches are default-enabled and auto-selected:
 
 1. Android XR native permission names
 2. Device identity
@@ -132,7 +132,7 @@ For **2.0.23/5002363**, the [manual Galaxy XR USB setup guide](Install/USB-STREA
 
 ## Optional: face and tongue tracking
 
-Install **VRCFaceTracking** and the matching [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC. In Steam Link, enable **OSC**, **eye sharing**, and **face sharing**, and set the output port to **9015**. Recommended older-build bundles include **GXR face bridge (version 5002318 and below)**; the 2.0.23/5002363 bundle instead includes **GXR tongue bridge (version 5002322 and above)**. Historical headset evidence for 5002322 does not establish runtime validation of 5002363. The tongue patch enables exact 2.0.23/5002363 with its independently verified native layout.
+Install **VRCFaceTracking** and the matching [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC. In Steam Link, enable **OSC**, **eye sharing**, and **face sharing**, and set the output port to **9015**. The recommended older-build set includes **GXR face bridge (version 5002318 and below)**; the 2.0.23/5002363 recommended set instead includes **GXR tongue bridge (version 5002322 and above)**. Historical headset evidence for 5002322 does not establish runtime validation of 5002363. The tongue patch enables exact 2.0.23/5002363 with its independently verified native layout.
 
 ## New base validation
 

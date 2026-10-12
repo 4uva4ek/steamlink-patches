@@ -13,7 +13,7 @@ bundle. See the [adaptation and validation record](diagnostics/steamlink-legacy-
 
 ## Steam Link 2.0.23 / 5002363
 
-The new exact base exposes the 7 modern individual patches with independently verified native addresses and stock Java startup. Its 6-patch recommended set is default-enabled, and Morphe Manager auto-selects it for this exact build; the **Galaxy XR recommended set (2.0.23/5002363)** entry and **Device identity (2.0.23/5002363)** remain optional one-step selections. The 14 legacy patches stay excluded. See the [5002363 audit](diagnostics/steamlink-5002363/README.md) for source APK provenance, exact addresses, mutation/option tests, APK patching and remaining runtime gaps.
+The new exact base exposes the 7 modern individual patches with independently verified native addresses and stock Java startup. Its 6-patch recommended set is default-enabled, and Morphe Manager auto-selects it for this exact build; **Device identity (2.0.23/5002363)** remains an optional one-step selection. The 14 legacy patches stay excluded. See the [5002363 audit](diagnostics/steamlink-5002363/README.md) for source APK provenance, exact addresses, mutation/option tests, APK patching and remaining runtime gaps.
 
 ## Compatibility and implementation notes
 
@@ -26,7 +26,7 @@ Steam Link VR (`com.valvesoftware.steamlinkvr`) was not built for Android XR. Th
 
 Target APK: `com.valvesoftware.steamlinkvr`. Exact compatibility metadata and guarded adaptations include v2.0.20/5001712, v2.0.20/5001812, v2.0.21/5001968, v2.0.22/5002244, and v2.0.23/5002363. The permission-free high-resolution fix accepts exactly those 5 builds; 5001712 and 5002244 have verified layouts, while 5002363 is a decoded-base adaptation with pending headset validation. Reconstruction, quad-view, permission-matrix, warm-up/omit, and DFR re-arm experiments are retired.
 
-Use Morphe Manager 1.30.0 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is one global value per patch, so the recommended defaults live on the individual patches: all 4 legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244) default-enable the same [17 individual patches](PATCH_CATALOG.md#recommendation-bundles), including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches, and Morphe Manager auto-selects them for the detected build. 2.0.23/5002363 default-enables only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, and Visual Delay Fix (60 ms). The 5 Galaxy XR recommended set entries remain available as optional one-step selections. The full GXR face bridge is restricted to the 4 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
+Use Morphe Manager 1.30.0 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is one global value per patch, so the recommended defaults live on the individual patches: all 4 legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244) default-enable the same [17 individual patches](PATCH_CATALOG.md#recommended-set-per-exact-build), including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches, and Morphe Manager auto-selects them for the detected build. 2.0.23/5002363 default-enables only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, and Visual Delay Fix (60 ms). The full GXR face bridge is restricted to the 4 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
 
 **Startup permission requests (before 5002322)** and **Startup splash and XR launch mode (before 5002322)** are members of the legacy recommended set, default-enabled on all 4 legacy bases and independently deselectable. The permission patch declares missing hand, eye, face, microphone and Bluetooth permissions and enables their startup requests. The splash patch enables the black startup screen and unmanaged VRLink start-mode override; older legacy builds also receive panel sizing. The shared helper defaults both behaviors off. Earlier battery/overlay settings flows use a transparent bootstrap unless those explicit patches are selected.
 
@@ -34,7 +34,7 @@ For exact 2.0.23/5002363, the recommended set preserves stock launcher, splash, 
 
 For the legacy bundles, **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244**, leave **HMD identity** on **Recommended for this build** or explicitly choose **Meta Quest Pro**. The spoof reports `Oculus Quest Pro` while retaining Galaxy XR tracking/controller routing. Existing saved explicit Samsung, Stock, or Pico choices are respected, so change those if necessary. On 2.0.23/5002363, **Device identity (2.0.23/5002363)** remains optional, is not part of the recommended set, and resolves to the Galaxy XR identity.
 
-Bundle selection does not broaden native compatibility: the high-resolution edit safely skips instead of guessing a native layout, and unsupported builds remain unchanged. All 4 exact legacy targets have the complete legacy set available.
+The recommended selection does not broaden native compatibility: the high-resolution edit safely skips instead of guessing a native layout, and unsupported builds remain unchanged. All 4 exact legacy targets have the complete legacy set available.
 
 **The standalone Video dither patch remains retired.** The existing OLED patch now offers optional Comparison dithering (Off, Low, Standard), a Neutral calibration profile, and sRGB8/RGB10/experimental FP16 output. Defaults are Final balanced, 8-bit sRGB, and dithering Off. RGB10 and FP16 remain optional. See the [controlled comparison guide](PATCH_CATALOG.md#controlled-oled-comparison).
 
@@ -48,7 +48,7 @@ both existing helper binaries, including 2.0.20/5001712, remain unchanged.
 
 ### Terminal-quad helper CPU revision — 2026-09-03
 
-The shared resolution patch now supplies 3-projection helper `v1.4-20260903` and 5001712 2-projection helper `v1.2-20260903`. Its generation-validated, non-owning render-thread cache removes steady-frame shared-ownership reference-count operations while the registry retains session ownership. It relies on OpenXR's externally synchronized destruction; lifecycle changes invalidate cached handles. Event readers still acquire ownership, and `xrPollEvent` dispatch processes data only for `XR_SUCCESS`, never `XR_EVENT_UNAVAILABLE`. Existing recommendation bundles automatically receive these helpers through their unchanged resolution-patch dependency.
+The shared resolution patch now supplies 3-projection helper `v1.4-20260903` and 5001712 2-projection helper `v1.2-20260903`. Its generation-validated, non-owning render-thread cache removes steady-frame shared-ownership reference-count operations while the registry retains session ownership. It relies on OpenXR's externally synchronized destruction; lifecycle changes invalidate cached handles. Event readers still acquire ownership, and `xrPollEvent` dispatch processes data only for `XR_SUCCESS`, never `XR_EVENT_UNAVAILABLE`. Existing recommended selections automatically receive these helpers through their unchanged resolution-patch dependency.
 
 Host CTest registry and actual 2-/3-projection helper integration checks passed, as did both Android rebuilds using NDK `27.2.12479018` and cached OpenXR `1.1.43` headers. These revisions have no headset result or measured speed gain yet. All 6 exact supported version/build pairs, continuous 2x2 quad submission, source formats, and GPU work remain unchanged; this does not enable 10-bit output. Compare against the previous artifact with the same base, scene, options, and host settings, checking cold launch, stop/restart, palm/DFR transitions, and loss/resume. See the [patch catalog](PATCH_CATALOG.md#galaxy-xr-high-resolution-3-projection-fix-xrgalaxyxrhighresolutionpatch) for validation boundaries and A/B guidance.
 
@@ -64,7 +64,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.13](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.13)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;53 patches total
+> **[v1.28.0-dev.13](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.13)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;48 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
 <br>
@@ -128,7 +128,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;27 patches</summary>
+<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;22 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -136,16 +136,6 @@ This section is generated from the patch catalog during releases.
 | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.20 (5001712) | 2.0.20 (5001812) | 2.0.21 (5001968) | 2.0.22 (5002244) | 2.0.23 (5002363) | 2.0.23 (5002363) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Verified Steam Link 2.0.20 build 5001712. | Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending. | Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending. | Verified Steam Link 2.0.22 build 5002244. | Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending. | Exact Steam Link 2.0.20/5001712 high-resolution target with its isolated 2-projection to 3-layer payload. The topology correction has prior user-reported startup and delayed-frame runtime evidence; this rebuilt binary remains uninstalled. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.20 build 5001812; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.21 build 5001968; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.22 build 5002244; headset validation pending. | Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.23 build 5002363; headset validation pending. | Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending. |
-
-#### Recommended sets
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
-|----------|----------------|----------------|-----------|
-| [Galaxy XR legacy foundation (through 2.0.22/5002244)](#galaxy-xr-legacy-foundation-through-2-0-22-5002244) | Selects the 17-patch Galaxy XR legacy set for builds through 2.0.22/5002244: identity, native gates, face bridge, OLED, microphone, battery, Visual Delay, startup permissions and splash. | 5002244 |  |
-| [Galaxy XR recommended set (2.0.20/5001712)](#galaxy-xr-recommended-set-2-0-20-5001712) | Applies the 17-patch Galaxy XR set for exact 2.0.20/5001712: startup permissions and splash, Meta Quest Pro identity, high-resolution fix and the tested balanced OLED profile. | 5001712 |  |
-| [Galaxy XR recommended set (2.0.20/5001812)](#galaxy-xr-recommended-set-2-0-20-5001812) | Applies the same 17-patch set as 5001712, for exact 2.0.20/5001812. Headset validation pending. | 5001812 |  |
-| [Galaxy XR recommended set (2.0.21/5001968)](#galaxy-xr-recommended-set-2-0-21-5001968) | Applies the same 17-patch set as 5001712, for exact 2.0.21/5001968. Headset validation pending. | 5001968 |  |
-| [Galaxy XR recommended set (2.0.23/5002363)](#galaxy-xr-recommended-set-2-0-23-5002363) | Applies the 6-patch Galaxy XR set for exact 2.0.23/5002363: high resolution, tongue bridge, battery page, Visual Delay and the balanced OLED profile. Keeps stock startup permissions. Headset validation pending. | 5002363 |  |
 
 #### Image quality
 

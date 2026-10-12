@@ -16,11 +16,6 @@ import util.buildPatchListJson
 /** These checks need only compiled declarations, never decoded APKs or stale release catalogs. */
 class PatchCategoriesTest {
     private val groups = linkedMapOf(
-        "Recommended sets" to listOf(
-            galaxyXrRecommended5001712Patch, galaxyXrRecommended5001812Patch,
-            galaxyXrRecommended5001968Patch, galaxyXrRecommended5002363Patch,
-            galaxyXrLegacyFoundationPatch,
-        ),
         "Image quality" to listOf(xrGalaxyXrHighResolutionPatch, oledCalibrationPatch),
         "Tracking & audio" to listOf(
             hmdOnlyPatch, controllerVelocityPatch, gxrFacebridgePatch,
@@ -49,8 +44,8 @@ class PatchCategoriesTest {
 
     @Test
     fun `every public patch carries its agreed category and default`() {
-        assertEquals(37, publicPatches.size)
-        assertEquals(listOf(5, 2, 6, 4, 3, 7, 10), groups.values.map { it.size })
+        assertEquals(32, publicPatches.size)
+        assertEquals(listOf(2, 6, 4, 3, 7, 10), groups.values.map { it.size })
         groups.forEach { (category, patches) ->
             patches.forEach { patch ->
                 assertEquals(category, patch.category, patch.name)
@@ -90,7 +85,7 @@ class PatchCategoriesTest {
             val name = channel.name
             assertEquals(channel.name.lowercase(), generated.get("channel").asString)
             val entries = generated.getAsJsonArray("patches").map { it.asJsonObject }
-            assertEquals(if (channel == ReleaseChannel.STABLE) 27 else 37, entries.size, name)
+            assertEquals(if (channel == ReleaseChannel.STABLE) 22 else 32, entries.size, name)
             val names = entries.map { it.get("name").asString }
             assertEquals(names.sorted(), names, name)
             assertEquals(names.size, names.toSet().size, name)
