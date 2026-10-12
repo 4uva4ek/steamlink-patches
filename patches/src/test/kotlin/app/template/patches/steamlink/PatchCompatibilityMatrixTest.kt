@@ -161,10 +161,13 @@ class PatchCompatibilityMatrixTest {
         val excludedPublicPatches = allIndividualPatches.toSet() - expected
         assertEquals(12, excludedPublicPatches.size)
         val modernClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
-        // The merged Device identity is recommended on 5002363 too; its guarded dependency chain
-        // reaches the legacy XR baseline, whose mutations are no-ops on native-XR builds, so only
-        // that chain may intersect (xrDeviceConfigBaselinePatch keeps only the native
-        // nativeIdentityResourceIdsPatch work; xrCoreRuntimePatch is a guarded no-op there).
+        // The merged Device identity is recommended on 5002363 too; its dependency chain reaches
+        // the legacy XR baseline, whose mutations are skipped on native-XR builds (guarded returns in
+        // xrDeviceConfigBaselinePatch, androidXrLibPatch, xrDirectInputFixPatch and
+        // disablePermissionPromptNativePatch). The chain's one unconditional step,
+        // androidXrUiExtensionPatch's DEX merge, adds only a new helper class without editing
+        // existing classes (pinned by Native5002318TrackingConfigTest), so only that inert chain
+        // may intersect the excluded set.
         assertEquals(
             setOf(xrDeviceConfigBaselinePatch, xrCoreRuntimePatch),
             modernClosure.intersect(excludedPublicPatches),

@@ -152,8 +152,10 @@ object Constants {
             }
         }
 
+    // Derived from the same build list the guards use (isFullFacebridgeSteamLinkBuild), so
+    // compatibility and mutation guards cannot diverge when bases are added.
     val COMPATIBILITIES_STEAM_LINK_FULL_FACEBRIDGE =
-        COMPATIBILITIES_STEAM_LINK_BEFORE_LATEST
+        FULL_FACEBRIDGE_STEAM_LINK_BUILDS.map(::steamLinkBuildCompatibility)
 
     val COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE =
         MODERN_TONGUE_BRIDGE_STEAM_LINK_BUILDS.map(::steamLinkBuildCompatibility)
