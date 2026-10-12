@@ -47,7 +47,7 @@ The [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) is in the technica
 
 - **Face and tongue tracking** (Steam Link): install VRCFaceTracking and the [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC, then enable **OSC**, **eye sharing** and **face sharing** in Steam Link and set the output port to **9015**.
 - **USB streaming** (Steam Link 2.0.23/5002363): [manual Galaxy XR USB setup guide](Install/USB-STREAMING.md). Wi-Fi must stay on for discovery in the tested workflow; longer stability is untested.
-- **Experimental patches** (Full-FOV foveal canvas, Meta platform decoupling): off by default, not in the recommended set, headset quality unverified.
+- **Experimental patches** (Full-FOV foveal canvas): off by default, not in the recommended set, headset quality unverified.
 
 ## Status and credits
 

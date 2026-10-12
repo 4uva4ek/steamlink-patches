@@ -69,6 +69,7 @@ class FourXvrPayloadResourceTest {
             "smali/cn/vr4p/patch/GxrAudioOutput.smali",
             "smali/cn/vr4p/patch/GxrAudioOutput\$Output.smali",
             "smali/cn/vr4p/patch/GxrToastContinuity.smali",
+            "smali/cn/vr4p/patch/PopupRefresh.smali",
             "smali/cn/vr4p/patch/SubtitleFont.smali",
             "smali/cn/vr4p/patch/SubtitleFontFiles.smali",
             "smali/cn/vr4p/patch/SubtitleStyleListener.smali",

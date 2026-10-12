@@ -35,6 +35,11 @@ class FourXvrLaunchManifestTest {
 
         upsertManifestFeature(doc, manifest, app, "com.oculus.feature.PASSTHROUGH", required = false, version = null)
         upsertManifestFeature(doc, manifest, app, "android.software.xr.api.openxr", required = false, version = "65537")
+        upsertManifestFeature(doc, manifest, app, "android.hardware.xr.input.controller", required = false, version = null)
+        upsertManifestFeature(doc, manifest, app, "android.hardware.xr.input.hand_tracking", required = false, version = null)
+        upsertManifestFeature(doc, manifest, app, "android.hardware.xr.input.eye_tracking", required = false, version = null)
+        upsertManifestPermission(doc, manifest, app, "android.permission.HAND_TRACKING")
+        upsertManifestPermission(doc, manifest, app, "android.permission.EYE_TRACKING_FINE")
         upsertApplicationChild(doc, app, "uses-native-library", "libopenxr.google.so") {
             it.setAttribute("android:required", "false")
         }
@@ -48,13 +53,26 @@ class FourXvrLaunchManifestTest {
         val features = doc.getElementsByTagName("uses-feature").let { nodes ->
             (0 until nodes.length).map { nodes.item(it) as Element }
         }
-        assertEquals(2, features.size)
+        assertEquals(5, features.size)
         val passthrough = features.single { it.getAttribute("android:name") == "com.oculus.feature.PASSTHROUGH" }
         assertEquals("false", passthrough.getAttribute("android:required"))
         assertEquals("", passthrough.getAttribute("android:version"))
         val openxr = features.single { it.getAttribute("android:name") == "android.software.xr.api.openxr" }
         assertEquals("false", openxr.getAttribute("android:required"))
         assertEquals("65537", openxr.getAttribute("android:version"))
+        val controller = features.single { it.getAttribute("android:name") == "android.hardware.xr.input.controller" }
+        assertEquals("false", controller.getAttribute("android:required"))
+        val handTracking = features.single { it.getAttribute("android:name") == "android.hardware.xr.input.hand_tracking" }
+        assertEquals("false", handTracking.getAttribute("android:required"))
+        val eyeTracking = features.single { it.getAttribute("android:name") == "android.hardware.xr.input.eye_tracking" }
+        assertEquals("false", eyeTracking.getAttribute("android:required"))
+
+        val permissions = doc.getElementsByTagName("uses-permission").let { nodes ->
+            (0 until nodes.length).map { nodes.item(it) as Element }
+        }
+        assertEquals(2, permissions.size)
+        val permissionNames = permissions.map { it.getAttribute("android:name") }.toSet()
+        assertEquals(setOf("android.permission.HAND_TRACKING", "android.permission.EYE_TRACKING_FINE"), permissionNames)
 
         val nativeLibrary = doc.getElementsByTagName("uses-native-library").item(0) as Element?
         assertNotNull(nativeLibrary)
@@ -72,10 +90,13 @@ class FourXvrLaunchManifestTest {
         val childCount = app.childNodes.length
         upsertManifestFeature(doc, manifest, app, "com.oculus.feature.PASSTHROUGH", required = false, version = null)
         upsertManifestFeature(doc, manifest, app, "android.software.xr.api.openxr", required = false, version = "65537")
+        upsertManifestFeature(doc, manifest, app, "android.hardware.xr.input.hand_tracking", required = false, version = null)
+        upsertManifestPermission(doc, manifest, app, "android.permission.HAND_TRACKING")
         upsertApplicationChild(doc, app, "uses-native-library", "libopenxr.google.so") {
             it.setAttribute("android:required", "false")
         }
         assertEquals(childCount, app.childNodes.length)
-        assertEquals(2, doc.getElementsByTagName("uses-feature").length)
+        assertEquals(5, doc.getElementsByTagName("uses-feature").length)
+        assertEquals(2, doc.getElementsByTagName("uses-permission").length)
     }
 }

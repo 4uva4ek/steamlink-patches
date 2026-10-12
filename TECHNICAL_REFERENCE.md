@@ -64,9 +64,9 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.18](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.18)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;43 patches total
+> **[v1.28.0-dev.18](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.18)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;44 patches total
 <details open>
-<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
+<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -94,8 +94,9 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Galaxy XR launch compatibility (4XVR)](#galaxy-xr-launch-compatibility-4xvr) | Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Galaxy XR launch compatibility (4XVR)](#galaxy-xr-launch-compatibility-4xvr) | Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations (OpenXR 1.1, passthrough, hand and eye input) for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 | [Galaxy XR launcher icon (4XVR)](#galaxy-xr-launcher-icon-4xvr) | Re-exposes the stock 4XVR launcher artwork under the canonical ic_launcher/ic_launcher_round names (adaptive icon plus density PNGs) and points the manifest at them, matching the Steam Link icon shape for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Popup refresh on resume (4XVR)](#popup-refresh-on-resume-4xvr) | Re-checks the 4XVR startup popups after the activity resumes or returns from system settings: hides the All-files-access prompt once external storage access is granted (the stock flow never re-checks the result of its 0x59E2 request) and hides the release-notes window when its saved version already covers the installed build, for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 | [Startup and UI continuity helper (4XVR)](#startup-and-ui-continuity-helper-4xvr) | Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build 20022. Headless validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Advanced XR compatibility
@@ -104,7 +105,7 @@ This section is generated from the patch catalog during releases.
 |----------|----------------|----------------|-----------|
 | [Frame-synced render dispatch (4XVR)](#frame-synced-render-dispatch-4xvr) | Drains the render dispatch queue before every frame, hands scene switches to RenderDispatch.requestScene instead of the retired render runnable, and routes window teardown through the dispatch for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 | [Galaxy XR refresh profile (72 Hz, 4XVR)](#galaxy-xr-refresh-profile-72-hz-4xvr) | Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Meta platform decoupling (4XVR, experimental)](#meta-platform-decoupling-4xvr-experimental) | Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime; launch-criticality is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Meta platform decoupling (4XVR)](#meta-platform-decoupling-4xvr) | Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime: without these stubs the app hangs on the splash — the OpenXR session is created but never presents its first frame (Galaxy XR on-device A/B, 2026-10-12). Meta-store VIP flows degrade. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 | [Render dispatch payload (4XVR)](#render-dispatch-payload-4xvr) | Installs the 4XVR render dispatch native (frame-synced scene queue and adaptive theater background updates) for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Subtitles & playback

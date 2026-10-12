@@ -1155,7 +1155,7 @@
     },
     {
       "name": "Galaxy XR launch compatibility (4XVR)",
-      "description": "Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
+      "description": "Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations (OpenXR 1.1, passthrough, hand and eye input) for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
       "category": "Startup & permissions",
       "default": true,
       "dependencies": [],
@@ -1282,10 +1282,10 @@
       "options": []
     },
     {
-      "name": "Meta platform decoupling (4XVR, experimental)",
-      "description": "Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime; launch-criticality is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
+      "name": "Meta platform decoupling (4XVR)",
+      "description": "Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime: without these stubs the app hangs on the splash — the OpenXR session is created but never presents its first frame (Galaxy XR on-device A/B, 2026-10-12). Meta-store VIP flows degrade. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
       "category": "Advanced XR compatibility",
-      "default": false,
+      "default": true,
       "dependencies": [],
       "compatiblePackages": [
         {
@@ -1627,6 +1627,38 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Popup refresh on resume (4XVR)",
+      "description": "Re-checks the 4XVR startup popups after the activity resumes or returns from system settings: hides the All-files-access prompt once external storage access is granted (the stock flow never re-checks the result of its 0x59E2 request) and hides the release-notes window when its saved version already covers the installed build, for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
+      "category": "Startup & permissions",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Render dispatch payload (4XVR)",

@@ -140,6 +140,18 @@ Caused by: java.util.NoSuchElementException: Collection is empty.
 - Byte-hashed text payloads need an explicit `.gitattributes` `text eol=lf` pin. Without it a Windows
   checkout (core.autocrlf) fails the sha256 payload tests while CI on Linux passes; add the pin and
   re-checkout the file instead of touching the expected hash.
+- Index-0 insertion is safe only when the method's first instruction is not a branch or switch target
+  and no try range starts there; both are cheap to read out of the decoded smali and belong in a
+  decoded-tree audit test that skips without the tree (pattern: `FourXvrPopupRefreshAnchorTest` —
+  unique selector, head not labelled, 0 `.catch` in the method, plus the helper's call surface:
+  public `IsVisible()Z` / `SetHide()V`, the public getter, the reflectively read field name).
+- Method-receiver extension helpers (idempotency guards, anchor predicates) need `MutableMethod` from
+  `app.morphe.patcher.util.proxy.mutableTypes.MutableMethod` — the patcher fork's package, not
+  `app.morphe.patcher.patch`. Guard each `addInstruction` with a check on `instructions.first()` so
+  re-running `execute` cannot inject a second call.
+- A new `diagnostics/<app>/` record directory is ignored by `diagnostics/*`: add the whitelist block
+  (`!diagnostics/<dir>/`, `diagnostics/<dir>/*`, `!diagnostics/<dir>/*.md`) in the same change, or a
+  plain `git add` silently drops the records the release docs and `AGENTS.md` cite.
 
 ## On-device APK sources (headset pulls)
 

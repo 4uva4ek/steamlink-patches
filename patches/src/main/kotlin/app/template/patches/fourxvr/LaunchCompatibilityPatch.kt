@@ -66,11 +66,31 @@ internal fun upsertManifestFeature(
     matches.drop(1).forEach { duplicate -> duplicate.parentNode.removeChild(duplicate) }
 }
 
+internal fun upsertManifestPermission(
+    doc: Document,
+    manifest: Element,
+    app: Element,
+    name: String,
+) {
+    val matches = doc.getElementsByTagName("uses-permission").asSequence()
+        .filterIsInstance<Element>()
+        .filter { it.getAttribute("android:name") == name }
+        .toList()
+    val permission = matches.firstOrNull() ?: doc.createElement("uses-permission").also {
+        it.setAttribute("android:name", name)
+        manifest.insertBefore(it, app)
+    }
+    matches.filter { it !== permission && it.parentNode == manifest }.forEach { duplicate ->
+        manifest.removeChild(duplicate)
+    }
+}
+
 @Suppress("unused")
 internal val fourXvrLaunchCompatibilityPatch = resourcePatch(
     name = "Galaxy XR launch compatibility (4XVR)",
     description = "Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and " +
-        "the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. " +
+        "the Galaxy XR manifest declarations (OpenXR 1.1, passthrough, hand and eye input) for " +
+        "exact 4XVR 2.0.22 build 20022. " +
         "Decoded-base adaptation; headset validation pending. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
@@ -120,6 +140,48 @@ internal val fourXvrLaunchCompatibilityPatch = resourcePatch(
                 name = "android.software.xr.api.openxr",
                 required = false,
                 version = "65537",
+            )
+
+            // Android XR input contract: declare the documented XR input features and permissions so the
+            // platform can route hand and eye input to the app (Steam Link declares the same set; routing
+            // behaviour on this Samsung build is unverified, the two AOSP permissions are inert here).
+            upsertManifestFeature(
+                doc = doc,
+                manifest = manifest,
+                app = app,
+                name = "android.hardware.xr.input.controller",
+                required = false,
+                version = null,
+            )
+            upsertManifestFeature(
+                doc = doc,
+                manifest = manifest,
+                app = app,
+                name = "android.hardware.xr.input.hand_tracking",
+                required = false,
+                version = null,
+            )
+            upsertManifestFeature(
+                doc = doc,
+                manifest = manifest,
+                app = app,
+                name = "android.hardware.xr.input.eye_tracking",
+                required = false,
+                version = null,
+            )
+
+            // AOSP Android XR runtime permissions; inert on the current Samsung build, declared for parity with Steam Link.
+            upsertManifestPermission(
+                doc = doc,
+                manifest = manifest,
+                app = app,
+                name = "android.permission.HAND_TRACKING",
+            )
+            upsertManifestPermission(
+                doc = doc,
+                manifest = manifest,
+                app = app,
+                name = "android.permission.EYE_TRACKING_FINE",
             )
 
             // Native loader shim exposed by Android XR (not present on Meta devices).

@@ -139,10 +139,12 @@ internal val fourXvrRefreshProfilePatch = rawResourcePatch(
 }
 
 // ---------------------------------------------------------------------------
-// G2 — Meta platform decoupling (default-off). 11 exported functions of
+// G2 — Meta platform decoupling (default-on since 2026-10-12). 11 exported functions of
 // libovrplatformloader.so are stubbed to "mov x0, #0; ret" so the platform SDK never
-// initialises on a runtime without Meta Horizon services. Licensing-sensitive and
-// launch-criticality unproven: excluded from the recommended bundle; enable explicitly.
+// initialises on a runtime without Meta Horizon services. On-device A/B evidence (Galaxy XR
+// R3GYB09JA5E, 4XVR 2.0.22/20022, 2026-10-12): without the stubs the app hangs on its splash (its
+// session is created but never presents a first frame); with them the UI loads. Meta-store VIP
+// flows degrade, matching the reference build.
 // ---------------------------------------------------------------------------
 
 internal const val OVR_PLATFORM_LOADER_SIZE = 829_880
@@ -178,13 +180,14 @@ internal val OVR_STUB_EDITS = listOf(
 
 @Suppress("unused")
 internal val fourXvrPlatformDecouplingPatch = rawResourcePatch(
-    name = "Meta platform decoupling (4XVR, experimental)",
+    name = "Meta platform decoupling (4XVR)",
     description = "Stubs the 11 exported Oculus platform-init/entitlement/message functions in " +
         "libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build " +
-        "requires the Meta platform channel to stay inert on a non-Meta runtime; launch-criticality " +
-        "is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling. " +
+        "requires the Meta platform channel to stay inert on a non-Meta runtime: without these " +
+        "stubs the app hangs on the splash — the OpenXR session is created but never presents " +
+        "its first frame (Galaxy XR on-device A/B, 2026-10-12). Meta-store VIP flows degrade. " +
         FOUR_XVR_UPSTREAM_CREDIT,
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
