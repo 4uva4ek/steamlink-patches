@@ -1,7 +1,7 @@
-# Steam Link 2.0.23 angular adapter (experimental)
+# Steam Link 2.0.23 angular adapter
 
-Standalone Morphe patch: **Controller angular world to local, 2.0.23 (experimental)**.
-Category **Experiments**, default off, no recommended-set dependency. Exact
+Standalone Morphe patch: **Controller angular world to local**.
+Category **Controller**, default off, no recommended-set dependency. Exact
 2.0.23/5002363 only, for the original package and the inspected `.x_23` clone.
 
 Requires the Galaxy XR OpenXR Velocity Frame runtime correction **actually active**

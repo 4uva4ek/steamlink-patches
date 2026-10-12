@@ -37,11 +37,12 @@ internal fun controllerExtrapolationResource(name: String): ByteArray =
 
 @Suppress("unused")
 val controllerPoseExtrapolationPatch = rawResourcePatch(
-    name = "Controller pose extrapolation (experimental)",
-    description = "Makes the Galaxy XR runtime extrapolate controller poses to the time VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose. Adds an OpenXR API layer; no Steam Link code changes.",
+    name = "Controller pose extrapolation",
+    description = "Makes the Galaxy XR runtime extrapolate controller poses to the time VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose. Adds an OpenXR API layer; no Steam Link code changes. " +
+        STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
-    category(PatchCategories.EXPERIMENTS)
+    category(PatchCategories.CONTROLLER)
     compatibleWith(*CONTROLLER_EXTRAPOLATION_BUILDS.map { build ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,

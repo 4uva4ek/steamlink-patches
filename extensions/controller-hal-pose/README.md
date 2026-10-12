@@ -1,10 +1,10 @@
 # Controller HAL pose layer (2026-10-04)
 
 Source of `libgxr_controller_hal_pose.so` and `extensions/controller-hal-pose.mpe`, installed
-by the opt-in patches **Controller tracking from the controller HAL through Shizuku
-(experimental)** (2.0.23) and **Controller tracking from the controller HAL through Shizuku,
-2.0.20 - 2.0.22 (experimental)**. The two differ only in the angular velocity frame they write
-into the library's config block (see "Velocities").
+by the opt-in patch **Controller tracking from the controller HAL through Shizuku** for exact
+Steam Link 2.0.23/5002363 and the legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968,
+2.0.22/5002244). The angular velocity frame it writes into the library's config block differs
+between 2.0.23 and the legacy bases (see "Velocities").
 
 ## What it changes
 

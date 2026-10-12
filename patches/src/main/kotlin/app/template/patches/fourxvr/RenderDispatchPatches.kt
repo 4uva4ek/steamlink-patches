@@ -38,7 +38,8 @@ private const val V4_WINDOW = "Lcn/vr4p/oculus4xvrplayerov/V4Window;"
 internal val fourXvrRenderDispatchPayloadPatch = rawResourcePatch(
     name = "Render dispatch payload (4XVR)",
     description = "Installs the 4XVR render dispatch native (frame-synced scene queue and " +
-        "adaptive theater background updates) for exact 4XVR 2.0.22 build 20022.",
+        "adaptive theater background updates) for exact 4XVR 2.0.22 build 20022. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
@@ -57,7 +58,8 @@ internal val fourXvrRenderDispatchPatch = bytecodePatch(
     description = "Drains the render dispatch queue before every frame, hands scene switches to " +
         "RenderDispatch.requestScene instead of the retired render runnable, and routes window " +
         "teardown through the dispatch for exact 4XVR 2.0.22 build 20022. Headset validation " +
-        "pending.",
+        "pending. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)

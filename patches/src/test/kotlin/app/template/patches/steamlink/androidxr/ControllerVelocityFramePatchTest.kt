@@ -63,37 +63,30 @@ class ControllerVelocityFramePatchTest {
     fun `layer does not share files with the other controller layers`() {
         assertFalse(CONTROLLER_VELOCITY_FRAME_LIBRARY == CONTROLLER_EXTRAPOLATION_LIBRARY)
         assertFalse(CONTROLLER_VELOCITY_FRAME_MANIFEST == CONTROLLER_EXTRAPOLATION_MANIFEST)
-        // The legacy controller velocity layer keeps its own names.
-        assertFalse(CONTROLLER_VELOCITY_FRAME_LIBRARY == "libgxr_controller_velocity.so")
-        assertFalse(CONTROLLER_VELOCITY_FRAME_MANIFEST == "XR_APILAYER_local_GalaxyXR_controller_velocity.json")
     }
 
     @Test
-    fun `patches are opt-in and split the legacy and native bases`() {
-        assertEquals("Controller velocity frame (experimental)", controllerVelocityFramePatch.name)
-        assertEquals("Controller velocity frame, 2.0.20 - 2.0.22 (experimental)", controllerVelocityFrameLegacyPatch.name)
-        mapOf(
-            controllerVelocityFramePatch to listOf("2.0.23" to 5002363),
-            controllerVelocityFrameLegacyPatch to listOf(
-                "2.0.20" to 5001712, "2.0.20" to 5001812, "2.0.21" to 5001968, "2.0.22" to 5002244,
+    fun `patch is opt-in and one patch covers all 5 bases`() {
+        assertEquals("Controller velocity frame", controllerVelocityFramePatch.name)
+
+        assertFalse(controllerVelocityFramePatch.default, controllerVelocityFramePatch.name)
+        assertTrue(controllerVelocityFramePatch.dependencies.isEmpty(), controllerVelocityFramePatch.name)
+        val compatibilities = controllerVelocityFramePatch.compatibility.orEmpty()
+        assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME }, controllerVelocityFramePatch.name)
+        assertEquals(
+            listOf(
+                "2.0.23" to 5002363, "2.0.20" to 5001712, "2.0.20" to 5001812,
+                "2.0.21" to 5001968, "2.0.22" to 5002244,
             ),
-        ).forEach { (patch, builds) ->
-            assertFalse(patch.default, patch.name)
-            assertTrue(patch.dependencies.isEmpty(), patch.name)
-            val compatibilities = patch.compatibility.orEmpty()
-            assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME }, patch.name)
-            assertEquals(
-                builds,
-                compatibilities.map { it.targets.single() }.map { it.version to it.versionCodes!!.values.toSet().single() },
-                patch.name,
-            )
-        }
+            compatibilities.map { it.targets.single() }.map { it.version to it.versionCodes!!.values.toSet().single() },
+            controllerVelocityFramePatch.name,
+        )
         assertTrue("local to the streamed pose" in controllerVelocityFramePatch.description.orEmpty())
-        assertTrue("in the base space" in controllerVelocityFrameLegacyPatch.description.orEmpty())
+        assertTrue("in the base space" in controllerVelocityFramePatch.description.orEmpty())
         // Only the base the layer was measured on says so.
         assertEquals(
             listOf("2.0.23"),
-            (controllerVelocityFramePatch.compatibility.orEmpty() + controllerVelocityFrameLegacyPatch.compatibility.orEmpty())
+            controllerVelocityFramePatch.compatibility.orEmpty()
                 .map { it.targets.single() }
                 .filter { "not run on this base" !in it.description.orEmpty() }
                 .map { it.version },

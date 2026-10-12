@@ -27,11 +27,12 @@ private val controllerGripHapticsExtensionPatch = bytecodePatch {
 
 @Suppress("unused")
 val controllerGripHapticsPatch = rawResourcePatch(
-    name = "Controller grip haptics through Shizuku (experimental)",
-    description = "Routes controller vibration to the grip vibrator instead of the trigger, which Galaxy XR uses for every OpenXR vibration. The grip one needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without it vibration is stock.",
+    name = "Controller grip haptics through Shizuku",
+    description = "Routes controller vibration to the grip vibrator instead of the trigger, which Galaxy XR uses for every OpenXR vibration. The grip one needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without it vibration is stock. " +
+        STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
-    category(PatchCategories.EXPERIMENTS)
+    category(PatchCategories.CONTROLLER)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_EXPERIMENTAL.toTypedArray())
     dependsOn(
         shizukuBridgeExtensionPatch,

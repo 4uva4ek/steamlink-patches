@@ -47,7 +47,8 @@ private const val SUBTITLE_FONT = "Lcn/vr4p/patch/SubtitleFont;"
 internal val fourXvrSubtitleSuitePayloadPatch = rawResourcePatch(
     name = "Subtitle suite payload (4XVR)",
     description = "Installs the subtitle position native library used by the 4XVR subtitle " +
-        "suite controls on exact 4XVR 2.0.22 build 20022.",
+        "suite controls on exact 4XVR 2.0.22 build 20022. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.SUBTITLES_AND_PLAYBACK)
@@ -65,7 +66,8 @@ internal val fourXvrSubtitleSuitePatch = bytecodePatch(
     name = "Subtitle suite (4XVR)",
     description = "Adds the subtitle position controls row, the enlarged subtitle panel height, " +
         "immediate config persistence on color-tab changes, the custom subtitle font load and " +
-        "the wrapped-cue size clamp for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
+        "the wrapped-cue size clamp for exact 4XVR 2.0.22 build 20022. Headset validation pending. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.SUBTITLES_AND_PLAYBACK)

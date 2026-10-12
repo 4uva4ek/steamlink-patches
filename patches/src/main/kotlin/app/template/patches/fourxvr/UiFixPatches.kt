@@ -28,7 +28,8 @@ internal val fourXvrToastContinuityPatch = bytecodePatch(
     description = "Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated " +
         "memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across " +
         "activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build " +
-        "20022. Headless validation pending.",
+        "20022. Headless validation pending. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)

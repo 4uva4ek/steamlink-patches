@@ -30,7 +30,8 @@ val fourXvrGalaxyXrSetPatch = rawResourcePatch(
         "profile, the libplacebo HDR pipeline, the 5.1-channel audio bridge, the frame-synced " +
         "render dispatch, the subtitle suite and the startup/UI continuity helper. Headset " +
         "validation pending; the libplacebo source obligation is tracked in the implementation " +
-        "record.",
+        "record. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.RECOMMENDED_SETS)

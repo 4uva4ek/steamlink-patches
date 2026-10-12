@@ -1,7 +1,7 @@
 # Controller grip haptics (2026-10-04)
 
 Source of `libgxr_haptic_main.so` and `extensions/controller-grip-haptics.mpe`, installed by
-the opt-in patch **Controller grip haptics through Shizuku (experimental)**.
+the opt-in patch **Controller grip haptics through Shizuku**.
 
 ## What it changes
 

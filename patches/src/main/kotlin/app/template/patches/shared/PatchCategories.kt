@@ -9,5 +9,5 @@ internal object PatchCategories {
     const val APP_AND_DEVICE_IDENTITY = "App & device identity"
     const val ADVANCED_XR_COMPATIBILITY = "Advanced XR compatibility"
     const val SUBTITLES_AND_PLAYBACK = "Subtitles & playback"
-    const val EXPERIMENTS = "Experiments"
+    const val CONTROLLER = "Controller"
 }

@@ -125,7 +125,7 @@ val xrFovealCanvasPatch = rawResourcePatch(
     description = "Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation.",
     default = false,
 ) {
-    category(PatchCategories.EXPERIMENTS)
+    category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.map { exact ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,

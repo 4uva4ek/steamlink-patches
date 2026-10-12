@@ -37,7 +37,8 @@ private const val RENDER_DISPATCH = "Lcn/vr4p/oculus4xvrplayerov/RenderDispatch;
 internal val fourXvrHdrPayloadPatch = rawResourcePatch(
     name = "HDR pipeline payload (4XVR)",
     description = "Installs the modified libplacebo 7.360.1 (LGPL-2.1-or-later), the 4XVR HDR " +
-        "bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022.",
+        "bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
@@ -57,7 +58,8 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
     name = "libplacebo HDR pipeline (4XVR)",
     description = "Loads the HDR bridge, routes the decoder output surface through it for the " +
         "FP16 hand-off, detects HLG from the video MediaFormat and keeps the bridge informed of " +
-        "movie/seek transitions for exact 4XVR 2.0.22 build 20022. Headset validation pending.",
+        "movie/seek transitions for exact 4XVR 2.0.22 build 20022. Headset validation pending. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)

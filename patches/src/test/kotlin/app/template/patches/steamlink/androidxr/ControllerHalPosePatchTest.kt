@@ -97,31 +97,31 @@ class ControllerHalPosePatchTest {
     }
 
     @Test
-    fun `patches are opt-in, experimental, name Shizuku and split the bases`() {
+    fun `patch is opt-in, names Shizuku and covers all 5 bases`() {
         assertEquals(
-            "Controller tracking from the controller HAL through Shizuku (experimental)",
+            "Controller tracking from the controller HAL through Shizuku",
+            controllerHalPosePatch.name,
+        )
+        assertFalse(controllerHalPosePatch.default, controllerHalPosePatch.name)
+        assertTrue("needs Shizuku" in controllerHalPosePatch.description.orEmpty(), controllerHalPosePatch.name)
+        assertEquals(3, controllerHalPosePatch.dependencies.size, controllerHalPosePatch.name)
+        assertTrue(shizukuBridgeExtensionPatch in controllerHalPosePatch.dependencies, controllerHalPosePatch.name)
+        assertTrue(shizukuBridgeManifestPatch in controllerHalPosePatch.dependencies, controllerHalPosePatch.name)
+        val compatibilities = controllerHalPosePatch.compatibility.orEmpty()
+        assertTrue(
+            compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME },
             controllerHalPosePatch.name,
         )
         assertEquals(
-            "Controller tracking from the controller HAL through Shizuku, 2.0.20 - 2.0.22 (experimental)",
-            controllerHalPoseLegacyPatch.name,
+            listOf(
+                "2.0.23" to 5002363, "2.0.20" to 5001712, "2.0.20" to 5001812,
+                "2.0.21" to 5001968, "2.0.22" to 5002244,
+            ),
+            compatibilities.map { it.targets.single() }.map { it.version to it.versionCodes!!.values.toSet().single() },
+            controllerHalPosePatch.name,
         )
-        mapOf(
-            controllerHalPosePatch to setOf(5002363),
-            controllerHalPoseLegacyPatch to setOf(5001712, 5001812, 5001968, 5002244),
-        ).forEach { (patch, versionCodes) ->
-            assertFalse(patch.default, patch.name)
-            assertTrue("needs Shizuku" in patch.description.orEmpty(), patch.name)
-            val compatibilities = patch.compatibility.orEmpty()
-            assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME }, patch.name)
-            assertEquals(
-                versionCodes,
-                compatibilities.flatMap { it.targets }.flatMap { it.versionCodes!!.values }.toSet(),
-                patch.name,
-            )
-        }
         assertTrue("local to the grip pose" in controllerHalPosePatch.description.orEmpty())
-        assertTrue("in the base space" in controllerHalPoseLegacyPatch.description.orEmpty())
+        assertTrue("in the base space" in controllerHalPosePatch.description.orEmpty())
 
         listOf("2.0.20" to "5001712", "2.0.20" to "5001812", "2.0.21" to "5001968", "2.0.22" to "5002244",
             "2.0.23" to "5002363")

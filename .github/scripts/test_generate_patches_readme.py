@@ -18,7 +18,7 @@ CATEGORIES = (
     "Startup & permissions",
     "App & device identity",
     "Advanced XR compatibility",
-    "Experiments",
+    "Controller",
 )
 
 

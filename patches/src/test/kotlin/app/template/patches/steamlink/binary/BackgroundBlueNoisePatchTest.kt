@@ -14,9 +14,9 @@ class BackgroundBlueNoisePatchTest {
     )
 
     @Test
-    fun `background and foveal patches are independently selectable exact experiments`() {
-        assertEquals("Background blue-noise dithering (experimental)", backgroundBlueNoisePatch.name)
-        assertEquals("Foveal blue-noise dithering (experimental)", fovealBlueNoisePatch.name)
+    fun `background and foveal patches are independently selectable exact layers`() {
+        assertEquals("Background blue-noise dithering", backgroundBlueNoisePatch.name)
+        assertEquals("Foveal blue-noise dithering", fovealBlueNoisePatch.name)
         assertNotSame(backgroundBlueNoisePatch, fovealBlueNoisePatch)
         assertNotSame(backgroundBlueNoisePatch.options["inputDepth"], fovealBlueNoisePatch.options["inputDepth"])
         for (patch in listOf(backgroundBlueNoisePatch, fovealBlueNoisePatch)) {

@@ -71,7 +71,8 @@ internal val fourXvrLaunchCompatibilityPatch = resourcePatch(
     name = "Galaxy XR launch compatibility (4XVR)",
     description = "Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and " +
         "the Galaxy XR manifest declarations for exact 4XVR 2.0.22 build 20022. " +
-        "Decoded-base adaptation; headset validation pending.",
+        "Decoded-base adaptation; headset validation pending. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)

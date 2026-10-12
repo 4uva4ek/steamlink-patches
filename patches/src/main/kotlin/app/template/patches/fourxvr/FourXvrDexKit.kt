@@ -32,6 +32,13 @@ import java.security.MessageDigest
  * InlineSmaliCompiler path crashes on several released Morphe Manager builds.
  */
 
+/**
+ * Credit for the upstream patch set this 4XVR port is based on (logkim1/4XVR-GalaxyXR).
+ * Appended to every 4XVR patch description shown in Morphe Manager.
+ */
+internal const val FOUR_XVR_UPSTREAM_CREDIT =
+    "Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR."
+
 internal fun loadFourXvrResource(name: String): ByteArray =
     (object {}.javaClass.getResourceAsStream("/fourxvr/$name")
         ?: error("Missing bundled resource: fourxvr/$name"))

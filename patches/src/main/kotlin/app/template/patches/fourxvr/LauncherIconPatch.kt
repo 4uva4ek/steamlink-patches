@@ -25,7 +25,8 @@ internal val fourXvrLauncherIconPatch = rawResourcePatch(
     name = "Galaxy XR launcher icon (4XVR)",
     description = "Re-exposes the stock 4XVR launcher artwork under the canonical " +
         "ic_launcher/ic_launcher_round names (adaptive icon plus density PNGs) and points the " +
-        "manifest at them, matching the Steam Link icon shape for exact 4XVR 2.0.22 build 20022.",
+        "manifest at them, matching the Steam Link icon shape for exact 4XVR 2.0.22 build 20022. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)

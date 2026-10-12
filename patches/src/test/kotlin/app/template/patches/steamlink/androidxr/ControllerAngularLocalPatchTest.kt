@@ -12,7 +12,7 @@ class ControllerAngularLocalPatchTest {
         val patch = controllerAngularLocalPatch
         assertFalse(patch.default)
         assertTrue(patch.dependencies.isEmpty())
-        assertEquals("Experiments", patch.category)
+        assertEquals("Controller", patch.category)
         assertEquals(setOf("com.valvesoftware.steamlinkvr","com.valvesoftware.steamlinkvr.x_23"),
             patch.compatibility!!.map {it.packageName}.toSet())
         val compatibility = patch.compatibility!!.first()

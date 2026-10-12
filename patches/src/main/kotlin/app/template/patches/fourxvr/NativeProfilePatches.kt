@@ -119,7 +119,8 @@ internal val fourXvrRefreshProfilePatch = rawResourcePatch(
     name = "Galaxy XR refresh profile (72 Hz, 4XVR)",
     description = "Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) " +
         "so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. " +
-        "Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation.",
+        "Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
@@ -181,10 +182,11 @@ internal val fourXvrPlatformDecouplingPatch = rawResourcePatch(
     description = "Stubs the 11 exported Oculus platform-init/entitlement/message functions in " +
         "libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build " +
         "requires the Meta platform channel to stay inert on a non-Meta runtime; launch-criticality " +
-        "is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling.",
+        "is unproven and Meta-store VIP flows degrade. Default off; verify on device before enabling. " +
+        FOUR_XVR_UPSTREAM_CREDIT,
     default = false,
 ) {
-    category(PatchCategories.EXPERIMENTS)
+    category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_FOUR_XVR.toTypedArray())
 
     execute {

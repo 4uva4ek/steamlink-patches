@@ -27,9 +27,9 @@ continues to resolve to Galaxy XR. Other supported targets outside the exact leg
 set likewise retain Galaxy XR as their automatic choice. Neither native bundle enables legacy
 conversion mutations, and 5002322 still excludes Device identity.
 
-A separate default-off **Foveal blue-noise dithering (experimental)** patch was added on 2026-09-22. It does not replace the historical/VD-like controls below. The [decoded VD comparison](diagnostics/steamlink-blue-noise-ditering/virtualdesktop-verification.md) corrects the earlier fovea-isolation and VD-equivalence claims.
+A separate default-off **Foveal blue-noise dithering** patch was added on 2026-09-22. It does not replace the historical/VD-like controls below. The [decoded VD comparison](diagnostics/steamlink-blue-noise-ditering/virtualdesktop-verification.md) corrects the earlier fovea-isolation and VD-equivalence claims.
 
-On 2026-09-25, a matching default-off **Background blue-noise dithering (experimental)**
+On 2026-09-25, a matching default-off **Background blue-noise dithering**
 patch was added. The 2 blue-noise patches can be selected independently or together;
 each only quantizes its named layer. The original tile/formula remain unchanged.
 See [current layer selection and checks](diagnostics/steamlink-background-blue-noise/README.md).

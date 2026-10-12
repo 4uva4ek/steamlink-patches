@@ -8,12 +8,10 @@ import app.morphe.patcher.patch.Patch
 import app.template.patches.steamlink.androidxr.ANDROID_SURFACE_TRIGGER_5001712_BUILD_ID
 import app.template.patches.steamlink.androidxr.ANDROID_SURFACE_TRIGGER_BUILD_ID
 import app.template.patches.steamlink.androidxr.ANDROID_SURFACE_TRIGGER_MANIFEST
-import app.template.patches.steamlink.androidxr.gxrModernTongueBridgePatch
 import app.template.patches.steamlink.androidxr.patchModernTongueTransport
 import app.template.patches.steamlink.androidxr.androidSurfaceTriggerResourceLibraryForBuild
 import app.template.patches.steamlink.androidxr.ensureIdsXml
 import app.template.patches.steamlink.androidxr.appearOnTopPatch
-import app.template.patches.steamlink.androidxr.controllerVelocityPatch
 import app.template.patches.steamlink.androidxr.gxrFacebridgePatch
 import app.template.patches.steamlink.androidxr.unrestrictedBatteryUsagePatch
 import app.template.patches.steamlink.androidxr.xrCoreRuntimePatch
@@ -42,7 +40,6 @@ import app.template.patches.steamlink.binary.patchNativeMicrophonePreset
 import app.template.patches.steamlink.binary.patchVisualDelay
 import app.template.patches.shared.Constants.isTwoProjectionSteamLinkBuild
 import app.template.patches.steamlink.identity.changePackageNamePatch
-import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
 import app.template.patches.steamlink.identity.patchHmdModelIdentity
 import kotlinx.coroutines.flow.toList
@@ -72,15 +69,15 @@ private val visualDelayFixtures = highResolutionFixtures
 private val legacyPublicFixtures = highResolutionFixtures.filter { it.versionCode in setOf("5001712", "5001812", "5001968") }
 
 // Independent expected offsets from symbol/disassembly receipts, not production tables.
-private data class LegacyNativeSites(val face: Int, val eye: Int, val cadence: Int, val mic: Int, val hook: Int, val gates: List<Int>)
+private data class LegacyNativeSites(val face: Int, val eye: Int, val mic: Int, val hook: Int, val gates: List<Int>)
 private val legacySites = mapOf(
-    "5001712" to LegacyNativeSites(0x99924, 0xa1a7f, 0xf6468, 0xf4584, 0x1014e8, listOf(0xffe20, 0xffe28, 0x10db10, 0x116564, 0x11656c, 0x116620)),
-    "5001812" to LegacyNativeSites(0x99862, 0xa1985, 0xf6324, 0xf4484, 0x101648, listOf(0xffc5c, 0xffc64, 0x10dc70, 0x1166c4, 0x1166cc, 0x116780)),
-    "5001968" to LegacyNativeSites(0x9334f, 0x9b7ab, 0xf2180, 0xefdb4, 0xfd5f0, listOf(0xfbc04, 0xfbc0c, 0x109bf0, 0x112644, 0x11264c, 0x112700)),
+    "5001712" to LegacyNativeSites(0x99924, 0xa1a7f, 0xf4584, 0x1014e8, listOf(0xffe20, 0xffe28, 0x10db10, 0x116564, 0x11656c, 0x116620)),
+    "5001812" to LegacyNativeSites(0x99862, 0xa1985, 0xf4484, 0x101648, listOf(0xffc5c, 0xffc64, 0x10dc70, 0x1166c4, 0x1166cc, 0x116780)),
+    "5001968" to LegacyNativeSites(0x9334f, 0x9b7ab, 0xefdb4, 0xfd5f0, listOf(0xfbc04, 0xfbc0c, 0x109bf0, 0x112644, 0x11264c, 0x112700)),
 )
 
 private val publicPatchesFor5002363: List<Patch<*>> = listOf(
-    deviceIdentityNativeXrPatch, gxrModernTongueBridgePatch, xrGalaxyXrHighResolutionPatch,
+    deviceIdentityPatch, gxrFacebridgePatch, xrGalaxyXrHighResolutionPatch,
     microphoneInputPresetPatch, oledCalibrationPatch, unrestrictedBatteryUsagePatch, hmdOnlyPatch,
 )
 
@@ -88,7 +85,6 @@ private val publicPatchesFor5001712: List<Patch<*>> = listOf(
     androidXrNativePermissionNamesPatch,
     appearOnTopPatch,
     changePackageNamePatch,
-    controllerVelocityPatch,
     deviceIdentityPatch,
     forceHmdInitializationGatesPatch,
     forceLobbyPermissionStateGatePatch,
@@ -173,7 +169,7 @@ private suspend fun runSingleAudit(args: Array<String>) {
             val input = fixtureFile(fixtureDirectory, fixture)
             val caseDirectory = File(outputDirectory, "5002363-public-${requireNotNull(patch.name).safeName()}")
             val output = File(caseDirectory, "steamlink-5002363-unsigned.apk")
-            configurePublicAuditOptions(patch)
+            configurePublicAuditOptions(patch, fixture)
             executePatch(input, patch, File(caseDirectory, "temporary"), output)
             verifyModernPublicOutput(input, output, patch, fixture)
             println("PASS 2.0.23/5002363 public patch: ${patch.name}: $output")
@@ -187,7 +183,7 @@ private suspend fun runSingleAudit(args: Array<String>) {
             require(fixture.isFile) { "Missing decoded APK fixture: $fixture" }
             val patchDirectory = File(outputDirectory, "${base.versionCode}-public-${patchName.safeName()}")
             val output = File(patchDirectory, "steamlink-${base.versionCode}-${patchName.safeName()}-unsigned.apk")
-            configurePublicAuditOptions(patch)
+            configurePublicAuditOptions(patch, base)
             executePatch(fixture, patch, File(patchDirectory, "temporary"), output)
             verifyPublicPatchOutput(output, patch, base)
             if (patch == xrGalaxyXrHighResolutionPatch) {
@@ -254,10 +250,13 @@ private suspend fun runSingleAudit(args: Array<String>) {
     }
 }
 
-private fun configurePublicAuditOptions(patch: Patch<*>) {
+private fun configurePublicAuditOptions(patch: Patch<*>, fixture: HighResolutionFixture) {
     when (patch) {
-        controllerVelocityPatch -> patch.options["poseSendCadence"] = "half-2x"
-        deviceIdentityPatch -> patch.options["profile"] = "meta-quest-pro"
+        // The merged identity patch already resolves to the Galaxy XR transport identity on
+        // 5002363; keep the explicit Quest Pro pin only for the legacy fixtures.
+        deviceIdentityPatch -> {
+            if (fixture.versionCode != "5002363") patch.options["profile"] = "meta-quest-pro"
+        }
         else -> Unit
     }
 }
@@ -284,15 +283,6 @@ private fun verifyPublicPatchOutput(outputApk: File, patch: Patch<*>, fixture: H
             changePackageNamePatch -> {
                 manifest.requireEncodedString("com.valvesoftware.steamlinkvr.gxr")
                 apk.requireDexString("com.valvesoftware.steamlinkvr.gxr")
-            }
-
-            controllerVelocityPatch -> {
-                apk.requireElf("lib/arm64-v8a/libgxr_controller_velocity.so")
-                scene.requireBytesAt(sites.cadence, "62008052".hexBytes())
-                apk.requireEntryBytes(
-                    "assets/openxr/1/api_layers/implicit.d/" +
-                        "XR_APILAYER_local_GalaxyXR_controller_velocity.json",
-                ).requireEncodedString("XR_APILAYER_local_GalaxyXR_controller_velocity")
             }
 
             deviceIdentityPatch -> {
@@ -388,7 +378,7 @@ private fun verifyModernPublicOutput(
         val stock = original.requireEntryBytes(scenePath)
         val scene = result.requireEntryBytes(scenePath)
         val expectedScene = when (patch) {
-            gxrModernTongueBridgePatch -> patchModernTongueTransport(stock, fixture.versionName, fixture.versionCode)
+            gxrFacebridgePatch -> patchModernTongueTransport(stock, fixture.versionName, fixture.versionCode)
             microphoneInputPresetPatch -> patchNativeMicrophonePreset(stock, "voice-recognition", fixture.versionName, fixture.versionCode)
             hmdOnlyPatch -> patchVisualDelay(stock, 60, fixture.versionName, fixture.versionCode)
             oledCalibrationPatch -> null // Full matrix/exact diff is checked by OledDecodedCompatibilityAudit.
@@ -406,7 +396,7 @@ private fun verifyModernPublicOutput(
             val path = "assets/config/$name"
             if (original.getEntry(path) == null) continue
             val bytes = original.requireEntryBytes(path)
-            val expected = if (patch == deviceIdentityNativeXrPatch && name == "hmd_config.json") {
+            val expected = if (patch == deviceIdentityPatch && name == "hmd_config.json") {
                 patchHmdModelIdentity(bytes.decodeToString(), "samsung-galaxy-xr", exactProductLookup = true).encodeToByteArray()
             } else bytes
             check(result.requireEntryBytes(path).contentEquals(expected)) { "${patch.name}: changed $path unexpectedly" }

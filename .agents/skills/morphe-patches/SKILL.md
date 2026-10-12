@@ -247,6 +247,19 @@ Report cached compilation, full Gradle/Android packaging, real APK audits and Gi
 
 Byte-pinned JSON/text resources need deterministic checkout bytes. Set an explicit `.gitattributes` rule (the foveal canvas manifest uses `text eol=lf`) and check `git ls-files --eol` plus the resource SHA-256 after checkout. Windows `core.autocrlf` can otherwise invalidate a correct Linux manifest pin. Preserve the canonical hash and installer guard; do not accept multiple line-ending hashes to hide the mismatch.
 
+### Isolated `:patches:test` when the working tree is blocked
+
+Another task's uncommitted refactor can break `:patches:test` compilation (for example tests still calling a removed patch object). Do not revert or stash their files; verify your change in a throwaway worktree instead:
+
+1. `git worktree add --detach <EXTERNAL>/build/<name> HEAD` (`<EXTERNAL>` = `../builds/steamlink-patches`), then copy only your changed files in. Do not commit.
+2. `settings.gradle.kts` resolves the external root relative to `settingsDir`, so a worktree nested deeper builds a second tree under `<worktree>/../builds/...`; run the build, then delete that derived tree and `git worktree remove --force`.
+3. Run `JAVA_HOME=<jdk> ./gradlew.bat :patches:test --offline --console=plain`, then read executed/skipped/failure counts from the JUnit XML in that derived tree's `gradle/patches/test-results/test/*.xml` (`tests`/`skipped`/`failures`/`errors` attributes).
+4. Report those counts separately from the in-place run. An in-place compile failure caused by foreign uncommitted edits is a blocker to state, never a result to hide.
+
+### Attribution credit lines in patch descriptions
+
+Credit text lives in one `internal const val <APP>_CREDIT` per app (4XVR: `FOUR_XVR_UPSTREAM_CREDIT` in `FourXvrDexKit.kt`; Steam Link: `STEAM_LINK_CONTROLLER_CREDIT` in `steamlink/androidxr/ControllerAngularVelocityFrame.kt`) and is appended as `"... " + CREDIT` to the description of every patch the credit covers; option descriptions never get it. Keep appended text free of phrases tests pin as sentinels (for example `not run on this base`), then run `:patches:generatePatchesList`, `python -B .github/scripts/generate_patches_readme.py <owner/repo> <branch> patches-list-all.json TECHNICAL_REFERENCE.md`, and `:patches:test`.
+
 ```powershell
 .\gradlew.bat :patches:test            # local gate, run at the end of every task
 .\gradlew.bat build                    # full build (every app)
