@@ -39,7 +39,36 @@ Validation (local, Windows, Java 21 / Gradle 9.6.1):
 - `npm ci` (325 packages, Node 26.7.0 / npm 11.19.0), then
   `.github/scripts/test_release_artifact_paths.cjs`: 9 assertions passed.
 
-Remaining gap: no GitHub Actions run of the corrected commit has been observed, so CI
-success for this change is unverified (`gh` is not available on this host). The workflow
-file was YAML-parsed locally and its step order reviewed; the first post-push run of the
-`dev` branch release must be checked before treating the CI change as proven.
+Remaining gap: the publishing path (version bump, prepareCmd build, publish, attestation)
+has not yet run under the new workflow; it needs a `fix:`/`feat:` push to dev, which
+publishes a prerelease.
+
+## Measured on GitHub Actions
+
+[Run 256](https://github.com/AngelDark92/xr-porting-hub/actions/runs/38226588183), commit
+`e140c3c`, a `ci:` commit, so no release was published and the single-build fallback path
+ran: **136 s total** (created 08:55:36Z, finished 08:57:52Z), job 131 s, queue 3 s.
+
+| Step | Duration |
+|---|---:|
+| Install dependencies (`npm ci`) | 4 s |
+| Verify patch category documentation | 1 s |
+| Verify external release artifact paths | 0 s |
+| Run unit tests | skipped (local step) |
+| Release (plugin verifyConditions, version check, no release) | 64 s |
+| Verify build when no release was published | 43 s |
+
+The 43 s fallback step is the complete release graph without tests: compile, the 4
+extension assemblies, jar, `buildAndroid` (D8) and `generatePatchesList`.
+
+Old workflow, same job, for comparison:
+
+| Run | Path | Total | Preflight gate | Release |
+|---|---|---:|---:|---:|
+| 254 `a5ef0aa` (docs push, no release) | old | 173 s | 94 s (incl. `:patches:test`) | 56 s |
+| 255 `d7526f4` (merge, published v1.28.0-dev.12) | old | 166 s | 94 s | 52 s |
+| 256 `e140c3c` (ci push, no release) | new | 136 s | — | 64 s + 43 s build |
+
+No-release path: 173 s to 136 s (-21%). The 94 s test-carrying gate is replaced by the
+43 s single build; the Release step grew by ~8 s because it now resolves the plugins
+cold as the first Gradle invocation of the job.
