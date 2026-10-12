@@ -102,8 +102,10 @@ the tracked `patches-list*.json` catalogs. Tests pin some wording:
   shipped smali helper sources.
 
 Rewriting a description therefore needs a matching test update (or keep the phrase), then
-`:patches:generatePatchesList` to rewrite all 4 root catalogs, and `:patches:test`. The
-`build` task pulls in `check`/`test`, so a failing test also stops catalog regeneration.
+`:patches:generatePatchesList` to rewrite all 4 root catalogs, and `:patches:test`.
+`:patches:generatePatchesList` no longer depends on `test` (CI and the release build never
+run tests), so the local `:patches:test` run at the end of the task is the only thing that
+catches a broken assertion.
 Option and AppTarget descriptions are not covered by these assertions.
 
 ## Bytecode editing
@@ -190,16 +192,25 @@ Tests importing a production `compileOnly` library must declare their own
 `testImplementation(libs.gson)` and the separate catalog generator configuration;
 do not promote it to production `implementation` or `runtimeOnly` to fix tests.
 
-Run the workflow's complete Gradle gate in a fresh checkout before accepting
-dependency/plugin, generator or test changes:
+### Tests and the release graph
+
+CI runs no tests. `:patches:test` is a local end-of-task step: run it at the end of every
+task that touches this repository and report the executed/skipped counts.
 
 ```powershell
-.\gradlew.bat clean :patches:test :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=experimental --no-daemon
+.\gradlew.bat :patches:test                  # local gate, end of every task
+.\gradlew.bat :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=experimental  # reproduce the CI/release graph
 ```
 
-Use `stable` on main. The workflow must run this gate before semantic-release,
-including commits that do not produce a release. Preserve generated extensions
-and mandatory portable tests in this graph.
+The release workflow builds the graph exactly once: `gradle-semantic-release-plugin` bumps
+`gradle.properties`, `@semantic-release/exec` prepareCmd runs
+`./gradlew clean generatePatchesList -PreleaseChannel=...` before any git tag exists, and a
+push that publishes no release falls back to
+`./gradlew :patches:buildAndroid :patches:generatePatchesList -PreleaseChannel=... clean`.
+`:patches:buildAndroid` (jar + D8 into the `.mpp`) and `:patches:generatePatchesList` are the
+end of that graph — keep it that way; do not re-add `dependsOn(build)` or any test task.
+For dependency, plugin, generator or test changes, validate this same graph plus
+`:patches:test` in an isolated checkout locally.
 Attestation uses the exact release version through
 `.github/scripts/resolve_release_artifact.cjs`, yielding a canonical absolute
 path without `..`. Prefixing a relative pattern with the workspace is insufficient.
@@ -226,7 +237,7 @@ dependency, while manual validation supplied `gson.jar`. Production compilation
 and Android packaging passed, so changing the patcher/smali pins or skipping tests
 would not fix that failure.
 
-Before accepting new tests, check whether each file input is tracked (`git ls-files -- <path>`) or explicitly provisioned by `.github/workflows/release.yml`. The workflow's ordinary `:patches:test` has no decoded APK provisioning. A local cached-compiler pass with ignored inputs present does not test that environment.
+Before accepting new tests, check whether each file input is tracked (`git ls-files -- <path>`) or explicitly provisioned by `.github/workflows/release.yml`. CI never runs `:patches:test`, so it provisions no decoded APK and produces no test evidence; the local run is the only test proof. A local cached-compiler pass with ignored inputs present does not test a fresh checkout.
 
 Keep tracked resource/hash checks, metadata tests and malformed-input rejection runnable without proprietary decoded APKs. For real-byte audits, use `org.junit.Assume.assumeTrue` with an explicit `BLOCKED` reason only when the exact decoded input is absent. Do not skip missing canonical payloads, invalid present inputs or assertion failures. Synthetic invalid bytes can prove rejection, never real-base compatibility.
 
@@ -237,6 +248,7 @@ Report cached compilation, full Gradle/Android packaging, real APK audits and Gi
 Byte-pinned JSON/text resources need deterministic checkout bytes. Set an explicit `.gitattributes` rule (the foveal canvas manifest uses `text eol=lf`) and check `git ls-files --eol` plus the resource SHA-256 after checkout. Windows `core.autocrlf` can otherwise invalidate a correct Linux manifest pin. Preserve the canonical hash and installer guard; do not accept multiple line-ending hashes to hide the mismatch.
 
 ```powershell
+.\gradlew.bat :patches:test            # local gate, run at the end of every task
 .\gradlew.bat build                    # full build (every app)
 .\gradlew.bat assembleExtension        # rebuild the Steam Link extension DEX only
 .\gradlew.bat assembleFourXvrExtension # rebuild the 4XVR extension DEX only

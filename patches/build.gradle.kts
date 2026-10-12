@@ -274,8 +274,9 @@ tasks {
     register<JavaExec>("generatePatchesList") {
         description = "Build patch with patch list"
 
-        dependsOn(build)
         // Validate Android DEX packaging before release preparation updates catalogs.
+        // The graph ends here and at :patches:buildAndroid: unit tests are a local
+        // end-of-task step (see AGENTS.md) and never part of the CI or release graph.
         dependsOn("buildAndroid")
 
         classpath = sourceSets["main"].runtimeClasspath + patchListGeneratorClasspath
