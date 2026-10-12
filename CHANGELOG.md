@@ -1,3 +1,9 @@
+## [1.28.0-dev.19](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.18...v1.28.0-dev.19) (2026-10-12)
+
+### ✨ New Features
+
+* Enhance 4XVR compatibility with Android XR input features and popup management ([84339e6](https://github.com/AngelDark92/xr-porting-hub/commit/84339e63a1af3a79c6afdb75f9e8294aceeae8d9))
+
 ## [1.28.0-dev.18](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.17...v1.28.0-dev.18) (2026-10-12)
 
 ### 🐛 Bug Fixes

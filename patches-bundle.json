@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-12T14:15:52",
-  "description": "## [1.28.0-dev.18](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.17...v1.28.0-dev.18) (2026-10-12)\n\n### 🐛 Bug Fixes\n\n* remove recommended sets and update related documentation and tests ([f1175ad](https://github.com/AngelDark92/xr-porting-hub/commit/f1175ade35f63b4a0d30286abedc5c7aad3bcfa0))",
-  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.18/patches-1.28.0-dev.18.mpp",
+  "created_at": "2026-10-12T15:56:40",
+  "description": "## [1.28.0-dev.19](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.18...v1.28.0-dev.19) (2026-10-12)\n\n### ✨ New Features\n\n* Enhance 4XVR compatibility with Android XR input features and popup management ([84339e6](https://github.com/AngelDark92/xr-porting-hub/commit/84339e63a1af3a79c6afdb75f9e8294aceeae8d9))",
+  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.19/patches-1.28.0-dev.19.mpp",
   "signature_download_url": "",
-  "version": "1.28.0-dev.18"
+  "version": "1.28.0-dev.19"
 }
