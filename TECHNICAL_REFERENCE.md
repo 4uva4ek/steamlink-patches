@@ -64,9 +64,9 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0-dev.19](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.19)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;44 patches total
+> **[v1.28.0-dev.19](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0-dev.19)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;45 patches total
 <details open>
-<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
+<summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -107,6 +107,12 @@ This section is generated from the patch catalog during releases.
 | [Galaxy XR refresh profile (72 Hz, 4XVR)](#galaxy-xr-refresh-profile-72-hz-4xvr) | Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 | [Meta platform decoupling (4XVR)](#meta-platform-decoupling-4xvr) | Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime: without these stubs the app hangs on the splash — the OpenXR session is created but never presents its first frame (Galaxy XR on-device A/B, 2026-10-12). Meta-store VIP flows degrade. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 | [Render dispatch payload (4XVR)](#render-dispatch-payload-4xvr) | Installs the 4XVR render dispatch native (frame-synced scene queue and adaptive theater background updates) for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+
+#### Premium & purchases
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Premium unlock (4XVR, experimental)](#premium-unlock-4xvr-experimental) | Removes the 4XVR premium gate on Galaxy XR, where the Meta Store cannot be reached to verify a purchase: every start forces the app's own VIP state on through ChangeCurVIPStateClear(true), the same state transition a store purchase applies, so IsMP() is true and the trial playback limiter stays off. The dead Meta-store Buy entry points re-assert the unlocked state instead of calling the native checkout; the Buy buttons are hidden in favor of the Sync slot. Exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Subtitles & playback
 

@@ -8,7 +8,7 @@
 | 4XVR | `cn.vr4p.oculus4xvrplayerov` | 2.0.22/20022 | [@logkim1](https://github.com/logkim1/4XVR-GalaxyXR) |
 
 - **Steam Link VR** — streams SteamVR from your PC to the headset. The patches fix resolution, color and OLED calibration, microphone, controller tracking, permissions and startup for Android XR.
-- **4XVR** — video player with 4X clarity, MVC 3D and HDR. The patches port the Quest build to Galaxy XR: launch compatibility, launcher icon, controller models, libplacebo HDR pipeline, 72 Hz refresh profile, 5.1-channel audio, frame-synced render dispatch and the subtitle suite.
+- **4XVR** — video player with 4X clarity, MVC 3D and HDR. The patches port the Quest build to Galaxy XR: launch compatibility, launcher icon, controller models, libplacebo HDR pipeline, 72 Hz refresh profile, 5.1-channel audio, frame-synced render dispatch, the subtitle suite and the launch-critical Meta platform decoupling. The premium unlock (no purchase check) is new and experimental, off by default.
 
 Each app keeps its own package, exact supported builds, sources, payloads and compatibility list. Morphe patches one APK at a time, so pick the app you want.
 
@@ -47,12 +47,12 @@ The [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) is in the technica
 
 - **Face and tongue tracking** (Steam Link): install VRCFaceTracking and the [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC, then enable **OSC**, **eye sharing** and **face sharing** in Steam Link and set the output port to **9015**.
 - **USB streaming** (Steam Link 2.0.23/5002363): [manual Galaxy XR USB setup guide](Install/USB-STREAMING.md). Wi-Fi must stay on for discovery in the tested workflow; longer stability is untested.
-- **Experimental patches** (Full-FOV foveal canvas): off by default, not in the recommended set, headset quality unverified.
+- **Experimental patches** (Full-FOV foveal canvas; 4XVR premium unlock): off by default, not in the recommended set, headset validation pending.
 
 ## Status and credits
 
 - **Steam Link VR** — released patch set. Controller tracking and haptics patches (HAL pose, velocity frame, pose extrapolation, grip haptics through Shizuku) are based on [@4uva4ek's Galaxy XR modules](https://github.com/4uva4ek). Per-build headset validation is ongoing; local static and patching evidence is recorded under [`diagnostics/`](diagnostics/).
-- **4XVR** — ported from [@logkim1's 4XVR-GalaxyXR patch set](https://github.com/logkim1/4XVR-GalaxyXR), which supplies the launch, HDR pipeline and playback work this port builds on. His work, credited. Headset validation of this repository's port is pending, so treat it as early software.
+- **4XVR** — ported from [@logkim1's 4XVR-GalaxyXR patch set](https://github.com/logkim1/4XVR-GalaxyXR), which supplies the launch, HDR pipeline, playback and premium-hook work this port builds on. His work, credited. Headset validation of this repository's port is pending, so treat it as early software.
 - Not affiliated with Meta, Samsung, Valve or 4XVR.
 
 ## More information

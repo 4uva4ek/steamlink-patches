@@ -60,7 +60,7 @@ class FourXvrPayloadResourceTest {
 
     @Test
     fun `extension smali sources ship for every helper class of the recommended groups`() {
-        // 32 files; spot-check the load-bearing classes across all packages.
+        // 20 files; spot-check the load-bearing classes across all packages.
         val required = listOf(
             "smali/dev/eni/hdrdirect/HdrBridge.smali",
             "smali/cn/vr4p/oculus4xvrplayerov/FrameDispatchCore.smali",
@@ -76,16 +76,43 @@ class FourXvrPayloadResourceTest {
             "smali/cn/vr4p/patch/SubtitlePositionControls.smali",
             "smali/cn/vr4p/patch/SubtitlePositionStrings.smali",
             "smali/cn/vr4p/patch/PositionValue.smali",
+            // The premium unlock helper (owner decision 2026-10-12; replaces the parked
+            // MetaPremium verifier set).
+            "smali/cn/vr4p/patch/PremiumUnlock.smali",
         )
         required.forEach { path ->
             assertNotNull(javaClass.getResource("/fourxvr/$path"), path)
         }
-        // The excluded premium/VIP shim must never be staged.
+        // The parked MetaPremium verifier set must never be staged again.
         listOf(
-            "smali/cn/vr4p/patch/MetaPremium.smali",
-            "smali/cn/vr4p/patch/MetaPremiumCheck.smali",
-        ).forEach { path ->
+            "MetaPremium",
+            "MetaPremium\$1",
+            "MetaPremium\$2",
+            "MetaPremium\$3",
+            "MetaPremium\$3\$1",
+            "MetaPremium\$4",
+            "MetaPremium\$Strings",
+            "MetaPremiumCheck",
+            "MetaPremiumCheck\$Response",
+            "MetaPremiumCheck\$Result",
+        ).forEach { stem ->
+            val path = "smali/cn/vr4p/patch/$stem.smali"
             assertTrue(javaClass.getResource("/fourxvr/$path") == null, "excluded class staged: $path")
+        }
+    }
+
+    @Test
+    fun `premium unlock payload declares the methods the patch binds`() {
+        val source = checkNotNull(
+            javaClass.getResourceAsStream("/fourxvr/smali/cn/vr4p/patch/PremiumUnlock.smali"),
+        ).use { it.reader().readText() }
+        listOf(
+            ".method public static Launch()Z",
+            ".method public static unlock(Lcn/vr4p/oculus4xvrplayerov/Main4XActivity;)V",
+            ".method public static tidyBuyDialog(Lcn/vr4p/oculus4xvrplayerov/V4Window;)V",
+            ".method public static tidyBuyView(Landroid/view/View;)V",
+        ).forEach { declaration ->
+            assertTrue(source.contains(declaration), "PremiumUnlock.smali lost: $declaration")
         }
     }
 }

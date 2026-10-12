@@ -18,6 +18,7 @@ CATEGORIES = (
     "App & device identity",
     "Advanced XR compatibility",
     "Controller",
+    "Premium & purchases",
 )
 
 
@@ -85,7 +86,7 @@ class GeneratePatchesReadmeTest(unittest.TestCase):
         self.assertIn("Exact supported build", text)
         self.assertIn("First line<br>Second line | 5002363 |", text)
         self.assertIn("• Quality level<br>• fallbackOption", text)
-        self.assertIn("8 patches total", text)
+        self.assertIn("9 patches total", text)
 
     def test_legacy_catalog_retains_plain_table(self):
         text = self.render([patch("Zulu"), patch("Alpha")])

@@ -1661,6 +1661,38 @@
       "options": []
     },
     {
+      "name": "Premium unlock (4XVR, experimental)",
+      "description": "Removes the 4XVR premium gate on Galaxy XR, where the Meta Store cannot be reached to verify a purchase: every start forces the app's own VIP state on through ChangeCurVIPStateClear(true), the same state transition a store purchase applies, so IsMP() is true and the trial playback limiter stays off. The dead Meta-store Buy entry points re-assert the unlocked state instead of calling the native checkout; the Buy buttons are hidden in favor of the Sync slot. Exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
+      "category": "Premium & purchases",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "cn.vr4p.oculus4xvrplayerov",
+          "name": "4XVR",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#6C4BB6",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 20022,
+                "ARMEABI_V7A": 20022,
+                "X86_64": 20022,
+                "X86": 20022
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "4XVR Galaxy XR adaptation for exact build 20022; decoded-base design, headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Render dispatch payload (4XVR)",
       "description": "Installs the 4XVR render dispatch native (frame-synced scene queue and adaptive theater background updates) for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
       "category": "Advanced XR compatibility",

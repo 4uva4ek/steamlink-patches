@@ -129,6 +129,10 @@ Caused by: java.util.NoSuchElementException: Collection is empty.
   the original instruction, so inserted code never runs on the incoming-branch path. Insert after
   the label target or on a branch-free stretch, and confirm no label sits between the insert and
   the first read of what it defines.
+- dexlib2 `Opcode.name` is a FIELD holding the lowercase mnemonic (`"if-eqz"`, `"goto"`), not the
+  enum constant: matching `startsWith("IF_")`/`"GOTO"` never fires on a live dex. Match lowercase
+  mnemonic prefixes or compare enum constants (`opcode == Opcode.IF_EQZ`). Caught only by a real
+  apply-audit (fail-closed require at the `V4BuyVIPDlg.onCreate` join, 2026-10-12).
 - Never park a hook result in a stock scratch register across a merge point. Use only registers the
   stock code provably rewrites before their next read on the same straight-line path, or bump the
   register count and use a fresh local exactly as the shipped reference build does. A skipped or
@@ -259,6 +263,17 @@ Keep tracked resource/hash checks, metadata tests and malformed-input rejection 
 Run fixture-dependent tests once with retained inputs and once from a fresh/isolated working directory where they are absent, using only tracked runtime resources and explicit classpaths. Check JUnit executed/skipped/failure counts. The 2026-10-01 failure in run `36907870366` was 5 `FovealCanvasPatchTest` failures caused by an ignored 5001812 scene; `buildAndroid` had already passed. Fix that input boundary rather than changing production guards or disabling the test task.
 
 Report cached compilation, full Gradle/Android packaging, real APK audits and GitHub CI separately. Confirm the corrected commit's workflow result before claiming CI success.
+
+Real apply-audits (`util.*MorpheAudit` runners — `FovealCanvasMorpheAudit`, and the 4XVR
+`PremiumUnlockMorpheAudit`) execute the patcher end-to-end on a retained original APK and package an
+unsigned output; they are the strongest pre-device evidence for a patch's edit surface. The runner's
+classpath is a cached-compiler snapshot assembled by its `build-classpath.py`: after ANY patch-source
+change re-run that script before the audit or the JVM loads stale classes (tell: a stack frame at
+pre-edit line positions). Verify the output with `Tools/apk-tools/build-tools-35.0.1/android-15/dexdump.exe`;
+dexdump renders references as `Lpkg/Class;.method:(args)ret` (dot separator), not smali's `->`. Under
+STRIP_FAST packaging the modified classes move to a new dex (the output `classes.dex`), the originals
+shift one slot, and the stripped original keeps its size with a different sha256 — check its class
+list holds no leftover class_defs for the moved classes (no duplicate definitions).
 
 Byte-pinned JSON/text resources need deterministic checkout bytes. Set an explicit `.gitattributes` rule (the foveal canvas manifest uses `text eol=lf`) and check `git ls-files --eol` plus the resource SHA-256 after checkout. Windows `core.autocrlf` can otherwise invalidate a correct Linux manifest pin. Preserve the canonical hash and installer guard; do not accept multiple line-ending hashes to hide the mismatch.
 
