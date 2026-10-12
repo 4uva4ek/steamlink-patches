@@ -1,3 +1,9 @@
+## [1.28.0-dev.20](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.19...v1.28.0-dev.20) (2026-10-12)
+
+### ✨ New Features
+
+* Implement premium fallback patch for 4XVR 2.0.22 ([9a8a050](https://github.com/AngelDark92/xr-porting-hub/commit/9a8a05010e4b8f26012d2e1a8bb79fe41e5f9a80))
+
 ## [1.28.0-dev.19](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.18...v1.28.0-dev.19) (2026-10-12)
 
 ### ✨ New Features
