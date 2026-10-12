@@ -1,3 +1,9 @@
+## [1.28.0-dev.16](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.15...v1.28.0-dev.16) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* pin full-facebridge compat to its build list, exact legacy bases in the merged bridge description, clarify the native-closure test ([5572593](https://github.com/AngelDark92/xr-porting-hub/commit/55725931d924f01438c8daf93ec3e87a993cddbc))
+
 ## [1.28.0-dev.15](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.14...v1.28.0-dev.15) (2026-10-12)
 
 ### ✨ New Features
