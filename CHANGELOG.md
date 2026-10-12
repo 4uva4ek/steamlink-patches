@@ -1,3 +1,9 @@
+## [1.28.0-dev.12](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.11...v1.28.0-dev.12) (2026-10-12)
+
+### ✨ New Features
+
+* add opt-in Steam Link 2.0.23 angular frame adapter ([5572286](https://github.com/AngelDark92/xr-porting-hub/commit/5572286a7dc1d1c49b66f6a8fe057ba3cb79cc81))
+
 ## [1.28.0-dev.11](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.10...v1.28.0-dev.11) (2026-10-11)
 
 ### 🐛 Bug Fixes
