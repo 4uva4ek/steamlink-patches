@@ -15,17 +15,16 @@ Manifest Capability Pack; and Device identity with the Meta Quest Pro spoof (`Oc
 model).
 
 Leave HMD identity on **Recommended**, or explicitly choose **Meta Quest Pro**. Recommended
-resolves to the Quest spoof for exact 2.0.20/5001712 and 5001740, plus 2.0.22/5002244. The config baseline runs before Device identity; the legacy Quest payload changes
+resolves to the Quest spoof for the exact legacy targets 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244. The config baseline runs before Device identity; the legacy Quest payload changes
 only the 3 HMD model values while preserving SamsungVST tracking and Galaxy XR controller/eye
 routing. Saved explicit Samsung, Stock, or PICO profiles remain respected rather than silently
 overridden.
 
 The exact 2.0.22/5002322 bundle selects only face bridge, high-resolution fix, microphone
 `voice-recognition`, OLED `final-balanced` with recommended `srgb8-highp`, battery usage, and Visual Delay
-`60` ms. Native-XR build 5002318 retains that 6-patch set plus Device identity, where Recommended
-continues to resolve to Galaxy XR. Other supported targets outside the exact legacy recommendation
-set likewise retain Galaxy XR as their automatic choice. Neither native bundle enables legacy
-conversion mutations, and 5002322 still excludes Device identity.
+`60` ms. On the native-XR side the single supported base 2.0.23/5002363 exposes a 6-patch recommended
+set; Device identity (2.0.23/5002363) stays optional and off by default, so no supported native
+target auto-selects an identity. The native bundle enables no legacy conversion mutations.
 
 A separate default-off **Foveal blue-noise dithering** patch was added on 2026-09-22. It does not replace the historical/VD-like controls below. The [decoded VD comparison](diagnostics/steamlink-blue-noise-ditering/virtualdesktop-verification.md) corrects the earlier fovea-isolation and VD-equivalence claims.
 

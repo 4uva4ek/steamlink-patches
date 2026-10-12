@@ -6,7 +6,8 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.rawResourcePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
-import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_LEGACY
 import app.template.patches.shared.Constants.isLegacyRecommendedSteamLinkBuild
 import app.template.patches.shared.Constants.isModernTongueBridgeSteamLinkBuild
 import app.template.patches.shared.Constants.isNativeXrSteamLinkBuild
@@ -344,8 +345,8 @@ internal fun patchHmdModelIdentity(
     return patched
 }
 
-// Resolve per execution: patch options are shared objects, so setting the Quest Pro option
-// while declaring a legacy bundle would also change the native build recommendation.
+// Resolve per execution: the shared profile option is one object across both val scopes, so the
+// selected value is resolved against the exact base being patched rather than pre-baked per bundle.
 internal fun resolveDeviceIdentityProfile(profile: String, version: String, versionCode: String): String =
     if (profile == "recommended") {
         if (isLegacyRecommendedSteamLinkBuild(version, versionCode)) "meta-quest-pro" else "samsung-galaxy-xr"
@@ -371,6 +372,7 @@ private fun createDeviceIdentityPatch(
     description: String,
     default: Boolean,
     compatibilities: List<Compatibility>,
+    profileDescription: String,
 ) = rawResourcePatch(
     name = name,
     description = description,
@@ -394,7 +396,7 @@ private fun createDeviceIdentityPatch(
             "PICO 4 Pro" to "pico-4-pro",
         ),
         title = "HMD identity",
-        description = "Recommended selects this build's recommended profile: Meta Quest Pro on the legacy targets through 5002244 (including 5001712), and the Galaxy XR identity on 2.0.23/5002363. Explicit profiles override that choice. Native-XR routing and verified legacy payloads are preserved.",
+        description = profileDescription,
         required = true,
     )
 
@@ -437,12 +439,30 @@ private fun createDeviceIdentityPatch(
     }
 }
 
+// Morphe exposes one global `default` flag per patch object, so recommendation scope is expressed
+// with one object per scope over this single shared guarded body: the recommended `Device identity`
+// covers the 4 legacy bases, while `Device identity (2.0.23/5002363)` stays optional so the native
+// build is never auto-selected the identity. The body itself branches per exact base.
 @Suppress("unused")
 val deviceIdentityPatch = createDeviceIdentityPatch(
     name = "Device identity",
-    description = "Overrides the HMD identity reported to SteamVR, per exact build: Meta Quest Pro on the " +
-        "legacy targets through 5002244 (including 5001712), the Galaxy XR identity on 2.0.23/5002363. " +
-        "Explicit profiles override that.",
+    description = "Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the " +
+        "legacy targets through 5002244. Explicit profiles override that.",
     default = true,
-    compatibilities = COMPATIBILITIES_STEAM_LINK,
+    compatibilities = COMPATIBILITIES_STEAM_LINK_LEGACY,
+    profileDescription = "Recommended selects this build's recommended profile: Meta Quest Pro on the " +
+        "legacy targets through 5002244. Explicit profiles override that choice. Verified legacy " +
+        "payloads are preserved.",
+)
+
+@Suppress("unused")
+val deviceIdentityNativeXrPatch = createDeviceIdentityPatch(
+    name = "Device identity (2.0.23/5002363)",
+    description = "Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; " +
+        "not part of the recommended set. Explicit profiles override that.",
+    default = false,
+    compatibilities = COMPATIBILITIES_STEAM_LINK_5002363,
+    profileDescription = "Recommended selects this build's recommended profile: the Galaxy XR identity " +
+        "on 2.0.23/5002363. Explicit profiles override that choice. Native-XR routing and the in-place " +
+        "identity upsert are preserved.",
 )

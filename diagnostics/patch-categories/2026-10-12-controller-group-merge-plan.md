@@ -210,3 +210,16 @@ State after wave 2: 27 Steam Link public patches (sizes 5/4/4/2/7/5); root catal
 (34 stable; `Controller` x5); `:patches:test` 169 executed / 13 skipped / 0 failures;
 `TECHNICAL_REFERENCE.md` regenerated; doc-generator fixture test 4/4. Owner approved commit + push
 to `dev` so the next dev pre-release reaches Morphe Manager.
+
+### Owner correction — Device identity recommendation scope (same day, after dev.16)
+
+Owner: `Device identity` must be recommended on the legacy bases and **not** on 2.0.23. Morphe
+exposes one global `default` flag per patch object, so recommendation scope cannot be expressed
+inside the single merged object. The wave-2 merge is therefore refined into ONE shared factory +
+guarded body with TWO scoped objects: `deviceIdentityPatch` (the 4 legacy bases
+5001712/5001812/5001968/5002244, `default = true`) and `deviceIdentityNativeXrPatch`
+(2.0.23/5002363 only, `default = false`, optional/selectable). No body or mutation is duplicated —
+the split exists only for the global `default` flag. Effects: the 2.0.23 recommended set is 6
+patches again (the native build still exposes 7 stable individual patches); the legacy recommended
+set stays 17. `PatchCompatibilityMatrixTest`, `PatchCategoriesTest`, `DecodedSteamLinkPatchAudit`,
+the per-build `Constants` "recommends" prose and `PATCH_CATALOG.md` were updated to match.

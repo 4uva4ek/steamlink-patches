@@ -40,6 +40,7 @@ import app.template.patches.steamlink.binary.patchNativeMicrophonePreset
 import app.template.patches.steamlink.binary.patchVisualDelay
 import app.template.patches.shared.Constants.isTwoProjectionSteamLinkBuild
 import app.template.patches.steamlink.identity.changePackageNamePatch
+import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
 import app.template.patches.steamlink.identity.patchHmdModelIdentity
 import kotlinx.coroutines.flow.toList
@@ -77,7 +78,7 @@ private val legacySites = mapOf(
 )
 
 private val publicPatchesFor5002363: List<Patch<*>> = listOf(
-    deviceIdentityPatch, gxrFacebridgePatch, xrGalaxyXrHighResolutionPatch,
+    deviceIdentityNativeXrPatch, gxrFacebridgePatch, xrGalaxyXrHighResolutionPatch,
     microphoneInputPresetPatch, oledCalibrationPatch, unrestrictedBatteryUsagePatch, hmdOnlyPatch,
 )
 
@@ -252,11 +253,13 @@ private suspend fun runSingleAudit(args: Array<String>) {
 
 private fun configurePublicAuditOptions(patch: Patch<*>, fixture: HighResolutionFixture) {
     when (patch) {
-        // The merged identity patch already resolves to the Galaxy XR transport identity on
-        // 5002363; keep the explicit Quest Pro pin only for the legacy fixtures.
+        // The split identity patches each cover their own scope: the legacy patch pins the Quest
+        // Pro fallback profile for its legacy fixtures, while the native patch keeps its
+        // recommended default, which resolves to the Galaxy XR identity on 5002363.
         deviceIdentityPatch -> {
             if (fixture.versionCode != "5002363") patch.options["profile"] = "meta-quest-pro"
         }
+        deviceIdentityNativeXrPatch -> Unit
         else -> Unit
     }
 }
@@ -396,7 +399,7 @@ private fun verifyModernPublicOutput(
             val path = "assets/config/$name"
             if (original.getEntry(path) == null) continue
             val bytes = original.requireEntryBytes(path)
-            val expected = if (patch == deviceIdentityPatch && name == "hmd_config.json") {
+            val expected = if (patch == deviceIdentityNativeXrPatch && name == "hmd_config.json") {
                 patchHmdModelIdentity(bytes.decodeToString(), "samsung-galaxy-xr", exactProductLookup = true).encodeToByteArray()
             } else bytes
             check(result.requireEntryBytes(path).contentEquals(expected)) { "${patch.name}: changed $path unexpectedly" }

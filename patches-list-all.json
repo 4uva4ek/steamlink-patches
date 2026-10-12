@@ -1057,7 +1057,7 @@
     },
     {
       "name": "Device identity",
-      "description": "Overrides the HMD identity reported to SteamVR, per exact build: Meta Quest Pro on the legacy targets through 5002244 (including 5001712), the Galaxy XR identity on 2.0.23/5002363. Explicit profiles override that.",
+      "description": "Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the legacy targets through 5002244. Explicit profiles override that.",
       "category": "App & device identity",
       "default": true,
       "dependencies": [
@@ -1152,7 +1152,36 @@
               "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
-        },
+        }
+      ],
+      "options": [
+        {
+          "key": "profile",
+          "title": "HMD identity",
+          "description": "Recommended selects this build's recommended profile: Meta Quest Pro on the legacy targets through 5002244. Explicit profiles override that choice. Verified legacy payloads are preserved.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "recommended",
+          "values": {
+            "Recommended for this build (legacy Quest Pro / native Galaxy XR)": "recommended",
+            "Samsung Galaxy XR": "samsung-galaxy-xr",
+            "Stock identity (no change)": "stock-no-change",
+            "Meta Quest Pro": "meta-quest-pro",
+            "PICO 4 Pro": "pico-4-pro"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Device identity (2.0.23/5002363)",
+      "description": "Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; not part of the recommended set. Explicit profiles override that.",
+      "category": "App & device identity",
+      "default": false,
+      "dependencies": [
+        "RawResourcePatch",
+        "ResourcePatch"
+      ],
+      "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
           "name": "Steam Link",
@@ -1171,7 +1200,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, Device identity, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         }
@@ -1180,7 +1209,7 @@
         {
           "key": "profile",
           "title": "HMD identity",
-          "description": "Recommended selects this build's recommended profile: Meta Quest Pro on the legacy targets through 5002244 (including 5001712), and the Galaxy XR identity on 2.0.23/5002363. Explicit profiles override that choice. Native-XR routing and verified legacy payloads are preserved.",
+          "description": "Recommended selects this build's recommended profile: the Galaxy XR identity on 2.0.23/5002363. Explicit profiles override that choice. Native-XR routing and the in-place identity upsert are preserved.",
           "required": true,
           "type": "kotlin.String",
           "default": "recommended",
@@ -2279,7 +2308,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, Device identity, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2414,7 +2443,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, Device identity, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2933,7 +2962,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, Device identity, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -3053,7 +3082,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, Device identity, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }

@@ -25,6 +25,7 @@ import app.template.patches.steamlink.binary.microphoneInputPresetPatch
 import app.template.patches.steamlink.binary.oledCalibrationPatch
 import app.template.patches.steamlink.identity.changePackageNamePatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
+import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -101,7 +102,7 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun modern_recommended_set_contains_only_the_requested_seven_patches() {
+    fun modern_recommended_set_contains_only_the_requested_six_patches() {
         assertEquals(
             setOf(
                 xrGalaxyXrHighResolutionPatch,
@@ -110,7 +111,6 @@ class PatchCompatibilityMatrixTest {
                 unrestrictedBatteryUsagePatch,
                 hmdOnlyPatch,
                 oledCalibrationPatch,
-                deviceIdentityPatch,
             ),
             nativeRecommendedPatches,
         )
@@ -133,9 +133,11 @@ class PatchCompatibilityMatrixTest {
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
         assertEquals(1.00f, oledCalibrationPatch.options["fovealGamma"].default)
-        assertTrue(deviceIdentityPatch.supports("2.0.23", 5002363))
+        assertFalse(deviceIdentityPatch.supports("2.0.23", 5002363))
+        assertTrue(deviceIdentityNativeXrPatch.supports("2.0.23", 5002363))
         assertFalse(deviceIdentityPatch.supports("2.0.22", 5002322))
         assertTrue(deviceIdentityPatch.default)
+        assertFalse(deviceIdentityNativeXrPatch.default)
         assertTrue(gxrFacebridgePatch.supports("2.0.23", 5002363))
         assertFalse(gxrFacebridgePatch.supports("2.0.22", 5002322))
     }
@@ -149,7 +151,7 @@ class PatchCompatibilityMatrixTest {
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
-            deviceIdentityPatch,
+            deviceIdentityNativeXrPatch,
         )
         assertEquals(expected, allIndividualPatches.filter { it.supports("2.0.23", 5002363) }.toSet())
         listOf("2.0.22" to 5002322, "2.0.22" to 5002363, "2.0.23" to 5002322, "2.0.23" to 5002364)
@@ -159,19 +161,11 @@ class PatchCompatibilityMatrixTest {
                 }
             }
         val excludedPublicPatches = allIndividualPatches.toSet() - expected
-        assertEquals(12, excludedPublicPatches.size)
+        assertEquals(13, excludedPublicPatches.size)
         val modernClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
-        // The merged Device identity is recommended on 5002363 too; its dependency chain reaches
-        // the legacy XR baseline, whose mutations are skipped on native-XR builds (guarded returns in
-        // xrDeviceConfigBaselinePatch, androidXrLibPatch, xrDirectInputFixPatch and
-        // disablePermissionPromptNativePatch). The chain's one unconditional step,
-        // androidXrUiExtensionPatch's DEX merge, adds only a new helper class without editing
-        // existing classes (pinned by Native5002318TrackingConfigTest), so only that inert chain
-        // may intersect the excluded set.
-        assertEquals(
-            setOf(xrDeviceConfigBaselinePatch, xrCoreRuntimePatch),
-            modernClosure.intersect(excludedPublicPatches),
-        )
+        // Identity is optional on the native build (not in the recommended set), so the recommended
+        // closure does not reach the excluded legacy XR baseline chain.
+        assertTrue(modernClosure.intersect(excludedPublicPatches).isEmpty())
     }
 
     @Test
@@ -321,6 +315,7 @@ class PatchCompatibilityMatrixTest {
             appearOnTopPatch,
             changePackageNamePatch,
             deviceIdentityPatch,
+            deviceIdentityNativeXrPatch,
             forceHmdInitializationGatesPatch,
             forceLobbyPermissionStateGatePatch,
             forceStreamXrGatesPatch,
@@ -366,7 +361,6 @@ class PatchCompatibilityMatrixTest {
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
-            deviceIdentityPatch,
         )
     }
 }
