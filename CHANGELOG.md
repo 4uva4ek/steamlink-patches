@@ -1,3 +1,9 @@
+## [1.28.0-dev.14](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.13...v1.28.0-dev.14) (2026-10-12)
+
+### ✨ New Features
+
+* delete the Steam Link recommended-set wrappers ([6b789c0](https://github.com/AngelDark92/xr-porting-hub/commit/6b789c078897fc7c906319539d90737e21d4f43e))
+
 ## [1.28.0-dev.13](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.12...v1.28.0-dev.13) (2026-10-12)
 
 ### ✨ New Features
