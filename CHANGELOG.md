@@ -1,3 +1,9 @@
+## [1.28.0-dev.15](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.14...v1.28.0-dev.15) (2026-10-12)
+
+### ✨ New Features
+
+* Refactor and clean up patches for controller velocity and cadence ([bc96f66](https://github.com/AngelDark92/xr-porting-hub/commit/bc96f6643b539e8e9b7b4dac741faaab04ecf2ef))
+
 ## [1.28.0-dev.14](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.13...v1.28.0-dev.14) (2026-10-12)
 
 ### ✨ New Features
