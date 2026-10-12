@@ -1,3 +1,9 @@
+## [1.28.0-dev.18](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.17...v1.28.0-dev.18) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* remove recommended sets and update related documentation and tests ([f1175ad](https://github.com/AngelDark92/xr-porting-hub/commit/f1175ade35f63b4a0d30286abedc5c7aad3bcfa0))
+
 ## [1.28.0-dev.17](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.16...v1.28.0-dev.17) (2026-10-12)
 
 ### 🐛 Bug Fixes
