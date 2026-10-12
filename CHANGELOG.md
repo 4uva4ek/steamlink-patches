@@ -1,3 +1,9 @@
+## [1.28.0-dev.21](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.20...v1.28.0-dev.21) (2026-10-12)
+
+### ✨ New Features
+
+* Add parity audit and fixes for 4XVR 2.0.22, including audio bridge and subtitle enhancements ([7700be8](https://github.com/AngelDark92/xr-porting-hub/commit/7700be88318f609ab18ee9bea3551728d68cf5db))
+
 ## [1.28.0-dev.20](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.19...v1.28.0-dev.20) (2026-10-12)
 
 ### ✨ New Features
