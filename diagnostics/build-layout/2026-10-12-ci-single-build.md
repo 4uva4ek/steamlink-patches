@@ -72,3 +72,9 @@ Old workflow, same job, for comparison:
 No-release path: 173 s to 136 s (-21%). The 94 s test-carrying gate is replaced by the
 43 s single build; the Release step grew by ~8 s because it now resolves the plugins
 cold as the first Gradle invocation of the job.
+
+Warm-cache repeat: [run 257](https://github.com/AngelDark92/xr-porting-hub/actions/runs/38226946656)
+(docs commit `2b06ffa`, no release) finished in **59 s** total, job 55 s, queue 2 s.
+`Setup Java` restored the cached Gradle home in 7 s, the Release step dropped from 64 s
+to 17 s and the fallback build from 43 s to 9 s. Same path cold 136 s, warm 59 s; old
+workflow 173 s.
