@@ -248,6 +248,46 @@ internal val fourXvrAudioBridgePatch = bytecodePatch(
         )
 
         // ------------------------------------------------------------------
+        // Vr4pMediaPlayer.access$7702(player, J): the synthetic m_AAudioPtr setter. The reference
+        // build hands the fresh AAudio handle to the bridge right after the store, so the bridge
+        // can re-route this player's audio output (the bind that backs the SetListenPoseAAudio
+        // and ReleaseAAudio redirections above).
+        // ------------------------------------------------------------------
+        val audioSetter = player.methods.first {
+            it.name == "access\$7702" &&
+                it.parameterTypes.size == 2 &&
+                it.parameterTypes[0].toString() == V4_MEDIA_PLAYER &&
+                it.parameterTypes[1].toString() == "J"
+        }
+        val pointerStoreIndexes = audioSetter.implementation!!.instructions.withIndex()
+            .filter { (_, instruction) ->
+                instruction.opcode == Opcode.IPUT_WIDE &&
+                    ((instruction as? ReferenceInstruction)?.reference as? FieldReference)
+                        ?.let { it.name == "m_AAudioPtr" && it.definingClass == V4_MEDIA_PLAYER } == true
+            }
+            .map { it.index }
+        check(pointerStoreIndexes.size == 1) {
+            "Expected one m_AAudioPtr store in Vr4pMediaPlayer.access\$7702; " +
+                "found ${pointerStoreIndexes.size}"
+        }
+        val pointerStoreIndex = pointerStoreIndexes.single()
+        val pointerStoreNext = audioSetter.implementation!!.instructions.getOrNull(pointerStoreIndex + 1)
+        val alreadyBound = ((pointerStoreNext as? ReferenceInstruction)?.reference as? MethodReference)
+            ?.let { it.definingClass == AUDIO_BRIDGE && it.name == "bind" } == true
+        if (!alreadyBound) {
+            audioSetter.addInstruction(
+                pointerStoreIndex + 1,
+                invokeStatic35c(
+                    AUDIO_BRIDGE,
+                    "bind",
+                    listOf(V4_MEDIA_PLAYER, "J"),
+                    "V",
+                    listOf(audioSetter.pRegister(0), audioSetter.pRegister(1), audioSetter.pRegister(2)),
+                ),
+            )
+        }
+
+        // ------------------------------------------------------------------
         // Main4XActivity.onCreate: initialize the bridge right after the NativeActivity onCreate
         // super call, where the reference build places it.
         // ------------------------------------------------------------------

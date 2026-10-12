@@ -11,7 +11,9 @@ import app.template.patches.shared.Constants.isFourXvr20022Build
 import app.template.patches.shared.PatchCategories
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction10t
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction21t
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -72,8 +74,11 @@ internal val fourXvrRenderDispatchPatch = bytecodePatch(
 
         // ------------------------------------------------------------------
         // Main4XActivity.RenderFrame(ZJJ)V: drain the dispatch queue before the per-frame render.
-        // The reference inserts the drain between :cond_0 and the p1 branch; anchor on the
-        // V4Render->RenderFrame call and walk back to that branch.
+        // The reference build inserts the drain between :cond_0 and the p1 branch, so the if-nez v5
+        // branch into :cond_0 must land ON the drain call. A branch holds its target instruction
+        // object, so a plain insert before that target is skipped on the incoming-branch path:
+        // rebuild the branch against a fresh label placed on the inserted drain call
+        // (branch -> drain -> p1 branch, exactly like the reference).
         // ------------------------------------------------------------------
         val mainActivity = mutableClassDefBy(MAIN_ACTIVITY)
         val renderFrame = mainActivity.methods.first { it.name == "RenderFrame" && it.parameterTypes.size == 3 }
@@ -92,10 +97,39 @@ internal val fourXvrRenderDispatchPatch = bytecodePatch(
                 "(${drainBranch?.opcode}, register ${(drainBranch as? OneRegisterInstruction)?.registerA}, " +
                 "expected IF_EQZ on p1 = ${renderFrame.pRegister(1)})"
         }
+        val cond0Index = drainIndex - 2
+        val incomingBranches = renderFrame.implementation!!.instructions.withIndex()
+            .filter { (_, instruction) ->
+                (instruction as? BuilderOffsetInstruction)?.target?.location?.index == cond0Index
+            }
+            .map { it.index }
+        check(incomingBranches.size == 1) {
+            "Expected exactly one branch into the :cond_0 entry of Main4XActivity.RenderFrame; " +
+                "found ${incomingBranches.size}"
+        }
         renderFrame.addInstruction(
-            drainIndex - 2,
+            cond0Index,
             invokeStaticNoArgs(RENDER_DISPATCH, "drain", "V"),
         )
+        val drainLabel = renderFrame.implementation!!.newLabelForIndex(cond0Index)
+        incomingBranches.forEach { branchIndex ->
+            val branch = renderFrame.implementation!!.instructions[branchIndex]
+            check(
+                branch is BuilderInstruction21t &&
+                    (branch as BuilderOffsetInstruction).target.location.index == cond0Index + 1,
+            ) {
+                "Unexpected branch shape at index $branchIndex of Main4XActivity.RenderFrame " +
+                    "(${branch.opcode}); expected an if-* branch into :cond_0"
+            }
+            renderFrame.replaceInstruction(
+                branchIndex,
+                BuilderInstruction21t(
+                    branch.opcode,
+                    (branch as OneRegisterInstruction).registerA,
+                    drainLabel,
+                ),
+            )
+        }
 
         // ------------------------------------------------------------------
         // V4Theatre.SetCurSubTheatreID(IZ)V: replace both retired handoff paths with

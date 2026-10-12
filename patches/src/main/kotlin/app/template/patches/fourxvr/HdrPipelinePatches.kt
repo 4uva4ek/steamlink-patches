@@ -15,6 +15,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableTypeReference
 
 /**
  * G3 — libplacebo HDR rendering pipeline for exact 4XVR 2.0.22/20022.
@@ -372,6 +373,26 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
             else -> error("Unsupported setOutputSurface invocation shape")
         }
         check(setOutputRegisters.size == 2) { "Unexpected setOutputSurface register shape in ActResume" }
+        // The reference build's routeResumeSurface call sits INSIDE the stock setOutputSurface try
+        // range, so a routing failure reaches the stock handlers (Exception -> codec recovery,
+        // catchall -> rethrow). dexlib2 cannot relocate the stock range; instead the inserted call
+        // gets its own range over the same stock handler labels.
+        val actResumeImplementation = actResume.implementation!!
+        val stockRangeBlocks = actResumeImplementation.tryBlocks.filter {
+            it.start.location.index == setOutputSurfaceIndex
+        }
+        val exceptionHandler = stockRangeBlocks
+            .firstOrNull { it.exceptionHandler.exceptionType == "Ljava/lang/Exception;" }
+            ?.exceptionHandler
+            ?.handler
+        val catchallHandler = stockRangeBlocks
+            .firstOrNull { it.exceptionHandler.exceptionType == null }
+            ?.exceptionHandler
+            ?.handler
+        check(exceptionHandler != null && catchallHandler != null) {
+            "Expected Exception and catchall handlers over the ActResume setOutputSurface range; " +
+                "found ${stockRangeBlocks.map { it.exceptionHandler.exceptionType }}"
+        }
         actResume.addInstructions(
             setOutputSurfaceIndex,
             listOf(
@@ -385,5 +406,14 @@ internal val fourXvrHdrPipelinePatch = bytecodePatch(
                 moveResult(setOutputRegisters[1], objectResult = true),
             ),
         )
+        val routeStart = actResumeImplementation.newLabelForIndex(setOutputSurfaceIndex)
+        val routeEnd = actResumeImplementation.newLabelForIndex(setOutputSurfaceIndex + 2)
+        actResumeImplementation.addCatch(
+            ImmutableTypeReference("Ljava/lang/Exception;"),
+            routeStart,
+            routeEnd,
+            exceptionHandler,
+        )
+        actResumeImplementation.addCatch(routeStart, routeEnd, catchallHandler)
     }
 }

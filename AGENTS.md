@@ -136,6 +136,25 @@ Evidence, exact byte/function guards, and the tried ledger remain under `diagnos
   boundary) is pending. Plan, decode evidence and rework record:
   [premium unlock record](diagnostics/4xvr-galaxyxr/2026-10-12-4xvr-premium-restore-plan.md).
 
+- Reference-vs-Morphe parity audit and fixes (2026-10-12): a three-way diff of the reference build
+  against the dev.20 Morphe output (`4XVR_Video_Player-Patched/`) found five behavioural gaps the
+  patch set still had vs the reference - the dead `RenderDispatch.drain()` call in
+  `Main4XActivity.RenderFrame` (the `:cond_0` branch skipped it), the skippable
+  `SubtitlePositionControls.attach()` on the `:cond_a` path of `V4SubtitlesUI`, the missing
+  `SubtitleStyleListener` instantiation in `Main4XActivity` (making the shipped `refresh()` call a
+  no-op), the missing `GxrAudioOutput.bind()` hook in `Vr4pMediaPlayer.access$7702`, and
+  `routeResumeSurface` sitting outside the stock try (no codec recovery on a routing failure).
+  All five are fixed in `RenderDispatchPatches.kt` / `SubtitleSuitePatches.kt` /
+  `AudioBridgePatches.kt` / `HdrPipelinePatches.kt` (branch-join label rebuilds plus `addCatch`
+  try coverage). Host-side Morphe apply-audit PASS on the retained stock APK with the packaged dex
+  verified hook-by-hook (`util.FourXvrParityMorpheAudit`; receipt:
+  `../builds/steamlink-patches/build/4xvr-parity-20261012/morphe-audit-parity/run/`) and
+  `:patches:test` 173/0/13. Known toolchain artifact: the dev.20 Manager-side build loses two
+  string resource names per locale (ids `0x7f0f0149`/`0x7f0f0193`; values and IDs intact, desktop
+  output checked with `aapt2`). Headset validation pending; a commit + push publishes the next
+  `-dev` release for Morphe Manager. Record and open items:
+  [parity fixes record](diagnostics/4xvr-galaxyxr/2026-10-12-ref-vs-morphe-parity-fixes.md).
+
 ## Official Morphe references
 
 - Multi-version `AppTarget` example: https://github.com/MorpheApp/morphe-patcher/blob/v1.9.0-dev.1/docs/2_2_patch_anatomy.md#L12-L37

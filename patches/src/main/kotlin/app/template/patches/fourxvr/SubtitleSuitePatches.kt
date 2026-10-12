@@ -9,7 +9,9 @@ import app.template.patches.shared.Constants.isFourXvr20022Build
 import app.template.patches.shared.PatchCategories
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction12x
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction21c
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction21t
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction23x
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction31i
@@ -21,7 +23,9 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableTypeReference
 
 /**
  * G6 — 4XVR subtitle suite for exact 4XVR 2.0.22/20022.
@@ -42,6 +46,7 @@ private const val V4_CONFIG = "Lcn/vr4p/vr4pmovieplayer/V4Config;"
 private const val MAIN_ACTIVITY = "Lcn/vr4p/oculus4xvrplayerov/Main4XActivity;"
 private const val SUBTITLE_POSITION_CONTROLS = "Lcn/vr4p/patch/SubtitlePositionControls;"
 private const val SUBTITLE_FONT = "Lcn/vr4p/patch/SubtitleFont;"
+private const val SUBTITLE_STYLE_LISTENER = "Lcn/vr4p/patch/SubtitleStyleListener;"
 
 @Suppress("unused")
 internal val fourXvrSubtitleSuitePayloadPatch = rawResourcePatch(
@@ -102,7 +107,10 @@ internal val fourXvrSubtitleSuitePatch = bytecodePatch(
         // ------------------------------------------------------------------
         // V4SubtitlesUI.onCreate()V: attach the subtitle position row immediately before
         // the unique V4Window.AftCreate() super call (the only AftCreate reference in the
-        // class). The receiver must be the method receiver register.
+        // class). The receiver must be the method receiver register. The reference build's
+        // :cond_a entry runs the attach call, so the if-eqz branch into :cond_a is rebuilt
+        // against a fresh label placed on the inserted row (a plain insert before the branch
+        // target is skipped on that path).
         // ------------------------------------------------------------------
         val aftCreateSites = subtitlesUi.methods.flatMap { method ->
             method.implementation?.instructions?.withIndex()?.filter { (_, instruction) ->
@@ -125,6 +133,15 @@ internal val fourXvrSubtitleSuitePatch = bytecodePatch(
             aftCreateCall is FiveRegisterInstruction &&
                 aftCreateCall.registerCount == 1 && aftCreateCall.registerC == aftCreateReceiver,
         ) { "Unexpected V4Window->AftCreate super-call shape in V4SubtitlesUI" }
+        val condABranches = aftCreateMethod.implementation!!.instructions.withIndex()
+            .filter { (_, instruction) ->
+                (instruction as? BuilderOffsetInstruction)?.target?.location?.index == aftCreateIndex
+            }
+            .map { it.index }
+        check(condABranches.size == 1) {
+            "Expected exactly one branch into the :cond_a entry of V4SubtitlesUI; " +
+                "found ${condABranches.size}"
+        }
         aftCreateMethod.addInstructions(
             aftCreateIndex,
             listOf(
@@ -135,6 +152,76 @@ internal val fourXvrSubtitleSuitePatch = bytecodePatch(
                     listOf("Landroid/view/ViewGroup;"),
                     "V",
                     listOf(0),
+                ),
+            ),
+        )
+        val attachLabel = aftCreateMethod.implementation!!.newLabelForIndex(aftCreateIndex)
+        condABranches.forEach { branchIndex ->
+            val branch = aftCreateMethod.implementation!!.instructions[branchIndex]
+            check(
+                branch is BuilderInstruction21t &&
+                    (branch as BuilderOffsetInstruction).target.location.index == aftCreateIndex + 2,
+            ) {
+                "Unexpected branch shape at index $branchIndex of V4SubtitlesUI.AftCreate " +
+                    "(${branch.opcode}); expected an if-* branch into :cond_a"
+            }
+            aftCreateMethod.replaceInstruction(
+                branchIndex,
+                BuilderInstruction21t(
+                    branch.opcode,
+                    (branch as OneRegisterInstruction).registerA,
+                    attachLabel,
+                ),
+            )
+        }
+
+        // ------------------------------------------------------------------
+        // Main4XActivity: the reference build constructs the subtitle listener as the extended
+        // SubtitleStyleListener (cue cache + italic refresh on the playback tick) instead of the
+        // stock V4VRSubtitleListener. Retarget the single instantiation so the app's subtitle
+        // pipeline runs the extended listener.
+        // ------------------------------------------------------------------
+        val mainActivity = mutableClassDefBy(MAIN_ACTIVITY)
+        val listenerSites = mainActivity.methods.flatMap { method ->
+            method.implementation?.instructions?.withIndex()?.filter { (_, instruction) ->
+                instruction.opcode == Opcode.NEW_INSTANCE &&
+                    ((instruction as? ReferenceInstruction)?.reference as? TypeReference)?.type ==
+                    V4_VR_SUBTITLE_LISTENER
+            }?.map { method to it.index } ?: emptyList()
+        }
+        check(listenerSites.size == 1) {
+            "Expected exactly one V4VRSubtitleListener instantiation in Main4XActivity; " +
+                "found ${listenerSites.size}"
+        }
+        val (listenerMethod, listenerIndex) = listenerSites.single()
+        val listenerNewInstance = listenerMethod.implementation!!.instructions[listenerIndex]
+        check(listenerNewInstance is OneRegisterInstruction) {
+            "Unexpected V4VRSubtitleListener instantiation shape in Main4XActivity"
+        }
+        val listenerInit = listenerMethod.implementation!!.instructions[listenerIndex + 1]
+        val listenerInitReference = (listenerInit as? ReferenceInstruction)?.reference as? MethodReference
+        check(
+            listenerInit.opcode == Opcode.INVOKE_DIRECT &&
+                listenerInitReference?.definingClass == V4_VR_SUBTITLE_LISTENER &&
+                listenerInitReference.name == "<init>",
+        ) { "Unexpected instruction after the V4VRSubtitleListener instantiation in Main4XActivity" }
+        listenerMethod.replaceInstruction(
+            listenerIndex,
+            BuilderInstruction21c(
+                Opcode.NEW_INSTANCE,
+                (listenerNewInstance as OneRegisterInstruction).registerA,
+                ImmutableTypeReference(SUBTITLE_STYLE_LISTENER),
+            ),
+        )
+        listenerMethod.replaceInstruction(
+            listenerIndex + 1,
+            retargetInvoke(
+                listenerInit,
+                ImmutableMethodReference(
+                    SUBTITLE_STYLE_LISTENER,
+                    "<init>",
+                    listenerInitReference.parameterTypes,
+                    listenerInitReference.returnType,
                 ),
             ),
         )
