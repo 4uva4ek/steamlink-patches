@@ -1,3 +1,9 @@
+## [1.28.0-dev.17](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.16...v1.28.0-dev.17) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* scope the Device identity recommendation to the legacy bases ([4076f91](https://github.com/AngelDark92/xr-porting-hub/commit/4076f91bbe45393253f7ceac8d3a07536287bf1a))
+
 ## [1.28.0-dev.16](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.15...v1.28.0-dev.16) (2026-10-12)
 
 ### 🐛 Bug Fixes
