@@ -10,4 +10,5 @@ internal object PatchCategories {
     const val SUBTITLES_AND_PLAYBACK = "Subtitles & playback"
     const val CONTROLLER = "Controller"
     const val PREMIUM_AND_PURCHASES = "Premium & purchases"
+    const val STREAMING_AND_NETWORK = "Streaming & network"
 }

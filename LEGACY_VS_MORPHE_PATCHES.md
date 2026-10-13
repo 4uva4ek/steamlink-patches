@@ -22,7 +22,7 @@ overridden.
 
 The exact 2.0.22/5002322 bundle selects only face bridge, high-resolution fix, microphone
 `voice-recognition`, OLED `final-balanced` with recommended `srgb8-highp`, battery usage, and Visual Delay
-`60` ms. On the native-XR side the single supported base 2.0.23/5002363 exposes a 6-patch recommended
+`60` ms. On the native-XR side the single supported base 2.0.23/5002363 exposes a 7-patch recommended
 set; Device identity (2.0.23/5002363) stays optional and off by default, so no supported native
 target auto-selects an identity. The native bundle enables no legacy conversion mutations.
 

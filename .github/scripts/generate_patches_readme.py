@@ -113,6 +113,7 @@ CATEGORY_ORDER = (
     "Advanced XR compatibility",
     "Controller",
     "Premium & purchases",
+    "Streaming & network",
 )
 
 

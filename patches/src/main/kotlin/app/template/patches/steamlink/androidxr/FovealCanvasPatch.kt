@@ -12,7 +12,7 @@ import java.security.MessageDigest
 
 internal const val FOVEAL_CANVAS_LIBRARY = "libgxr_foveal_canvas.so"
 internal const val FOVEAL_CANVAS_MANIFEST = "XR_APILAYER_local_GalaxyXR_foveal_canvas.json"
-internal const val FOVEAL_CANVAS_HELPER_SHA256 = "2939db189b19322da6ec601e96f9d4036d449fd8ee386e3cbd69e491d539eac3"
+internal const val FOVEAL_CANVAS_HELPER_SHA256 = "d1426255e07674d604d1288429676c0c7f4a67d6a1b575d55c5a94e47d030d3f"
 internal const val FOVEAL_CANVAS_MANIFEST_SHA256 =
     "2ff0b8e93e682ae39247f9f7e0a394e8ee6cabbefa374a1249b19bb1195a12e5"
 internal const val FOVEAL_CANVAS_SCENE_SIZE = 2_220_872

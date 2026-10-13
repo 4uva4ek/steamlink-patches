@@ -5,6 +5,7 @@ import app.template.patches.steamlink.androidxr.appearOnTopPatch
 import app.template.patches.steamlink.androidxr.androidXrUiExtensionPatch
 import app.template.patches.steamlink.androidxr.gxrFacebridgePatch
 import app.template.patches.steamlink.androidxr.unrestrictedBatteryUsagePatch
+import app.template.patches.steamlink.androidxr.xrCodecsSupportPatch
 import app.template.patches.steamlink.androidxr.xrCoreRuntimePatch
 import app.template.patches.steamlink.androidxr.xrDeviceConfigBaselinePatch
 import app.template.patches.steamlink.androidxr.xrDirectInputFixPatch
@@ -22,6 +23,7 @@ import app.template.patches.steamlink.binary.forceLobbyPermissionStateGatePatch
 import app.template.patches.steamlink.binary.forceStreamXrGatesPatch
 import app.template.patches.steamlink.binary.hmdOnlyPatch
 import app.template.patches.steamlink.binary.microphoneInputPresetPatch
+import app.template.patches.steamlink.binary.networkOptimizationsPatch
 import app.template.patches.steamlink.binary.oledCalibrationPatch
 import app.template.patches.steamlink.identity.changePackageNamePatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
@@ -102,12 +104,13 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun modern_recommended_set_contains_only_the_requested_six_patches() {
+    fun modern_recommended_set_contains_only_the_requested_seven_patches() {
         assertEquals(
             setOf(
                 xrGalaxyXrHighResolutionPatch,
                 gxrFacebridgePatch,
                 microphoneInputPresetPatch,
+                networkOptimizationsPatch,
                 unrestrictedBatteryUsagePatch,
                 hmdOnlyPatch,
                 oledCalibrationPatch,
@@ -133,6 +136,8 @@ class PatchCompatibilityMatrixTest {
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
         assertEquals(1.00f, oledCalibrationPatch.options["fovealGamma"].default)
+        assertTrue(networkOptimizationsPatch.default)
+        assertEquals("Network Optimizations", networkOptimizationsPatch.name)
         assertFalse(deviceIdentityPatch.supports("2.0.23", 5002363))
         assertTrue(deviceIdentityNativeXrPatch.supports("2.0.23", 5002363))
         assertFalse(deviceIdentityPatch.supports("2.0.22", 5002322))
@@ -143,11 +148,13 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun new_native_base_exposes_seven_individual_patches_and_no_legacy_mutations() {
+    fun new_native_base_exposes_nine_individual_patches_and_no_legacy_mutations() {
         val expected = setOf(
             xrGalaxyXrHighResolutionPatch,
             gxrFacebridgePatch,
             microphoneInputPresetPatch,
+            networkOptimizationsPatch,
+            xrCodecsSupportPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
@@ -204,13 +211,15 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun new_legacy_bases_preserve_all_21_standalone_patches_and_optional_defaults() {
+    fun new_legacy_bases_preserve_all_22_standalone_patches_and_optional_defaults() {
         val completeCatalog = allIndividualPatches + listOf(fovealBlueNoisePatch, backgroundBlueNoisePatch)
         val reference = completeCatalog.filter { it.supports("2.0.20", 5001712) }.toSet()
-        assertEquals(21, reference.size)
+        assertEquals(22, reference.size)
         listOf("2.0.20" to 5001812, "2.0.21" to 5001968).forEach { (version, code) ->
             val supported = completeCatalog.filter { it.supports(version, code) }.toSet()
-            assertEquals(reference, supported, "$version/$code")
+            // Codecs Support stays exact to 5001712 on the 2.0.20 line; the intermediate
+            // bases keep every other standalone patch.
+            assertEquals(reference - xrCodecsSupportPatch, supported, "$version/$code")
             assertEquals(legacyRecommendedPatches, recommendedFor(version, code).toSet(), "$version/$code")
             legacyRecommendedPatches.forEach { assertTrue(it.default, "${it.name}: $version/$code") }
             (supported - legacyRecommendedPatches).forEach { patch ->
@@ -322,6 +331,8 @@ class PatchCompatibilityMatrixTest {
             gxrFacebridgePatch,
             xrGalaxyXrHighResolutionPatch,
             microphoneInputPresetPatch,
+            networkOptimizationsPatch,
+            xrCodecsSupportPatch,
             oledCalibrationPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
@@ -358,6 +369,7 @@ class PatchCompatibilityMatrixTest {
             xrGalaxyXrHighResolutionPatch,
             gxrFacebridgePatch,
             microphoneInputPresetPatch,
+            networkOptimizationsPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,

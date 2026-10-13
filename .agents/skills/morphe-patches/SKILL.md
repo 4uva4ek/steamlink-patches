@@ -63,6 +63,10 @@ A new app is a new package, never a widening of an existing patch. Checklist:
 8. Tests: tracked payload SHA-256 pins, synthetic apply / keep-patched / reject-foreign / wrong-size / wrong-hash cases, and the real-base audit behind `org.junit.Assume.assumeTrue("BLOCKED: ...")`. Report executed and skipped counts separately.
 9. Worked example in repo: the 4XVR set (`fourxvr/`, `resources/fourxvr/`, `fourxvr-extension.mpe`). Cross-check every app-member reference in extension smali against the stock decode before assembling — the app's existing classes are patched in place, never replaced.
 
+## Native OpenXR layer protocol pitfall (device-verified 2026-10-12)
+
+An implicit API layer's `getInstanceProcAddr` is queried by the shipped loader with `XR_NULL_HANDLE` for `xrInitializeLoaderKHR` BEFORE any `createApiLayerInstance` chain exists (`ApiLayerInterface::LoadApiLayers` in the app's own `libopenxr_loader.so`). Forwarding that call through a not-yet-assigned next-chain pointer branches to null and SIGSEGVs the app at every start (pc=0, `xrCreateInstance` caller). Guard every layer's fallback: return `XR_ERROR_FUNCTION_UNSUPPORTED` when the next chain is unassigned. A failed call is the loader-tolerated "no forward" answer; `XR_SUCCESS` with a null output pointer makes the loader abort the layer. Repro/evidence: `diagnostics/steamlink-foveal-canvas/2026-10-12-loader-crash-rca-and-fix.md`.
+
 ## Extension DEX (smali)
 
 - Sources: `patches/src/main/resources/steamlink/androidxr/smali/` (Steam Link) and `patches/src/main/resources/fourxvr/smali/` (4XVR)
