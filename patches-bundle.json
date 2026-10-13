@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-13T14:37:46",
-  "description": "## [1.28.0-dev.23](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.22...v1.28.0-dev.23) (2026-10-13)\n\n### 🐛 Bug Fixes\n\n* enhance network optimization patch with tolerance for prior edits in scene and main transforms ([0f3e1b8](https://github.com/AngelDark92/xr-porting-hub/commit/0f3e1b89983c15115cc42be05e812714ed9a943c))",
-  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.23/patches-1.28.0-dev.23.mpp",
+  "created_at": "2026-10-13T15:34:05",
+  "description": "## [1.28.0-dev.24](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.23...v1.28.0-dev.24) (2026-10-13)\n\n### 🐛 Bug Fixes\n\n* update Network Optimizations patch test to correctly validate prior microphone edits ([e3c07a0](https://github.com/AngelDark92/xr-porting-hub/commit/e3c07a0bcfd217e014ac46f34316f0f819247966))",
+  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.24/patches-1.28.0-dev.24.mpp",
   "signature_download_url": "",
-  "version": "1.28.0-dev.23"
+  "version": "1.28.0-dev.24"
 }

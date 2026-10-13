@@ -1,3 +1,9 @@
+## [1.28.0-dev.24](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.23...v1.28.0-dev.24) (2026-10-13)
+
+### 🐛 Bug Fixes
+
+* update Network Optimizations patch test to correctly validate prior microphone edits ([e3c07a0](https://github.com/AngelDark92/xr-porting-hub/commit/e3c07a0bcfd217e014ac46f34316f0f819247966))
+
 ## [1.28.0-dev.23](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.22...v1.28.0-dev.23) (2026-10-13)
 
 ### 🐛 Bug Fixes
