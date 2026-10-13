@@ -1,3 +1,9 @@
+## [1.28.0-dev.22](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.21...v1.28.0-dev.22) (2026-10-13)
+
+### ✨ New Features
+
+* network optimizations for 2.0.23 and allow other codecs patch both still experimental ([76da903](https://github.com/AngelDark92/xr-porting-hub/commit/76da90316a54c7eab7b889f4e1e400871f5e2860))
+
 ## [1.28.0-dev.21](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.20...v1.28.0-dev.21) (2026-10-12)
 
 ### ✨ New Features
