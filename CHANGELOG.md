@@ -1,3 +1,9 @@
+## [1.28.0-dev.23](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.22...v1.28.0-dev.23) (2026-10-13)
+
+### 🐛 Bug Fixes
+
+* enhance network optimization patch with tolerance for prior edits in scene and main transforms ([0f3e1b8](https://github.com/AngelDark92/xr-porting-hub/commit/0f3e1b89983c15115cc42be05e812714ed9a943c))
+
 ## [1.28.0-dev.22](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.21...v1.28.0-dev.22) (2026-10-13)
 
 ### ✨ New Features
