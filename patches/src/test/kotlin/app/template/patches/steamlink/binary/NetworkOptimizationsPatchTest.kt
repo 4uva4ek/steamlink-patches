@@ -92,8 +92,8 @@ class NetworkOptimizationsPatchTest {
             // block (0x141C6C) and Visual Delay hook (0x101F1C) have already edited the scene
             // library before this patch runs. Only the windows this patch owns may be checked.
             val prior = stock.copyOf().also {
-                val mic = it[0x0F44C0].toInt()
-                it[0x0F44C0] = ((mic and 0xF8) or 0x01).toByte()
+                // Microphone preset's real write is 0xE1 -> 0xC1 (Voice Recognition) at 0x0F44C0.
+                it[0x0F44C0] = 0xC1.toByte()
                 it[0x141C6C] = (it[0x141C6C].toInt() xor 0x01).toByte()
                 it[0x101F1C] = 0x11.toByte()
             }
@@ -103,7 +103,7 @@ class NetworkOptimizationsPatchTest {
                 assertContentEquals(edit.replacementBytes(), patched.copyOfRange(edit.offset, edit.endExclusive),
                     "${edit.id} patched window over a multi-patch input")
             }
-            assertEquals(((stock[0x0F44C0].toInt() and 0xF8) or 0x01) and 0xFF, patched[0x0F44C0].toInt() and 0xFF,
+            assertEquals(0xC1, patched[0x0F44C0].toInt() and 0xFF,
                 "Prior microphone edit not preserved")
             assertEquals((stock[0x141C6C].toInt() xor 0x01) and 0xFF, patched[0x141C6C].toInt() and 0xFF,
                 "Prior tongue edit not preserved")
