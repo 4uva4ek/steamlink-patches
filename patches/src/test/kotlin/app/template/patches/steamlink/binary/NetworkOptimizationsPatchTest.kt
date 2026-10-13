@@ -86,6 +86,32 @@ class NetworkOptimizationsPatchTest {
         }
 
     @Test
+    fun `scene transform tolerates unrelated prior patch edits and preserves them`() =
+        withDecoded(SCENE_RELATIVE_PATH) { stock ->
+            // Simulates the recommended-set order: Microphone input preset (0x0F44C0), GXR tongue
+            // block (0x141C6C) and Visual Delay hook (0x101F1C) have already edited the scene
+            // library before this patch runs. Only the windows this patch owns may be checked.
+            val prior = stock.copyOf().also {
+                val mic = it[0x0F44C0].toInt()
+                it[0x0F44C0] = ((mic and 0xF8) or 0x01).toByte()
+                it[0x141C6C] = (it[0x141C6C].toInt() xor 0x01).toByte()
+                it[0x101F1C] = 0x11.toByte()
+            }
+            val patched = applyNetworkOptimizationsScene(prior)
+
+            for (edit in SCENE_EDITS) {
+                assertContentEquals(edit.replacementBytes(), patched.copyOfRange(edit.offset, edit.endExclusive),
+                    "${edit.id} patched window over a multi-patch input")
+            }
+            assertEquals(((stock[0x0F44C0].toInt() and 0xF8) or 0x01) and 0xFF, patched[0x0F44C0].toInt() and 0xFF,
+                "Prior microphone edit not preserved")
+            assertEquals((stock[0x141C6C].toInt() xor 0x01) and 0xFF, patched[0x141C6C].toInt() and 0xFF,
+                "Prior tongue edit not preserved")
+            assertEquals(0x11, patched[0x101F1C].toInt() and 0xFF, "Prior delay edit not preserved")
+            assertContentEquals(patched, applyNetworkOptimizationsScene(patched), "Reapply is not idempotent")
+        }
+
+    @Test
     fun `main transform reproduces the frozen hashes edits and idempotence`() =
         withDecoded(MAIN_RELATIVE_PATH) { stock ->
             val snapshot = stock.copyOf()
@@ -120,6 +146,17 @@ class NetworkOptimizationsPatchTest {
                 applyNetworkOptimizationsMain(flipped)
             }
             assertContentEquals(flippedSnapshot, flipped, "Failed patch mutated its input")
+        }
+
+    @Test
+    fun `main transform tolerates unrelated prior edits`() =
+        withDecoded(MAIN_RELATIVE_PATH) { stock ->
+            val prior = stock.copyOf().also { it[0x1000] = (it[0x1000].toInt() xor 0x01).toByte() }
+            val patched = applyNetworkOptimizationsMain(prior)
+            assertContentEquals(E4.replacementBytes(), patched.copyOfRange(E4.offset, E4.endExclusive),
+                "E4 patched window over a prior-edit input")
+            assertEquals((stock[0x1000].toInt() xor 0x01) and 0xFF, patched[0x1000].toInt() and 0xFF,
+                "Prior edit not preserved")
         }
 
     @Test

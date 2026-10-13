@@ -589,6 +589,7 @@ Exact 2.0.23/5002363 only; headset validation pending. See the [diagnostic recor
 - Pairs with the GalaxyXR driver Stream codec setting (`nvencCodec`: 1 = H.264, 2 = AV1); 8-bit only
 - The layer identity-checks the scene library against pinned per-base code anchors and fails closed on unknown layouts; other patches' scene edits are tolerated while the pinned decoder-import regions stay byte-identical
 - Headset validation pending; requires a SteamVR restart and a stream reconnect
+- Removing this patch: repatch from the original APK and set the driver Stream codec back to HEVC first — an unpatched client cannot decode an H.264/AV1 stream (driver uninstall needs no ordering: its setting is removed with the driver)
 
 ---
 

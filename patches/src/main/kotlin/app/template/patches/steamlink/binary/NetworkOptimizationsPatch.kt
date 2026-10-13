@@ -11,15 +11,22 @@ import java.security.MessageDigest
 // Every window below is byte-exact and unique in the shipped library, on the exact base:
 //   libvrlink_scene.so  size 2,292,008    sha256 628821feab199d7712be8a51273eb9a21ec440a7c91aa6a768cc7307a4fe22f0
 //   libmain.so          size 15,826,584   sha256 1bc350c5d0d2cb6501680f98d55512c516802df7d78fb48f8a142baf0d2f5acb
-// All transforms are fail-closed: a size or hash mismatch aborts the patch and leaves the
-// library untouched. Only this base is accepted; there is no legacy fallback for these edits.
+// All transforms are fail-closed at window granularity: the exact stock window must be found
+// verbatim (and unique in the file), or the patch aborts with the current file's size and hash.
+// A full-file stock hash is NOT required: in a Morphe session other patches may have edited the
+// same library before this one runs (this patch edits libvrlink_scene.so and libmain.so; the
+// microphone preset, the GXR tongue block, the Visual Delay hook and the OLED calibration all
+// touch the scene library first in the recommended set). The frozen hashes below remain the
+// pristine-APK expectations and the re-application fast path.
 
 private const val SCENE_SIZE = 2_292_008
-private const val SCENE_SHA256 = "628821feab199d7712be8a51273eb9a21ec440a7c91aa6a768cc7307a4fe22f0"
+// Pristine-APK expectations, kept for diagnostics and records; the per-window guards below are
+// authoritative because earlier patches in a session may already have edited the file.
+internal const val SCENE_SHA256 = "628821feab199d7712be8a51273eb9a21ec440a7c91aa6a768cc7307a4fe22f0"
 private const val SCENE_PATCHED_SHA256 = "4d5ff6937d07747495b82a412592ce017d6bdadd54c8264e1e49ebb24b5aa72c"
 
 private const val MAIN_SIZE = 15_826_584
-private const val MAIN_SHA256 = "1bc350c5d0d2cb6501680f98d55512c516802df7d78fb48f8a142baf0d2f5acb"
+internal const val MAIN_SHA256 = "1bc350c5d0d2cb6501680f98d55512c516802df7d78fb48f8a142baf0d2f5acb"
 private const val MAIN_PATCHED_SHA256 = "17c1a4d91351190fcf2a996c1cb7673faac3bdde8aee70716cb07e295b950ade"
 
 // E1 - libvrlink_scene.so 0x166b60, 44-byte window in SVLFECRXFrame::CheckRetry's abort block.
@@ -131,11 +138,9 @@ internal fun applyNetworkOptimizationsScene(bytes: ByteArray): ByteArray {
     if (bytes.size != SCENE_SIZE) {
         throw PatchException("unexpected libvrlink_scene.so size=${bytes.size}; expected $SCENE_SIZE for 2.0.23/5002363")
     }
-    val actual = sha256(bytes)
-    if (actual == SCENE_PATCHED_SHA256) return bytes.copyOf()
-    if (actual != SCENE_SHA256) {
-        throw PatchException("unexpected libvrlink_scene.so sha256 $actual; expected stock $SCENE_SHA256 for 2.0.23/5002363")
-    }
+    if (sha256(bytes) == SCENE_PATCHED_SHA256) return bytes.copyOf()
+    // No full-file stock-hash gate here: earlier patches in the same session may have edited this
+    // library already (the per-window guards below verify exactly the regions this patch owns).
     val e1 = replaceExact(bytes, E1_OFFSET, E1_STOCK, E1_REPLACEMENT, "E1 retransmit-abort fallback")
     val e2 = replaceExact(e1, E2_OFFSET, E2_STOCK, E2_REPLACEMENT, "E2 backtrack window")
     return replaceExact(e2, E3_OFFSET, E3_STOCK, E3_REPLACEMENT, "E3 UDP send buffer")
@@ -145,11 +150,7 @@ internal fun applyNetworkOptimizationsMain(bytes: ByteArray): ByteArray {
     if (bytes.size != MAIN_SIZE) {
         throw PatchException("unexpected libmain.so size=${bytes.size}; expected $MAIN_SIZE for 2.0.23/5002363")
     }
-    val actual = sha256(bytes)
-    if (actual == MAIN_PATCHED_SHA256) return bytes.copyOf()
-    if (actual != MAIN_SHA256) {
-        throw PatchException("unexpected libmain.so sha256 $actual; expected stock $MAIN_SHA256 for 2.0.23/5002363")
-    }
+    if (sha256(bytes) == MAIN_PATCHED_SHA256) return bytes.copyOf()
     return replaceExact(bytes, E4_OFFSET, E4_STOCK, E4_REPLACEMENT, "E4 decoder flush removal")
 }
 
