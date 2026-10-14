@@ -1,3 +1,9 @@
+## [1.28.0-dev.30](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.29...v1.28.0-dev.30) (2026-10-14)
+
+### ✨ New Features
+
+* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([24e658a](https://github.com/AngelDark92/xr-porting-hub/commit/24e658a83326112b419bf5267de56160037d5c58))
+
 ## [1.28.0-dev.29](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.28...v1.28.0-dev.29) (2026-10-14)
 
 ### 🐛 Bug Fixes

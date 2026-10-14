@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-14T15:14:28",
-  "description": "## [1.28.0-dev.29](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.28...v1.28.0-dev.29) (2026-10-14)\n\n### 🐛 Bug Fixes\n\n* codecs support v6 (AV1 AU walk past sized TD OBU) ([2eaa85c](https://github.com/AngelDark92/xr-porting-hub/commit/2eaa85c31a11ed9c5a1fde1ac87588e3c278fb3d))",
-  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.29/patches-1.28.0-dev.29.mpp",
+  "created_at": "2026-10-14T16:18:10",
+  "description": "## [1.28.0-dev.30](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.29...v1.28.0-dev.30) (2026-10-14)\n\n### ✨ New Features\n\n* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([24e658a](https://github.com/AngelDark92/xr-porting-hub/commit/24e658a83326112b419bf5267de56160037d5c58))",
+  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.30/patches-1.28.0-dev.30.mpp",
   "signature_download_url": "",
-  "version": "1.28.0-dev.29"
+  "version": "1.28.0-dev.30"
 }
