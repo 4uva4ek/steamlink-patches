@@ -51,11 +51,13 @@
 
 namespace {
 
+using gxr::FindAv1SeqAndFrame;
 using gxr::FormatEntry;
+using gxr::PatchAv1SeqHeaders;
 using gxr::Sniffed;
 
 constexpr const char* kLayerName = "XR_APILAYER_local_GalaxyXR_codecs_support";
-constexpr const char* kBuild = "codecs-support-v5-20261014";
+constexpr const char* kBuild = "codecs-support-v6-20261014";
 constexpr const char* kDisableEnv = "GXR_DISABLE_CODECS_SUPPORT";
 constexpr const char* kSceneSoname = "libvrlink_scene.so";
 constexpr size_t kMaxSniffedAu = 4u << 20;
@@ -179,79 +181,8 @@ bool QueueAu(void* codec, const std::vector<uint8_t>& au, uint64_t timeUs, uint3
     return false;
 }
 
-// Walk one AU's OBUs (bounds-checked, AV1 rules); report the first
-// sequence-header (type 1) and frame-header (type 3) payload spans.
-bool FindAv1SeqAndFrame(const uint8_t* p, size_t n, size_t* seqOff, size_t* seqLen,
-                        size_t* fhOff, size_t* fhLen) {
-    if (!p || n < 2) return false;
-    bool haveSeq = false, haveFh = false;
-    size_t off = 0;
-    while (off < n) {
-        const uint8_t hb = p[off];
-        if (hb & 0x80) return haveSeq && haveFh;
-        const uint8_t type = (hb >> 3) & 0x0F;
-        if (type == 0 || (type >= 9 && type <= 14)) return haveSeq && haveFh;
-        const bool ext = ((hb >> 2) & 1) != 0;
-        const bool hasSize = ((hb >> 1) & 1) != 0;
-        off++;
-        if (ext) { if (off + 1 >= n) return haveSeq && haveFh; off += 2; }
-        uint64_t sz = 0;
-        if (hasSize) {
-            int shift = 0; size_t bytes = 0; bool done = false;
-            while (off < n && bytes < 8) {
-                const uint8_t b = p[off++]; bytes++;
-                sz |= (uint64_t)(b & 0x7F) << shift; shift += 7;
-                if (!(b & 0x80)) { done = true; break; }
-            }
-            if (!done) return haveSeq && haveFh;
-        }
-        if (type == 2) { if (off < n && p[off] == 0) off++; else return haveSeq && haveFh; sz = 0; }
-        else if (!hasSize) return haveSeq && haveFh;
-        if ((uint64_t)off + sz > n) return haveSeq && haveFh;
-        if (type == 1 && !haveSeq) { *seqOff = off; *seqLen = (size_t)sz; haveSeq = true; }
-        if (type == 3 && !haveFh) { *fhOff = off; *fhLen = (size_t)sz; haveFh = true; }
-        if (haveSeq && haveFh) return true;
-        off += (size_t)sz;
-    }
-    return haveSeq && haveFh;
-}
-
-// Patch every sequence-header OBU in place (repeatSpsPps streams carry one
-// per IDR, so later AUs need it too). Returns the number patched.
-int PatchAv1SeqHeaders(uint8_t* p, size_t n, uint32_t w, uint32_t h) {
-    if (!p || n < 2) return 0;
-    int patched = 0;
-    size_t off = 0;
-    while (off < n) {
-        const uint8_t hb = p[off];
-        if (hb & 0x80) return patched;
-        const uint8_t type = (hb >> 3) & 0x0F;
-        if (type == 0 || (type >= 9 && type <= 14)) return patched;
-        const bool ext = ((hb >> 2) & 1) != 0;
-        const bool hasSize = ((hb >> 1) & 1) != 0;
-        off++;
-        if (ext) { if (off + 1 >= n) return patched; off += 2; }
-        uint64_t sz = 0;
-        if (hasSize) {
-            int shift = 0; size_t bytes = 0; bool done = false;
-            while (off < n && bytes < 8) {
-                const uint8_t b = p[off++]; bytes++;
-                sz |= (uint64_t)(b & 0x7F) << shift; shift += 7;
-                if (!(b & 0x80)) { done = true; break; }
-            }
-            if (!done) return patched;
-        }
-        if (type == 2) { if (off < n && p[off] == 0) off++; else return patched; sz = 0; }
-        else if (!hasSize) return patched;
-        if ((uint64_t)off + sz > n) return patched;
-        if (type == 1) {
-            gxr::Av1SeqInfo si = gxr::ParseAv1SeqMax(p + off, (size_t)sz);
-            if (si.ok && gxr::PatchAv1SeqMax(p + off, (size_t)sz, si, w, h)) patched++;
-        }
-        off += (size_t)sz;
-    }
-    return patched;
-}
+// FindAv1SeqAndFrame / PatchAv1SeqHeaders are in av1_geometry.h (pure
+// logic, exercised by the host tests; see the using declarations above).
 
 // A MediaCodec output Surface accepts one producer connection at a time:
 // configuring a second decoder while the app's HEVC decoder still holds the
