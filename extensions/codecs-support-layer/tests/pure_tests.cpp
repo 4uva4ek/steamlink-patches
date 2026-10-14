@@ -117,10 +117,40 @@ static void CheckRecipe() {
     CHECK(gxr::RecipeMime(noMime) == nullptr, "recipe without mime yields null rebuild mime");
 }
 
+static void CheckObuWalk() {
+    using gxr::WalkAv1Obus;
+    // valid unit: TD, sequence header, TD, frame header, tile group
+    const std::vector<uint8_t> ok = {
+        0x12, 0x00,                          // TD
+        0x0A, 0x04, 0x41, 0x42, 0x43, 0x44,  // sequence header (type 1), 4 payload bytes
+        0x12, 0x00,                          // TD
+        0x1A, 0x02, 0x11, 0x22,              // frame header (type 3), 2 payload bytes
+        0x22, 0x03, 0x01, 0x02, 0x03,        // tile group (type 4), 3 payload bytes
+    };
+    auto r1 = WalkAv1Obus(ok.data(), ok.size(), nullptr, nullptr);
+    CHECK(r1.obus == 5 && r1.failOffset == 0, "obu walk: clean unit walks 5 OBUs");
+    // truncated payload: sequence header claims 100 bytes, only 1 present
+    const std::vector<uint8_t> trunc = { 0x12, 0x00, 0x0A, 0x64, 0x41 };
+    auto r2 = WalkAv1Obus(trunc.data(), trunc.size(), nullptr, nullptr);
+    CHECK(r2.obus == 1 && r2.failOffset == 2 && std::string(r2.failReason) == "payload truncated",
+          "obu walk: truncated payload reported");
+    // forbidden bit on the third OBU header
+    const std::vector<uint8_t> bad = { 0x12, 0x00, 0x0A, 0x04, 0x41, 0x42, 0x43, 0x44, 0x8A, 0x02, 0x11, 0x22 };
+    auto r3 = WalkAv1Obus(bad.data(), bad.size(), nullptr, nullptr);
+    CHECK(r3.obus == 2 && r3.failOffset == 8 && std::string(r3.failReason) == "forbidden bit set",
+          "obu walk: forbidden bit reported");
+    // unterminated LEB128 size
+    const std::vector<uint8_t> leb = { 0x12, 0x00, 0x0A, 0x80 };
+    auto r4 = WalkAv1Obus(leb.data(), leb.size(), nullptr, nullptr);
+    CHECK(r4.failOffset == 2 && std::string(r4.failReason) == "unterminated LEB128 size",
+          "obu walk: unterminated size reported");
+}
+
 int main() {
     CheckSha();
     CheckSniff();
     CheckRecipe();
+    CheckObuWalk();
     std::printf("codecs-support pure logic: %d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }

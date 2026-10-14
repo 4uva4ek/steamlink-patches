@@ -54,7 +54,7 @@ using gxr::FormatEntry;
 using gxr::Sniffed;
 
 constexpr const char* kLayerName = "XR_APILAYER_local_GalaxyXR_codecs_support";
-constexpr const char* kBuild = "codecs-support-v2-20261014";
+constexpr const char* kBuild = "codecs-support-v3-20261014";
 constexpr const char* kDisableEnv = "GXR_DISABLE_CODECS_SUPPORT";
 constexpr const char* kSceneSoname = "libvrlink_scene.so";
 constexpr size_t kMaxSniffedAu = 4u << 20;
@@ -135,6 +135,8 @@ void* g_capturedFormat = nullptr;
 void* g_savedWindow = nullptr;
 void* g_savedCrypto = nullptr;
 uint32_t g_savedFlags = 0;
+int g_auDumps = 0;              // first-AU structure diagnostics (one-shot per process)
+bool g_recipeLogged = false;    // recorded-recipe dump (one-shot per process)
 std::map<void*, std::pair<size_t, uint8_t*>> g_inputPtrs;  // codec -> (idx, ptr)
 std::map<void*, void*> g_handleMap;                        // retired -> live
 
@@ -195,6 +197,42 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
     // any teardown invalidates that mapping.
     std::vector<uint8_t> auCopy;
     auCopy.assign(au, au + size);
+    // Diagnostics: dump the structure of the first 2 AV1 AUs (one-shot) so a
+    // rejected stream can be walked offline, and dump the recorded recipe once.
+    if (!std::strcmp(mime, "video/av01") && g_auDumps < 2 && auCopy.size()) {
+        g_auDumps++;
+        LOG("AU%d size=%zu", g_auDumps, auCopy.size());
+        char hex[3 * 48 + 1];
+        const size_t hn = auCopy.size() < 48 ? auCopy.size() : 48;
+        for (size_t i = 0; i < hn; i++) {
+            static const char* digits = "0123456789abcdef";
+            hex[i * 3] = digits[auCopy[i] >> 4];
+            hex[i * 3 + 1] = digits[auCopy[i] & 15];
+            hex[i * 3 + 2] = i + 1 < hn ? ' ' : '\0';
+        }
+        LOG("AU%d head: %s", g_auDumps, hex);
+        struct ObuCtx { int au; };
+        ObuCtx obuCtx{ g_auDumps };
+        auto emit = [](void* c, size_t ix, uint8_t t, size_t off, size_t hl, uint64_t sz) {
+            LOG("AU%d OBU%zu type=%u off=%zu hdr=%zu size=%llu",
+                static_cast<ObuCtx*>(c)->au, ix, t, off, hl, (unsigned long long)sz);
+        };
+        gxr::ObuWalkResult w = gxr::WalkAv1Obus(auCopy.data(), auCopy.size(), emit, &obuCtx);
+        if (w.failOffset) {
+            LOG("AU%d OBU walk STOPPED at offset %zu (type=%u): %s (%zu OBUs walked)",
+                obuCtx.au, w.failOffset, w.failType, w.failReason, w.obus);
+        } else {
+            LOG("AU%d OBU walk clean: %zu OBUs", obuCtx.au, w.obus);
+        }
+    }
+    if (!g_recipeLogged) {
+        g_recipeLogged = true;
+        LOG("recipe dump (%zu entries):", g_recipe.size());
+        for (const FormatEntry& e : g_recipe) {
+            if (e.isString) LOG("recipe: %s = \"%s\"", e.key.c_str(), e.svalue.c_str());
+            else LOG("recipe: %s = %d", e.key.c_str(), e.ivalue);
+        }
+    }
     void* live = o_createDecoder(mime);
     if (!live) {
         LOG("createDecoderByType(%s) failed; keeping stock path", mime);

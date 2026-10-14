@@ -62,6 +62,75 @@ inline Sniffed SniffAccessUnit(const uint8_t* p, size_t n) {
     return Sniffed::KeepHevc;
 }
 
+// ---------------------------------------------------------------------------
+// AV1 temporal-unit structure walk (diagnostics). Validates the OBU chain of
+// one access unit -- forbidden bit, LEB128 size fields, TD rules, payload
+// framing -- and reports the first malformed or truncated unit. Pure logic.
+// ---------------------------------------------------------------------------
+struct ObuWalkResult {
+    size_t obus;         // OBUs walked successfully
+    size_t failOffset;   // 0 when the walk is clean
+    uint8_t failType;
+    const char* failReason;
+};
+typedef void (*ObuEmitFn)(void* ctx, size_t index, uint8_t type, size_t offset, size_t headerLen,
+                          uint64_t payload);
+
+inline ObuWalkResult WalkAv1Obus(const uint8_t* p, size_t n, ObuEmitFn emit, void* ctx) {
+    ObuWalkResult r{0, 0, 0, nullptr};
+    if (!p) return r;
+    size_t off = 0;
+    while (off < n) {
+        const size_t start = off;
+        const uint8_t h = p[off];
+        if (h & 0x80) { r.failOffset = start; r.failType = h; r.failReason = "forbidden bit set"; return r; }
+        const uint8_t type = (h >> 3) & 0x0F;
+        if (type == 0 || (type >= 9 && type <= 14)) {
+            r.failOffset = start; r.failType = type; r.failReason = "reserved OBU type"; return r;
+        }
+        const bool extHdr = ((h >> 2) & 1) != 0;
+        const bool hasSize = ((h >> 1) & 1) != 0;
+        off++;
+        if (extHdr) {
+            if (off + 1 >= n) {
+                r.failOffset = start; r.failType = type; r.failReason = "truncated extension header"; return r;
+            }
+            off += 2;
+        }
+        uint64_t sz = 0;
+        if (hasSize) {
+            int shift = 0; size_t bytes = 0; bool done = false;
+            while (off < n && bytes < 8) {
+                const uint8_t b = p[off++]; bytes++;
+                sz |= static_cast<uint64_t>(b & 0x7F) << shift; shift += 7;
+                if (!(b & 0x80)) { done = true; break; }
+            }
+            if (!done) {
+                r.failOffset = start; r.failType = type; r.failReason = "unterminated LEB128 size"; return r;
+            }
+        }
+        if (type == 2) {  // temporal delimiter: zero-size unit
+            if (hasSize) {
+                if (sz != 0) { r.failOffset = start; r.failType = type; r.failReason = "TD with nonzero size"; return r; }
+            } else if (off < n && p[off] == 0) {
+                off++;  // size-less TD still carries one zero byte
+            } else {
+                r.failOffset = start; r.failType = type; r.failReason = "TD without zero byte"; return r;
+            }
+            sz = 0;
+        } else if (!hasSize) {
+            r.failOffset = start; r.failType = type; r.failReason = "OBU without size field"; return r;
+        }
+        if (static_cast<uint64_t>(off) + sz > n) {
+            r.failOffset = start; r.failType = type; r.failReason = "payload truncated"; return r;
+        }
+        if (emit) emit(ctx, r.obus, type, start, off - start, sz);
+        off += static_cast<size_t>(sz);
+        r.obus++;
+    }
+    return r;
+}
+
 inline const char* SniffedName(Sniffed s) {
     switch (s) {
         case Sniffed::KeepHevc: return "HEVC";
