@@ -1,3 +1,9 @@
+## [1.28.0-dev.26](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.25...v1.28.0-dev.26) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Enhance AV1 codec diagnostics and update support library version ([82975b0](https://github.com/AngelDark92/xr-porting-hub/commit/82975b0f50cd11c9c876ab3bfc189fea33560310))
+
 ## [1.28.0-dev.25](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.24...v1.28.0-dev.25) (2026-10-14)
 
 ### 🐛 Bug Fixes
