@@ -40,4 +40,21 @@ inline const char* RecipeMime(const std::vector<FormatEntry>& in) {
     return nullptr;
 }
 
+// The recorded recipe is the scene library's HEVC format. Some entries are
+// HEVC-era or QTI-extension hints that this device's AV1 codec path refuses
+// on every input ("Unsupported input buffer" while a standard player config
+// feeds the same access units happily), so the codec swap filters them out
+// and lets the codec drive its own defaults: drop the low-latency request,
+// the operating-rate/priority hints, and every vendor.* extension key.
+inline std::vector<FormatEntry> FilterCodecSwapRecipe(const std::vector<FormatEntry>& in) {
+    std::vector<FormatEntry> out;
+    out.reserve(in.size());
+    for (const FormatEntry& e : in) {
+        if (e.key == "low-latency" || e.key == "operating-rate" || e.key == "priority") continue;
+        if (e.key.rfind("vendor.", 0) == 0) continue;
+        out.push_back(e);
+    }
+    return out;
+}
+
 }  // namespace gxr

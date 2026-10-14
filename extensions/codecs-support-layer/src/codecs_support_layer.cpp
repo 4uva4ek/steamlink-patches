@@ -54,7 +54,7 @@ using gxr::FormatEntry;
 using gxr::Sniffed;
 
 constexpr const char* kLayerName = "XR_APILAYER_local_GalaxyXR_codecs_support";
-constexpr const char* kBuild = "codecs-support-v3-20261014";
+constexpr const char* kBuild = "codecs-support-v4-20261014";
 constexpr const char* kDisableEnv = "GXR_DISABLE_CODECS_SUPPORT";
 constexpr const char* kSceneSoname = "libvrlink_scene.so";
 constexpr size_t kMaxSniffedAu = 4u << 20;
@@ -238,12 +238,12 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
         LOG("createDecoderByType(%s) failed; keeping stock path", mime);
         return false;
     }
-    std::vector<FormatEntry> entries = gxr::SubstituteMime(g_recipe, mime);
+    std::vector<FormatEntry> entries = gxr::FilterCodecSwapRecipe(gxr::SubstituteMime(g_recipe, mime));
     void* fmt = o_formatNew();
     if (!fmt) { LOG("format allocation failed; keeping stock path"); o_delete(live); return false; }
     for (const FormatEntry& e : entries) {
-        if (e.isString) o_setString(fmt, e.key.c_str(), e.svalue.c_str());
-        else o_setInt32(fmt, e.key.c_str(), e.ivalue);
+        if (e.isString) { LOG("swap fmt: %s = \"%s\"", e.key.c_str(), e.svalue.c_str()); o_setString(fmt, e.key.c_str(), e.svalue.c_str()); }
+        else { LOG("swap fmt: %s = %d", e.key.c_str(), e.ivalue); o_setInt32(fmt, e.key.c_str(), e.ivalue); }
     }
     // Teardown begins: release the Surface producer before the new connect.
     o_stop(oldCodec);

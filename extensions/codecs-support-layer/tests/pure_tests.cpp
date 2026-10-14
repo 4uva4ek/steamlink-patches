@@ -115,6 +115,33 @@ static void CheckRecipe() {
     CHECK(!gxr::RecipeHasMime(noMime), "recipe without mime detected");
     CHECK(std::string(gxr::RecipeMime(recipe)) == "video/hevc", "recipe mime recovered for rebuild");
     CHECK(gxr::RecipeMime(noMime) == nullptr, "recipe without mime yields null rebuild mime");
+    std::vector<FormatEntry> full = {
+        {true, "mime", "video/hevc", 0},
+        {false, "width", "", 896},
+        {false, "height", "", 3584},
+        {true, "color-standard", "", 6},
+        {true, "low-latency", "", 1},
+        {false, "operating-rate", "", 32767},
+        {true, "vendor.qti-ext-dec-low-latency.enable", "", 1},
+        {true, "vendor.qti-ext-dec-picture-order.enable", "", 1},
+        {true, "vendor.qti-ext-dec-heif-mode.value", "", 1},
+        {false, "priority", "", 0},
+    };
+    auto filtered = gxr::FilterCodecSwapRecipe(full);
+    CHECK(filtered.size() == 4, "swap filter drops exactly the QTI-era hints");
+    bool hasVendor = false, hasLl = false, hasRate = false, hasPrio = false, keptSize = false;
+    for (const auto& e : filtered) {
+        if (e.key.rfind("vendor.", 0) == 0) hasVendor = true;
+        if (e.key == "low-latency") hasLl = true;
+        if (e.key == "operating-rate") hasRate = true;
+        if (e.key == "priority") hasPrio = true;
+        if (e.key == "width" && e.ivalue == 896) keptSize = true;
+    }
+    CHECK(!hasVendor && !hasLl && !hasRate && !hasPrio && keptSize,
+          "swap filter keeps mime/size/color, drops vendor/low-latency/rate/priority");
+    auto swappable = gxr::SubstituteMime(gxr::FilterCodecSwapRecipe(full), "video/av01");
+    CHECK(swappable.size() == 4 && swappable[0].svalue == "video/av01",
+          "filtered recipe still substitutes the mime");
 }
 
 static void CheckObuWalk() {
