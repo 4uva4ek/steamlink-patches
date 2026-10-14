@@ -1,4 +1,4 @@
-# Galaxy XR Morphe patch guidance
+# XR Porting Hub — Galaxy XR Morphe patch guidance
 
 The parent workspace `AGENTS.md` also applies. These rules are mandatory for every change under this repository.
 
@@ -40,7 +40,7 @@ AppTarget(
 - Shared helpers must not write across apps: a helper takes the target app's layout or package as a parameter instead of assuming one app. The per-app registries in `shared/Constants.kt` and the shared categories in `shared/PatchCategories.kt` are shared on purpose; the audits under `util/` stay bound to the app they audit (most are Steam Link-only). Per-app DexKit/hook helpers stay in that app's package.
 - Extension payloads stay per app: an app's `extendWith` merge must not reference another app's `.mpe`, helper classes or resource paths.
 - Adding an app must not change another app's catalogs, bundles, defaults, tests or native payloads. A new app's experiments stay isolated until that app demonstrates the same contract: guarded layouts, idempotent reapplication, option transitions and mandatory portable tests.
-- App-specific naming stays in the app's own sources, descriptions and diagnostics. Repository-wide text (this file, the skills, Copilot instructions, release metadata) describes all supported apps; the user-visible `patches { about { ... } }` block in `patches/build.gradle.kts` still names only Steam Link and needs a multi-app update before the next release.
+- App-specific naming stays in the app's own sources, descriptions and diagnostics. Repository-wide text (this file, the skills, Copilot instructions, release metadata) describes all supported apps; the user-visible `patches { about { ... } }` block in `patches/build.gradle.kts` now names the hub and both apps.
 
 ## Base adaptation safety
 

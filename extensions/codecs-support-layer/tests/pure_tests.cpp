@@ -113,6 +113,8 @@ static void CheckRecipe() {
     CHECK(recipe[0].svalue == "video/hevc", "original recipe untouched");
     std::vector<FormatEntry> noMime = {{false, "width", "", 8}};
     CHECK(!gxr::RecipeHasMime(noMime), "recipe without mime detected");
+    CHECK(std::string(gxr::RecipeMime(recipe)) == "video/hevc", "recipe mime recovered for rebuild");
+    CHECK(gxr::RecipeMime(noMime) == nullptr, "recipe without mime yields null rebuild mime");
 }
 
 int main() {

@@ -31,4 +31,13 @@ inline bool RecipeHasMime(const std::vector<FormatEntry>& in) {
     return false;
 }
 
+// The recipe's own mime value (e.g. "video/hevc"), used when a failed swap
+// must rebuild the stock decoder. Returns nullptr when no mime entry exists.
+inline const char* RecipeMime(const std::vector<FormatEntry>& in) {
+    for (const FormatEntry& e : in) {
+        if (e.isString && e.key == "mime") return e.svalue.c_str();
+    }
+    return nullptr;
+}
+
 }  // namespace gxr

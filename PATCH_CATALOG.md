@@ -1,8 +1,8 @@
-# Patch Catalog — steamlink-patches
+# Patch Catalog — XR Porting Hub
 
 Reference for conflict detection when importing external patches.
 Each entry lists the exact APK artifact and value(s) a patch writes or modifies.
-This catalog documents the Steam Link VR patch set (`com.valvesoftware.steamlinkvr`). Entries for the other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`, exact 2.0.22/20022), are recommended by default as of 2026-10-11; see the [README](README.md) status and credits section and `patches-list.json`.
+This catalog documents the hub's patch sets; the primary one is Steam Link VR (`com.valvesoftware.steamlinkvr`). Entries for the other app this repository patches, 4XVR (`cn.vr4p.oculus4xvrplayerov`, exact 2.0.22/20022), are recommended by default as of 2026-10-11; see the [README](README.md) status and credits section and `patches-list.json`.
 
 ## Current patch categories
 

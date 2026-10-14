@@ -17,9 +17,9 @@ patches {
     extensionsProjectPath = null
 
     about {
-        name = "Steam Link GalaxyXR Patches"
-        description = "Patches for Steam Link to support Samsung Galaxy XR hardware"
-        source = "https://github.com/AngelDark92/steamlink-patches"
+        name = "XR Porting Hub"
+        description = "Morphe patches that run Meta Quest / Pico apps on Android XR (Steam Link VR, 4XVR), starting with the Samsung Galaxy XR headset"
+        source = "https://github.com/AngelDark92/xr-porting-hub"
         author = "AngelDark92"
         contact = "na"
         website = "na"

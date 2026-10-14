@@ -1,4 +1,4 @@
-# Technical reference
+# Technical reference — XR Porting Hub
 
 Implementation notes, compatibility details, validation status, and build instructions for the Galaxy XR app patch set (Steam Link VR and 4XVR). For installation and patch selection, see the [README](README.md). The tables below cover both app patch sets; the 4XVR set is recommended by default — see its [plan](diagnostics/4xvr-galaxyxr/2026-10-11-4xvr-galaxyxr-diff-and-plan.md) and the README status and credits section.
 

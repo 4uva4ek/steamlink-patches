@@ -54,7 +54,7 @@ using gxr::FormatEntry;
 using gxr::Sniffed;
 
 constexpr const char* kLayerName = "XR_APILAYER_local_GalaxyXR_codecs_support";
-constexpr const char* kBuild = "codecs-support-v1-20261013";
+constexpr const char* kBuild = "codecs-support-v2-20261014";
 constexpr const char* kDisableEnv = "GXR_DISABLE_CODECS_SUPPORT";
 constexpr const char* kSceneSoname = "libvrlink_scene.so";
 constexpr size_t kMaxSniffedAu = 4u << 20;
@@ -152,6 +152,34 @@ void* RealHandle(void* codec) {
     return it == g_handleMap.end() ? codec : it->second;
 }
 
+// Queue an access unit into a freshly started decoder. Returns true when the
+// AU was copied into one of its input buffers and accepted.
+bool QueueAu(void* codec, const std::vector<uint8_t>& au, uint64_t timeUs, uint32_t flags,
+             const char* what) {
+    for (int attempt = 0; attempt < 100; attempt++) {
+        int64_t idx = o_dequeueInput(codec, 10000);
+        if (idx < 0) continue;
+        size_t cap = 0;
+        uint8_t* dst = o_getInput(codec, static_cast<size_t>(idx), &cap);
+        if (!dst || cap < au.size()) {
+            LOG("no input buffer large enough on %s; aborting swap", what);
+            return false;
+        }
+        std::memcpy(dst, au.data(), au.size());
+        if (o_queueInput(codec, static_cast<size_t>(idx), 0, au.size(), timeUs, flags) == 0) return true;
+        LOG("re-queue attempt %d on %s failed", attempt, what);
+    }
+    return false;
+}
+
+// A MediaCodec output Surface accepts one producer connection at a time:
+// configuring a second decoder while the app's HEVC decoder still holds the
+// window fails nativeWindowConnect with EINVAL (-22). So the swap tears the
+// old decoder down BEFORE the new one connects; if the swap cannot complete
+// after that point, a stock decoder (original recipe mime) is rebuilt and the
+// access unit re-queued into it. From the teardown on, this call owns the AU:
+// the caller must never fall through to the retired handle (true is always
+// returned once the teardown has happened).
 bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
              uint32_t flags, const char* mime) {
     if (!o_createDecoder || !o_configure || !o_start || !o_formatNew || !o_formatDelete ||
@@ -163,45 +191,63 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
         LOG("no recorded decoder format recipe; keeping stock path");
         return false;
     }
+    // The AU lives in the retired decoder's input buffer: copy it out before
+    // any teardown invalidates that mapping.
+    std::vector<uint8_t> auCopy;
+    auCopy.assign(au, au + size);
+    void* live = o_createDecoder(mime);
+    if (!live) {
+        LOG("createDecoderByType(%s) failed; keeping stock path", mime);
+        return false;
+    }
     std::vector<FormatEntry> entries = gxr::SubstituteMime(g_recipe, mime);
     void* fmt = o_formatNew();
-    if (!fmt) return false;
+    if (!fmt) { LOG("format allocation failed; keeping stock path"); o_delete(live); return false; }
     for (const FormatEntry& e : entries) {
         if (e.isString) o_setString(fmt, e.key.c_str(), e.svalue.c_str());
         else o_setInt32(fmt, e.key.c_str(), e.ivalue);
     }
-    void* live = o_createDecoder(mime);
-    if (!live) { LOG("createDecoderByType(%s) failed; keeping stock path", mime); o_formatDelete(fmt); return false; }
-    if (o_configure(live, fmt, g_savedWindow, g_savedCrypto, g_savedFlags) != 0) {
-        LOG("configure(%s) failed; keeping stock path", mime);
-        o_delete(live); o_formatDelete(fmt); return false;
-    }
-    if (o_start(live) != 0) {
-        LOG("start(%s) failed; keeping stock path", mime);
-        o_stop(live); o_delete(live); o_formatDelete(fmt); return false;
-    }
-    o_formatDelete(fmt);
-    bool queued = false;
-    for (int attempt = 0; attempt < 100 && !queued; attempt++) {
-        int64_t idx = o_dequeueInput(live, 10000);
-        if (idx < 0) continue;
-        size_t cap = 0;
-        uint8_t* dst = o_getInput(live, static_cast<size_t>(idx), &cap);
-        if (!dst || cap < size) { LOG("no input buffer large enough on %s; aborting swap", mime); break; }
-        std::memcpy(dst, au, size);
-        if (o_queueInput(live, static_cast<size_t>(idx), 0, size, timeUs, flags) == 0) queued = true;
-        else LOG("re-queue attempt %d on %s failed", attempt, mime);
-    }
-    if (!queued) {
-        LOG("could not re-queue the first access unit on %s; keeping stock path", mime);
-        o_stop(live); o_delete(live);
-        return false;
-    }
+    // Teardown begins: release the Surface producer before the new connect.
     o_stop(oldCodec);
     o_delete(oldCodec);
-    g_handleMap[oldCodec] = live;
-    LOG("switched decoder to %s; re-queued first AU (%zu bytes)", mime, size);
-    return true;
+    bool ok = o_configure(live, fmt, g_savedWindow, g_savedCrypto, g_savedFlags) == 0;
+    if (ok) ok = o_start(live) == 0;
+    if (ok) ok = QueueAu(live, auCopy, timeUs, flags, mime);
+    o_formatDelete(fmt);
+    if (ok) {
+        g_handleMap[oldCodec] = live;
+        LOG("switched decoder to %s; re-queued first AU (%zu bytes)", mime, size);
+        return true;
+    }
+    LOG("swap to %s failed after teardown; rebuilding the stock decoder", mime);
+    o_stop(live);
+    o_delete(live);
+    bool restored = false;
+    const char* origMime = gxr::RecipeMime(g_recipe);
+    if (origMime) {
+        void* fmt2 = o_formatNew();
+        if (fmt2) {
+            for (const FormatEntry& e : g_recipe) {
+                if (e.isString) o_setString(fmt2, e.key.c_str(), e.svalue.c_str());
+                else o_setInt32(fmt2, e.key.c_str(), e.ivalue);
+            }
+            void* reborn = o_createDecoder(origMime);
+            if (reborn) {
+                if (o_configure(reborn, fmt2, g_savedWindow, g_savedCrypto, g_savedFlags) == 0 &&
+                    o_start(reborn) == 0 && QueueAu(reborn, auCopy, timeUs, flags, origMime)) {
+                    g_handleMap[oldCodec] = reborn;
+                    restored = true;
+                    LOG("stock %s decoder rebuilt; stream continues on the fallback path", origMime);
+                } else {
+                    o_stop(reborn);
+                    o_delete(reborn);
+                }
+            }
+            o_formatDelete(fmt2);
+        }
+    }
+    if (!restored) LOG("stock decoder rebuild failed; access unit dropped");
+    return true;  // the retired handle is gone: never fall through to it
 }
 
 void* WrapCreateDecoder(const char* mime) {

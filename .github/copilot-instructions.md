@@ -1,4 +1,4 @@
-# steamlink-patches — Copilot context
+# XR Porting Hub — Copilot context
 
 Kotlin morphe-patcher patch library for several Galaxy XR apps. Steam Link VR
 (`com.valvesoftware.steamlinkvr`) targets the exact `(versionName, versionCode)` bases

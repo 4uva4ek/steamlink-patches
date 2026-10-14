@@ -1,4 +1,4 @@
-# Quest & Pico apps on Android XR
+# XR Porting Hub — Quest & Pico apps on Android XR
 
 [Morphe](https://morphe.software) patches that run **Meta Quest / Pico apps on Android XR devices**, starting with the **Samsung Galaxy XR (SM-I610)** headset. Originally a Steam Link-only patch set; now a hub for Meta Quest / Pico → Android XR ports.
 

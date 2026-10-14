@@ -1,7 +1,9 @@
-A collection of community patches for the Valve Steam Link hardware that restores maintainability and extends the retired streaming box with modern tweaks.
+# XR Porting Hub ideas
 
-- Patch the stock firmware to re-enable the package updater and allow custom add-on installs.
-- Ship a persistent root/SSH unlock so users can install homebrew like EmulationStation or retro emulators.
-- Apply streaming latency tweaks: forced low-latency audio modes and tunable video buffer settings.
-- Publish prebuilt patched firmware images with checksums, plus a reproducible build script for auditable patching.
-- Maintain concise documentation covering flashing, recovery from a bad flash, and rolling back to stock firmware.
+Roadmap ideas, not committed work. Each item still needs an exact base, decoded-APK evidence and headset validation.
+
+- Port more Meta Quest / Pico apps to Android XR: a new app is a new package with its own sources, payloads, extension task and compatibility list - never a widening of an existing app.
+- Reuse the 4XVR launch pattern (launch compatibility plus Meta platform decoupling) as the template for other Quest-only apps.
+- Steam Link hitch regression: continue only with new mechanisms; read diagnostics/steamlink-hitches/TRIED-EXPERIMENTS.md first - retired experiments must not be re-derived.
+- Record headset validation per app the same way every time (logcat tags, capture steps, executed/skipped counts).
+- Keep the README support table and each app's exact bases current before any release claim.
