@@ -56,3 +56,10 @@ timing questions come up.
 The host tap could patch the sequence-header max down at LockBitstream time,
 making the stream self-consistent for any decoder. The client layer owns this
 today; revisit only if a stock (unpatched) client ever needs the AV1 path.
+
+## HEVC sanity (same day, ~17:24)
+Driver back on codec 0: the tap init runs `codec=HEVC` with no codec swap (its
+usual preset/level/split tuning only); the v6 layer logs `first AU reads as
+HEVC; stock HEVC path kept` (transparent on HEVC); `c2.qti.hevc.decoder`
+decodes at ~90 fps; stream rendered, screenshots aligned. The codec-selection
+feature does not affect the stock path.
