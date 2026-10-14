@@ -1,3 +1,9 @@
+## [1.28.0-dev.27](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.26...v1.28.0-dev.27) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Update codecs support library version and enhance codec filtering logic ([92c7414](https://github.com/AngelDark92/xr-porting-hub/commit/92c7414137e3bf2dfa32f73306fd2651cbb759fc))
+
 ## [1.28.0-dev.26](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.25...v1.28.0-dev.26) (2026-10-14)
 
 ### 🐛 Bug Fixes
