@@ -1,10 +1,10 @@
 # Controller HAL pose layer (2026-10-04)
 
 Source of `libgxr_controller_hal_pose.so` and `extensions/controller-hal-pose.mpe`, installed
-by the opt-in patches **Controller tracking from the controller HAL through Shizuku
-(experimental)** (2.0.23) and **Controller tracking from the controller HAL through Shizuku,
-2.0.20 - 2.0.22 (experimental)**. The two differ only in the angular velocity frame they write
-into the library's config block (see "Velocities").
+by the opt-in patch **Controller tracking from the controller HAL through Shizuku** for exact
+Steam Link 2.0.23/5002363 and the legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968,
+2.0.22/5002244). The angular velocity frame it writes into the library's config block differs
+between 2.0.23 and the legacy bases (see "Velocities").
 
 ## What it changes
 
@@ -166,26 +166,13 @@ velocities for their own time).
 | `debug.gxr.halpose` | on | `0` reports the runtime's pose unchanged |
 | `debug.gxr.halpose.velocity` | on | `0` leaves the runtime's velocities in place |
 | `debug.gxr.halpose.hz` | 360 | HAL reads per second by the layer's thread; `0` reads only when VRLink asks |
-| `debug.gxr.halpose.ahead` | 60 | Time the reported pose is for, milliseconds after now |
+| `debug.gxr.halpose.ahead` | 2 | Time the reported pose is for, milliseconds after now |
 | `debug.gxr.halpose.lead` | 30 | How far ahead of now the HAL is asked, milliseconds; the reply is stepped back to the time above |
 | `debug.gxr.halpose.pitch` | 42.25 | Pitch of the grip pose against the HAL's pose, degrees |
 | `debug.gxr.halpose.velocity_sync` | 1 | `0` reports each read's own velocities instead of those for the pose's time |
 | `debug.gxr.halpose.angular` | from the patch | `local` or `world`: frame of the reported angular velocity |
 
-The time ahead is the prediction horizon. 2 ms were chosen by feel on 2026-10-05 (20 and 5
-were tried the same day) while SteamVR on the PC still extrapolated every pose from vrlink's time
-stamp (about +15 ms) to the application's photon time, so any larger value was predicted twice.
-The GalaxyXR PC driver's `streamFrame.poseTimeOffsetBiasMs` (60 ms) moves that stamp past the
-photon time and SteamVR adds nothing; the whole prediction is then the controller HAL's IMU
-fusion, which is what Virtual Desktop does (its headset app asks the runtime for now + the
-measured stream latency, capped at 66 ms, and smooths nothing). With the bias in place 60 ms was
-chosen by feel on 2026-10-06 (30/30, 60/10, 60/20, 60/40 and 60/50 felt worse). Measuring the
-round trip on the headset the way Virtual Desktop does was tried and does not work with Steam
-Link: VRLink puts the head-centre pose of its latest `xrLocateViews` into `xrEndFrame`'s
-projection layer, not the pose the PC rendered with, so the frame carries no round-trip
-information. VRLink asks `xrLocateSpace` for the controller at "now" (requested time minus now:
-median -6 us on 2.0.20), so the horizon has to come from this layer. `XrTime` on this runtime is
-not `CLOCK_MONOTONIC` (about 11 s apart); the layer never mixes the two.
+The 2 ms were chosen by feel on the headset (20 and 5 were tried the same day).
 
 ## Limits
 
@@ -204,12 +191,12 @@ Native layer (use a short build directory, the fetched OpenXR-SDK tree is deep):
 $sdk = "$env:LOCALAPPDATA\Android\Sdk"
 $cmake = "$sdk\cmake\3.22.1\bin"
 $ndk = "$sdk\ndk\28.2.13676358"
-& "$cmake\cmake.exe" -S extensions/controller-hal-pose -B <short build dir> -G Ninja `
+& "$cmake\cmake.exe" -S extensions/controller-hal-pose -B ../builds/steamlink-patches/extensions/controller-hal-pose/build-android -G Ninja `
     "-DCMAKE_MAKE_PROGRAM=$cmake\ninja.exe" `
     "-DCMAKE_TOOLCHAIN_FILE=$ndk\build\cmake\android.toolchain.cmake" `
     -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-29 -DANDROID_STL=c++_static `
     -DCMAKE_BUILD_TYPE=Release
-& "$cmake\cmake.exe" --build <short build dir> --target gxr_controller_hal_pose
+& "$cmake\cmake.exe" --build ../builds/steamlink-patches/extensions/controller-hal-pose/build-android --target gxr_controller_hal_pose
 ```
 
 Java extension (the Shizuku API itself is in the Shizuku bridge's extension):

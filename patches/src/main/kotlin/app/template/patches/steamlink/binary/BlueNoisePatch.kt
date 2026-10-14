@@ -17,14 +17,14 @@ val fovealBlueNoisePatch = blueNoisePatch(BlueNoiseLayer.FOVEA)
 val backgroundBlueNoisePatch = blueNoisePatch(BlueNoiseLayer.BACKGROUND)
 
 private fun blueNoisePatch(layer: BlueNoiseLayer) = rawResourcePatch(
-    name = if (layer == BlueNoiseLayer.FOVEA) "Foveal blue-noise dithering (experimental)"
-        else "Background blue-noise dithering (experimental)",
-    description = "Static blue-noise quantization after video colour processing and fade, only on the " +
+    name = if (layer == BlueNoiseLayer.FOVEA) "Foveal blue-noise dithering"
+        else "Background blue-noise dithering",
+    description = "Adds static blue noise after video colour processing and fade, on the " +
         (if (layer == BlueNoiseLayer.FOVEA) "foveal" else "background/base") +
-        " layer. Accepts 8-bit or 10-bit input and always uses 8-bit sRGB output. Select independently or together with the other layer's blue-noise patch. Separate from OLED/VD-like processing; headset validation pending. Unknown host shaders pass through unchanged.",
+        " layer only; 8-bit or 10-bit input, always 8-bit sRGB output. Selectable per layer, but turn OLED's VD-like fovea options off when combining. Unknown host shaders pass through unchanged.",
     default = false,
 ) {
-    category(PatchCategories.EXPERIMENTS)
+    category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*BLUE_NOISE_LAYOUTS.map { layout ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,

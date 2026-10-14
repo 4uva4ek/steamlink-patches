@@ -6,7 +6,7 @@ The comparison below is historical evidence about the 2 named APK artifacts, not
 the current generated patch bundle. Its enabled dithering, `78` ms pose offset, and missing-hook
 findings must not be read as current release defaults or fresh runtime results.
 
-Both legacy recommendation bundles now directly select the same 16 public patches: Android XR
+Both archived legacy builds selected the same 16 public patches: Android XR
 native permission names; Force HMD initialization gates; Force lobby permission-state gate; Force
 stream XR gates; GXR face bridge; Galaxy XR high-resolution 3-projection fix; Microphone input
 preset; OLED color calibration; Unrestricted battery usage; Visual Delay Fix; XR Core Runtime;
@@ -15,21 +15,20 @@ Manifest Capability Pack; and Device identity with the Meta Quest Pro spoof (`Oc
 model).
 
 Leave HMD identity on **Recommended**, or explicitly choose **Meta Quest Pro**. Recommended
-resolves to the Quest spoof for exact 2.0.20/5001712 and 5001740, plus 2.0.22/5002244. The config baseline runs before Device identity; the legacy Quest payload changes
+resolves to the Quest spoof for the exact legacy targets 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244. The config baseline runs before Device identity; the legacy Quest payload changes
 only the 3 HMD model values while preserving SamsungVST tracking and Galaxy XR controller/eye
 routing. Saved explicit Samsung, Stock, or PICO profiles remain respected rather than silently
 overridden.
 
 The exact 2.0.22/5002322 bundle selects only face bridge, high-resolution fix, microphone
 `voice-recognition`, OLED `final-balanced` with recommended `srgb8-highp`, battery usage, and Visual Delay
-`60` ms. Native-XR build 5002318 retains that 6-patch set plus Device identity, where Recommended
-continues to resolve to Galaxy XR. Other supported targets outside the exact legacy recommendation
-set likewise retain Galaxy XR as their automatic choice. Neither native bundle enables legacy
-conversion mutations, and 5002322 still excludes Device identity.
+`60` ms. On the native-XR side the single supported base 2.0.23/5002363 exposes a 7-patch recommended
+set; Device identity (2.0.23/5002363) stays optional and off by default, so no supported native
+target auto-selects an identity. The native bundle enables no legacy conversion mutations.
 
-A separate default-off **Foveal blue-noise dithering (experimental)** patch was added on 2026-09-22. It does not replace the historical/VD-like controls below. The [decoded VD comparison](diagnostics/steamlink-blue-noise-ditering/virtualdesktop-verification.md) corrects the earlier fovea-isolation and VD-equivalence claims.
+A separate default-off **Foveal blue-noise dithering** patch was added on 2026-09-22. It does not replace the historical/VD-like controls below. The [decoded VD comparison](diagnostics/steamlink-blue-noise-ditering/virtualdesktop-verification.md) corrects the earlier fovea-isolation and VD-equivalence claims.
 
-On 2026-09-25, a matching default-off **Background blue-noise dithering (experimental)**
+On 2026-09-25, a matching default-off **Background blue-noise dithering**
 patch was added. The 2 blue-noise patches can be selected independently or together;
 each only quantizes its named layer. The original tile/formula remain unchanged.
 See [current layer selection and checks](diagnostics/steamlink-background-blue-noise/README.md).
@@ -44,10 +43,10 @@ See the [current HEVC 10-bit audit](diagnostics/steamlink-vd-hevc10/README.md); 
 The historical unregistered helper remains
 `patches/src/main/kotlin/app/template/patches/steamlink/binary/VideoDither.kt`.
 
-Bundle membership does not broaden native guards: high-resolution adaptation is unavailable on
+Recommended membership does not broaden native guards: high-resolution adaptation is unavailable on
 5001740. Those
 mutations remain no-ops rather than assuming a neighboring build's topology or offsets. See the
-[current recommendation catalog](PATCH_CATALOG.md#recommendation-bundles) for exact scope.
+[current recommendation catalog](PATCH_CATALOG.md#recommended-set-per-exact-build) for exact scope.
 
 ## Scope
 

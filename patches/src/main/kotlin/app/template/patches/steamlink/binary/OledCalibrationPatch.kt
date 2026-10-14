@@ -346,8 +346,8 @@ internal fun setProjectionSwapchainFormat(
 @Suppress("unused")
 val oledCalibrationPatch = rawResourcePatch(
     name = "OLED color calibration",
-    description = "OLED calibration with optional VD-informed SDR foveal processing and a separate foveal gamma adjustment, always with 8-bit sRGB output. The VD options bypass the calibration profile on the fovea while retaining Valve's decoder colour correction. Foveal gamma can darken that layer in any mode. Exact builds 5001712, 5001812, 5001968, 5002244, and 5002363; visible improvement requires headset verification.",
-    default = false,
+    description = "Applies OLED gamma/saturation calibration with 8-bit sRGB output, plus optional VD-like SDR foveal processing and a separate foveal gamma. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363; visible improvement needs headset verification.",
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())

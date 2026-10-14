@@ -12,7 +12,7 @@ import java.security.MessageDigest
 
 internal const val FOVEAL_CANVAS_LIBRARY = "libgxr_foveal_canvas.so"
 internal const val FOVEAL_CANVAS_MANIFEST = "XR_APILAYER_local_GalaxyXR_foveal_canvas.json"
-internal const val FOVEAL_CANVAS_HELPER_SHA256 = "2939db189b19322da6ec601e96f9d4036d449fd8ee386e3cbd69e491d539eac3"
+internal const val FOVEAL_CANVAS_HELPER_SHA256 = "d1426255e07674d604d1288429676c0c7f4a67d6a1b575d55c5a94e47d030d3f"
 internal const val FOVEAL_CANVAS_MANIFEST_SHA256 =
     "2ff0b8e93e682ae39247f9f7e0a394e8ee6cabbefa374a1249b19bb1195a12e5"
 internal const val FOVEAL_CANVAS_SCENE_SIZE = 2_220_872
@@ -122,10 +122,10 @@ internal fun installFovealCanvasResources(
 @Suppress("unused")
 val xrFovealCanvasPatch = rawResourcePatch(
     name = "Full-FOV foveal canvas (experimental)",
-    description = "Exact Steam Link 2.0.20/5001812 experiment: copies only the foveal image onto a transparent 5000x6000 regular-GL canvas per eye and submits it as the 2nd projection. Preserves the original background projection and any existing static Surface-trigger quad. GPU allocation, runtime acceptance and resolution improvement require headset validation.",
+    description = "Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation.",
     default = false,
 ) {
-    category(PatchCategories.EXPERIMENTS)
+    category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.map { exact ->
         Compatibility(
             name = EXPERIMENTAL_COMPATIBILITY_NAME,

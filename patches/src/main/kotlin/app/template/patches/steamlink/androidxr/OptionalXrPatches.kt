@@ -36,8 +36,8 @@ private val unrestrictedBatteryManifestPatch = resourcePatch {
 @Suppress("unused")
 val unrestrictedBatteryUsagePatch = bytecodePatch(
     name = "Unrestricted battery usage",
-    description = "Opens Android's per-app Battery usage page at startup so Unrestricted can be selected for XR streaming.",
-    default = false,
+    description = "Opens Android's Battery usage page at startup so Unrestricted can be selected for XR streaming.",
+    default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
@@ -73,7 +73,7 @@ private val appearOnTopManifestPatch = resourcePatch {
 @Suppress("unused")
 val appearOnTopPatch = bytecodePatch(
     name = "Appear on top (legacy)",
-    description = "Legacy overlay-permission fallback retained for older Steam Link builds. Adds SYSTEM_ALERT_WINDOW and the compositor signal window.",
+    description = "Legacy overlay fallback for older builds: adds SYSTEM_ALERT_WINDOW and the compositor signal window.",
     default = false,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
@@ -308,8 +308,8 @@ private val androidSurfaceTriggerResourcesPatch = androidSurfaceTriggerResources
 @Suppress("unused")
 val xrGalaxyXrHighResolutionPatch = resourcePatch(
     name = "Galaxy XR high-resolution 3-projection fix",
-    description = "Permission-free resolution fix for exact builds 5001712, 5001812, 5001968, 5002244, and 5002363. Preserves each build's native projection layout (2 layers on the supported 2.0.20 and 2.0.21 builds; 3 layers on supported 2.0.22 and 2.0.23 builds) and source formats, including future RGB10_A2, while appending a static 2x2 Android-surface compositor trigger with no image copy or reconstruction.",
-    default = false,
+    description = "Permission-free high-resolution fix: appends a static 2x2 Android-surface compositor trigger and leaves each build's native projection layers and formats, including future RGB10_A2, untouched. No image copy. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363.",
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_HIGH_RESOLUTION.toTypedArray())

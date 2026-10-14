@@ -86,8 +86,8 @@ internal fun patchNativeMicrophonePreset(
 @Suppress("unused")
 val microphoneInputPresetPatch = rawResourcePatch(
     name = "Microphone input preset",
-    description = "Selects the Android AAudio microphone processing mode used by Steam Link. Galaxy XR testing found Voice Recognition clearer and louder than stock Voice Communication.",
-    default = false,
+    description = "Selects Steam Link's AAudio microphone processing mode. On Galaxy XR, Voice Recognition was clearer and louder than stock Voice Communication.",
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())

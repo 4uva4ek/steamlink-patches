@@ -1,13 +1,11 @@
 package app.template.patches.steamlink.androidxr
 
-import app.template.patches.shared.PatchCategories
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.rawResourcePatch
-import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE
 import app.template.patches.shared.Constants.isModernTongueBridgeSteamLinkBuild
 import app.template.patches.steamlink.util.BinaryPatchHelper.vaddrToFileOffset
 import java.security.MessageDigest
 
+// Internal tongue-transport helpers for the merged GXR face and tongue bridge patch.
 internal const val MODERN_TONGUE_LIBRARY_SIZE_5002363 = 2_292_008
 internal const val MODERN_TONGUE_VADDR_5002363 = 0x141c6cL
 internal const val MODERN_TONGUE_STOCK_SHA256_5002363 =
@@ -93,35 +91,5 @@ internal fun patchModernTongueTransport(
                 "at vaddr 0x${layout.vaddr.toString(16)}; " +
                 "librarySha256=${bytes.sha256()}",
         )
-    }
-}
-
-@Suppress("unused")
-val gxrModernTongueBridgePatch = rawResourcePatch(
-    name = "GXR tongue bridge (version 5002322 and above)",
-    description = "For exact Steam Link 2.0.23/5002363 with Valve's native Android XR face mapping and its independently verified native layout. Preserves Valve's face expressions and standard TongueOut while exposing Galaxy XR tongue out/left/right/up/down to the matching Galaxy XR VRCFT module.",
-    default = false,
-) {
-    category(PatchCategories.TRACKING_AND_AUDIO)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE.toTypedArray())
-    dependsOn(
-        gxrFaceTrackingManifestPatch,
-    )
-
-    execute {
-        if (!isModernTongueBridgeSteamLinkBuild(
-                packageMetadata.versionName,
-                packageMetadata.versionCode,
-            )
-        ) return@execute
-
-        val file = get("lib/arm64-v8a/libvrlink_scene.so")
-        val bytes = file.readBytes()
-        val patched = patchModernTongueTransport(
-            bytes,
-            packageMetadata.versionName,
-            packageMetadata.versionCode,
-        )
-        if (!patched.contentEquals(bytes)) file.writeBytes(patched)
     }
 }

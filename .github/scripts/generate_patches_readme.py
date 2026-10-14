@@ -106,13 +106,14 @@ def patches_table(patches):
 
 
 CATEGORY_ORDER = (
-    "Recommended sets",
     "Image quality",
     "Tracking & audio",
     "Startup & permissions",
     "App & device identity",
     "Advanced XR compatibility",
-    "Experiments",
+    "Controller",
+    "Premium & purchases",
+    "Streaming & network",
 )
 
 
@@ -224,6 +225,8 @@ def build_content(expanded=False):
 raw_ver = data["version"]
 # Strip leading "v" if present
 ver   = raw_ver.lstrip("v")
+# Per-group sum by design: a patch that renders in two package groups counts twice
+# (pinned by test_generate_patches_readme.py's "3 patches total" fixture).
 total = sum(len(e["patches"]) for e in by_pkg.values()) + len(universal)
 
 readme = readme_path.read_text(encoding="utf-8")

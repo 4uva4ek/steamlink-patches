@@ -3,11 +3,12 @@ import java.util.UUID
 group = "app.template"
 
 // Verify-Build.ps1 owns this fresh workspace and cleans it after preserving results.
-// Leave the root build directory unchanged: it also holds required APK fixtures/tools.
+// Retained fixture/tool inputs live separately from Gradle's cleanable output.
 val verificationWorkDirectory = providers.gradleProperty("verificationWorkDirectory")
     .orNull?.let { rootProject.file(it) }
 verificationWorkDirectory?.let { layout.buildDirectory.set(it.resolve("patches")) }
 val auditOutputDirectory = verificationWorkDirectory ?: rootProject.layout.buildDirectory.get().asFile
+val retainedBuildDirectory = rootProject.file("../builds/steamlink-patches/build")
 
 patches {
     // Disable the Morphe extension project integration.
@@ -16,9 +17,9 @@ patches {
     extensionsProjectPath = null
 
     about {
-        name = "Steam Link GalaxyXR Patches"
-        description = "Patches for Steam Link to support Samsung Galaxy XR hardware"
-        source = "https://github.com/AngelDark92/steamlink-patches"
+        name = "XR Porting Hub"
+        description = "Morphe patches that run Meta Quest / Pico apps on Android XR (Steam Link VR, 4XVR), starting with the Samsung Galaxy XR headset"
+        source = "https://github.com/AngelDark92/xr-porting-hub"
         author = "AngelDark92"
         contact = "na"
         website = "na"
@@ -154,19 +155,48 @@ val assembleBatteryExtension: TaskProvider<JavaExec> = tasks.register("assembleB
     }
 }
 
+// 4XVR Galaxy XR helper classes (cn.vr4p.patch.*, dev.eni.hdrdirect.*, frame/render dispatch).
+// Only brand-new classes are assembled here; edits to 4XVR's existing classes stay in
+// build-aware Kotlin patch code (typed dexlib2 builders, no raw smali strings).
+val fourXvrExtensionOutputDir = layout.buildDirectory.dir("generated/fourxvr-extension-resources")
+val assembleFourXvrExtension: TaskProvider<JavaExec> = tasks.register("assembleFourXvrExtension", JavaExec::class) {
+    group = "build"
+    description = "Assemble the 4XVR Galaxy XR helper classes to fourxvr-extension.mpe (no Android SDK required)"
+    val smaliSrcDir = file("src/main/resources/fourxvr/smali")
+    val smaliSources = fileTree(smaliSrcDir) {
+        include("**/*.smali")
+    }
+    val outputFile = fourXvrExtensionOutputDir.map { it.file("extensions/fourxvr-extension.mpe") }
+    inputs.files(smaliSources)
+    outputs.file(outputFile)
+    classpath = smaliAssembler
+    mainClass.set("com.android.tools.smali.smali.Main")
+    doFirst {
+        val out = outputFile.get().asFile
+        out.parentFile.mkdirs()
+        args(
+            "a",
+            "-a", "33",
+            "-o", out.absolutePath,
+            *smaliSources.files.map { it.absolutePath }.sorted().toTypedArray(),
+        )
+    }
+}
+
 // Include the assembled extension.mpe in the patches JAR.
 sourceSets.main {
     resources.srcDir(extensionOutputDir)
     resources.srcDir(minimalExtensionOutputDir)
     resources.srcDir(batteryExtensionOutputDir)
+    resources.srcDir(fourXvrExtensionOutputDir)
 }
 
 tasks.named("processResources") {
-    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension)
+    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension, assembleFourXvrExtension)
 }
 
 tasks.named("sourcesJar") {
-    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension)
+    dependsOn(assembleExtension, assembleMinimalExtension, assembleBatteryExtension, assembleFourXvrExtension)
 }
 
 tasks {
@@ -192,13 +222,13 @@ tasks {
 
     register<JavaExec>("auditDecodedSteamLinkPatches") {
         group = "verification"
-        description = "Audit public 5001712/5001812/5001968/5002363 patches, high resolution and Visual Delay on 5 bases, and 5 recommendation fixtures"
+        description = "Audit public 5001712/5001812/5001968/5002363 patches, high resolution and Visual Delay on 5 bases"
 
         dependsOn(classes)
         classpath = sourceSets["main"].runtimeClasspath
         mainClass.set("util.DecodedSteamLinkPatchAudit")
         val auditArgs = mutableListOf(
-            rootProject.layout.buildDirectory.dir("decoded-fixture-apks").get().asFile.absolutePath,
+            retainedBuildDirectory.resolve("decoded-fixture-apks").absolutePath,
             auditOutputDirectory.resolve("decoded-patch-audit").absolutePath,
         )
         project.findProperty("decodedAuditKind")?.toString()?.let { kind ->
@@ -244,12 +274,14 @@ tasks {
     register<JavaExec>("generatePatchesList") {
         description = "Build patch with patch list"
 
-        dependsOn(build)
         // Validate Android DEX packaging before release preparation updates catalogs.
+        // The graph ends here and at :patches:buildAndroid: unit tests are a local
+        // end-of-task step (see AGENTS.md) and never part of the CI or release graph.
         dependsOn("buildAndroid")
 
         classpath = sourceSets["main"].runtimeClasspath + patchListGeneratorClasspath
         mainClass.set("util.PatchListGeneratorKt")
+        systemProperty("morphe.patchArchiveDirectory", layout.buildDirectory.dir("libs").get().asFile.absolutePath)
 
         val releaseChannel = project.findProperty("releaseChannel")?.toString()?.trim()
         if (!releaseChannel.isNullOrEmpty()) {

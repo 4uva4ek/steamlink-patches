@@ -6,7 +6,7 @@ import app.template.patches.steamlink.util.BinaryPatchHelper.findUniqueAndReplac
 // The video fragment shader ships with the dither line commented out with "//" prefix.
 // Enabling changes those two bytes to spaces, activating the dither at runtime.
 // Archived byte helper, not a registered/selectable patch. Kept for reversible shader tests
-// and the developer opt-in instructions in PATCH_CATALOG.md. No recommended bundle calls it.
+// and the developer opt-in instructions in PATCH_CATALOG.md. No recommended set calls it.
 private val SHADER_TAIL = (
     "color.rgb += fract(UniDitherOffsets.a * .43 + UniDitherOffsets.rgb + " +
     "gl_FragCoord.x * 1.67 + gl_FragCoord.y * 1.127 ) * .00292;"

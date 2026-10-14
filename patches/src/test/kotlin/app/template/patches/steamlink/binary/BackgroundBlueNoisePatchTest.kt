@@ -1,9 +1,6 @@
 package app.template.patches.steamlink.binary
 
 import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
-import app.template.patches.steamlink.galaxyXrLegacyFoundationPatch
-import app.template.patches.steamlink.galaxyXrRecommended5001712Patch
-import app.template.patches.steamlink.galaxyXrRecommended5002363Patch
 import kotlin.test.*
 
 class BackgroundBlueNoisePatchTest {
@@ -17,16 +14,14 @@ class BackgroundBlueNoisePatchTest {
     )
 
     @Test
-    fun `background and foveal patches are independently selectable exact experiments`() {
-        assertEquals("Background blue-noise dithering (experimental)", backgroundBlueNoisePatch.name)
-        assertEquals("Foveal blue-noise dithering (experimental)", fovealBlueNoisePatch.name)
+    fun `background and foveal patches are independently selectable exact layers`() {
+        assertEquals("Background blue-noise dithering", backgroundBlueNoisePatch.name)
+        assertEquals("Foveal blue-noise dithering", fovealBlueNoisePatch.name)
         assertNotSame(backgroundBlueNoisePatch, fovealBlueNoisePatch)
         assertNotSame(backgroundBlueNoisePatch.options["inputDepth"], fovealBlueNoisePatch.options["inputDepth"])
         for (patch in listOf(backgroundBlueNoisePatch, fovealBlueNoisePatch)) {
             assertFalse(patch.default)
             assertTrue(patch.dependencies.isEmpty())
-            listOf(galaxyXrLegacyFoundationPatch, galaxyXrRecommended5001712Patch, galaxyXrRecommended5002363Patch)
-                .forEach { assertFalse(patch in it.dependencies) }
             assertEquals(setOf("2.0.20" to 5001712,
                 "2.0.20" to 5001812,
                 "2.0.21" to 5001968, "2.0.22" to 5002244, "2.0.23" to 5002363),

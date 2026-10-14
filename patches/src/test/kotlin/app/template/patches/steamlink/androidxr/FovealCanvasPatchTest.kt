@@ -2,7 +2,6 @@ package app.template.patches.steamlink.androidxr
 
 import app.morphe.patcher.patch.PatchException
 import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
-import app.template.patches.steamlink.galaxyXrRecommended5001812Patch
 import java.io.File
 import java.nio.file.Files
 import org.junit.Assume.assumeTrue
@@ -15,10 +14,9 @@ import kotlin.test.assertTrue
 
 class FovealCanvasPatchTest {
     @Test
-    fun `exact compatibility remains optional and outside the recommended dependency closure`() {
+    fun `exact compatibility remains optional and experimental-only`() {
         assertFalse(xrFovealCanvasPatch.default)
         assertTrue(xrFovealCanvasPatch.dependencies.isEmpty())
-        assertFalse(xrFovealCanvasPatch in galaxyXrRecommended5001812Patch.dependencies)
         assertTrue(xrFovealCanvasPatch.compatibility.orEmpty()
             .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
         val targets = xrFovealCanvasPatch.compatibility.orEmpty().flatMap { it.targets }

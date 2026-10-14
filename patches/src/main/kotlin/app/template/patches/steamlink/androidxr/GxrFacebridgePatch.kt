@@ -4,11 +4,14 @@ import app.template.patches.shared.PatchCategories
 import app.morphe.patcher.patch.rawResourcePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_FULL_FACEBRIDGE
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE
 import app.template.patches.shared.Constants.isFullFacebridgeSteamLinkBuild
 import app.template.patches.shared.Constants.isModernTongueBridgeSteamLinkBuild
 import org.w3c.dom.Element
 import java.io.File
 
+// One patch covers all 5 bases; builds up to 5002318 get the face-tracking layer (face bridge
+// library + FACE_TRACKING permission) and 2.0.23/5002363 gets the tongue transport edit.
 private fun facebridgeResource(name: String): ByteArray =
     (object {}.javaClass.getResourceAsStream("/steamlink/androidxr/$name")
         ?: error("Missing bundled resource: steamlink/androidxr/$name"))
@@ -76,17 +79,26 @@ internal val gxrFaceTrackingManifestPatch = resourcePatch {
 
 @Suppress("unused")
 val gxrFacebridgePatch = rawResourcePatch(
-    name = "GXR face bridge (version 5002318 and below)",
-    description = "For exact older Steam Link builds only. Installs libgxr_face_bridge.so (XR_FB_face_tracking2 → XR_ANDROID_face_tracking API layer) and adds android.permission.FACE_TRACKING to the manifest. See the [GXR Face Bridge source](https://github.com/compdoge/gxr-face-bridge) and matching [Galaxy XR VRCFT module](https://github.com/compdoge/LinkFT).",
-    default = false,
+    name = "GXR face and tongue bridge",
+    description = "Installs the Galaxy XR face transport for the VRCFT module, per exact build: the " +
+        "face-tracking bridge layer (XR_FB_face_tracking2 to XR_ANDROID_face_tracking) and the " +
+        "FACE_TRACKING permission on the legacy targets 5001712/5001812/5001968/5002244; the tongue " +
+        "out/left/right/up/down transport slots (keeping Valve's native face expressions and standard " +
+        "TongueOut) on 2.0.23/5002363.",
+    default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK_FULL_FACEBRIDGE.toTypedArray())
-    // Permission requests and startup UI are selected explicitly by older-build bundles.
+    compatibleWith(*(COMPATIBILITIES_STEAM_LINK_FULL_FACEBRIDGE + COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE).toTypedArray())
     dependsOn(
         gxrFacebridgeLibPatch,
         gxrFaceTrackingManifestPatch,
     )
 
-    execute { /* all work done by sub-patches */ }
+    execute {
+        if (!isModernTongueBridgeSteamLinkBuild(packageMetadata.versionName, packageMetadata.versionCode)) return@execute
+        val file = get("lib/arm64-v8a/libvrlink_scene.so")
+        val bytes = file.readBytes()
+        val patched = patchModernTongueTransport(bytes, packageMetadata.versionName, packageMetadata.versionCode)
+        if (!patched.contentEquals(bytes)) file.writeBytes(patched)
+    }
 }

@@ -1,139 +1,64 @@
-# Steam Link GalaxyXR Patches
+# XR Porting Hub — Quest & Pico apps on Android XR
 
-[Morphe](https://morphe.software) patches for using Steam Link VR on the **Samsung Galaxy XR (SM-I610)** headset.
+[Morphe](https://morphe.software) patches that run **Meta Quest / Pico apps on Android XR devices**, starting with the **Samsung Galaxy XR (SM-I610)** headset. Originally a Steam Link-only patch set; now a hub for Meta Quest / Pico → Android XR ports.
 
-## What this repository contains
+| App | Package | Supported builds | Patches by |
+|---|---|---|---|
+| Steam Link VR | `com.valvesoftware.steamlinkvr` | 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363 | AngelDark92; controller tracking and haptics by [@4uva4ek](https://github.com/4uva4ek) |
+| 4XVR | `cn.vr4p.oculus4xvrplayerov` | 2.0.22/20022 | [@logkim1](https://github.com/logkim1/4XVR-GalaxyXR) |
 
-The patches adapt Steam Link for Android XR and provide build-specific fixes for resolution, color, microphone input, tracking, permissions, and startup. Recommended bundles select the patches appropriate for your Steam Link build. Optional face tracking works with VRCFaceTracking and the Galaxy XR LinkFT module. Exact older builds use the full GXR face bridge, while exact build 2.0.23/5002363 uses a native tongue-only bridge that preserves Valve's built-in Android XR face mappings.
+- **Steam Link VR** — streams SteamVR from your PC to the headset. The patches fix resolution, color and OLED calibration, microphone, controller tracking, permissions and startup for Android XR.
+- **4XVR** — video player with 4X clarity, MVC 3D and HDR. The patches port the Quest build to Galaxy XR: launch compatibility, launcher icon, controller models, libplacebo HDR pipeline, 72 Hz refresh profile, 5.1-channel audio, frame-synced render dispatch, the subtitle suite and the launch-critical Meta platform decoupling. The premium unlock (no purchase check) is new and experimental, off by default.
 
-This repository contains the patch source and downloadable `.mpp` patch bundles, which Morphe applies to a Steam Link VR APK (`com.valvesoftware.steamlinkvr`).
+Each app keeps its own package, exact supported builds, sources, payloads and compatibility list. Morphe patches one APK at a time, so pick the app you want.
 
 ## What you need
 
-- A Samsung Galaxy XR headset and a PC with Steam and SteamVR.
-- [Morphe Manager](https://morphe.software) **1.30.0 or newer** on the headset, with compatibility checks enabled.
-- A Steam Link VR APK matching an exact version and build listed below.
-- This repository's patch bundle: [add the source to Morphe](https://morphe.software/add-source?github=AngelDark92/steamlink-patches), or download the `.mpp` from [Releases](https://github.com/AngelDark92/steamlink-patches/releases) and import it into Morphe Manager.
+- An Android XR headset (Samsung Galaxy XR) and, for Steam Link, a PC with Steam and SteamVR.
+- [Morphe Manager](https://morphe.software) **1.30.0 or newer** on the headset, compatibility checks enabled.
+- An app APK in one of the exact builds above.
+- This repository's patches: [add the source to Morphe](https://morphe.software/add-source?github=AngelDark92/xr-porting-hub), or download the `.mpp` from [Releases](https://github.com/AngelDark92/xr-porting-hub/releases) and import it.
 
-## 1. Get the Steam Link VR APK
+## 1. Get the app APK (Meta store)
 
-### Version 2.0.23 / 5002363: Meta store with DownQ
+Both apps come from the Meta store. You need one of the exact version/build pairs listed above.
 
-1. On your PC, download and install [DownQ from the Chrome Web Store](https://chromewebstore.google.com/detail/downq/clocmpojdjmikkaepgkmplgooejmnchb) in **Google Chrome**.
-2. Open [Steam Link on the Meta store](https://www.meta.com/experiences/steam-link/5841245619310585/) in Chrome and sign in to your Meta account.
-3. Click the **Downgrade** button at the **bottom right** of the page. (you will have to login to oculus and meta to be able to download)
-4. Choose the release channel if prompted, select version **2.0.23**, build **5002363**, and download its APK. Check both numbers before downloading.
+1. On your PC, install [DownQ for Chrome](https://chromewebstore.google.com/detail/downq/clocmpojdjmikkaepgkmplgooejmnchb) ([Firefox port](https://addons.mozilla.org/en-US/firefox/addon/downq-for-firefox/), unofficial, not runtime-tested).
+2. Open the store page in that browser and sign in to your Meta account: [Steam Link](https://www.meta.com/experiences/steam-link/5841245619310585/) or [4XVR Video Player](https://www.meta.com/experiences/4xvr-video-player/5936567899722707). 4XVR is a paid app — own it on your account first.
+3. Click the **Downgrade** button at the **bottom right** of the page, choose the version/build you need, and download its APK. Check both numbers before downloading.
 
-<img width="2986" height="1896" alt="Screenshot 2026-09-15 115003" src="https://github.com/user-attachments/assets/3cb2c534-f4b0-46a1-80be-1854d2ab2cbf" />
+Downgrade lists the builds Meta still serves. If the build you need is not offered, use an original APK of that exact version/build you already have.
 
-**Firefox alternative:** [DownQ for Firefox](https://addons.mozilla.org/en-US/firefox/addon/downq-for-firefox/) is an **unofficial Firefox port**. Install that add-on and follow the Meta store steps above in Firefox. The Firefox download workflow has not been runtime-tested for this guide.
+<img width="2986" height="1896" alt="DownQ downgrade button on the Steam Link store page" src="https://github.com/user-attachments/assets/3cb2c534-f4b0-46a1-80be-1854d2ab2cbf" />
 
-### Older versions: Steam depot download
+4. Copy the APK to the headset.
 
-On your PC, open the Steam console with `steam://open/console` in your web browser, then in Steam run the command for the version you want:
+## 2. Patch and install
 
-| Steam Link version / build | Steam console command |
-|---|---|
-| 2.0.20 / 5001712 | `download_depot 250820 250824 1108221034296079583` |
-| 2.0.22 / 5002244 | `download_depot 250820 250824 634053834998054244` |
+1. Open Morphe Manager and load this repository's source or `.mpp`.
+2. Select the app APK. Keep compatibility checks enabled: version and build code are both verified.
+3. Keep the recommended selection — Morphe Manager auto-selects the recommended patches for the detected exact build. Leave patch options at their defaults unless you need a specific adjustment.
+4. Run patching, then install the result from Morphe Manager.
+5. For Steam Link: launch it, complete the permission prompts and connect to SteamVR on your PC. If the Battery usage page opens, select **Unrestricted**.
 
-No verified Steam depot download command is recorded here for **2.0.20/5001812** or **2.0.21/5001968**. Use an original APK with that exact version/build pair.
+The [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) is in the technical reference. Do not assume another build is compatible because it has the same version name.
 
-After Steam reports that the download is complete, find the APK here (adjust the path if Steam is installed elsewhere):
+## Optional
 
-```text
-C:\Program Files (x86)\Steam\steamapps\content\app_250820\depot_250824\drivers\vrlink\resources\android-steamlinkvr-release.apk
-```
+- **Face and tongue tracking** (Steam Link): install VRCFaceTracking and the [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC, then enable **OSC**, **eye sharing** and **face sharing** in Steam Link and set the output port to **9015**.
+- **USB streaming** (Steam Link 2.0.23/5002363): [manual Galaxy XR USB setup guide](Install/USB-STREAMING.md). Wi-Fi must stay on for discovery in the tested workflow; longer stability is untested.
+- **Experimental patches** (Full-FOV foveal canvas; 4XVR premium unlock): off by default, not in the recommended set, headset validation pending.
 
-After downloading through either route, copy the APK to your headset. If you already have another listed build, select that APK in Morphe instead.
+## Status and credits
 
-N.D.: Delete the depot folder every time you switch to a new depot or the .apk will remain the first one you have downloaded.
-
-## 2. Select and apply the patches
-
-1. Open Morphe Manager and load this repository's patch source or downloaded `.mpp` bundle.
-2. Select the Steam Link VR APK. Keep compatibility checks enabled so Morphe can filter by both version and build number.
-3. Select the **single recommended bundle** for your APK from the table below. Leave its patch options at their recommended values unless you need a specific adjustment.
-4. Run patching, then install the resulting APK using Morphe Manager.
-5. Launch the patched Steam Link, complete its permission prompts, and connect to SteamVR on your PC. If the Battery usage page opens, select **Unrestricted** and return to Steam Link.
-
-See the [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) before selecting patches manually. Do not assume another build is compatible because it has the same version name.
-
-With category grouping enabled in Morphe Manager, find your bundle under **Recommended sets**. Individual patches appear under Image quality, Tracking & audio, Startup & permissions, App & device identity, Advanced XR compatibility, and Experiments. Grouping does not change the selected patches or their defaults.
-
-Optional blue-noise dithering has 2 separate experimental patches:
-**Foveal blue-noise dithering (experimental)** affects only the foveal layer;
-**Background blue-noise dithering (experimental)** affects only the background/base
-layer. Select either or both. Each accepts declared 8-bit or 10-bit input and uses
-8-bit sRGB output. Both are off by default and are not included in recommended
-bundles. If also selecting OLED color calibration, leave both VD-like toggles off.
-Headset quality remains unverified; see the [layer options and validation](diagnostics/steamlink-background-blue-noise/README.md).
-
-### Supported builds and recommended selection
-
-| Exact Steam Link version / build | Single recommended bundle | Direct patches |
-|---|---|---|
-| 2.0.20 / 5001712 | Galaxy XR recommended set (2.0.20/5001712) | 17 legacy patches |
-| 2.0.20 / 5001812 | Galaxy XR recommended set (2.0.20/5001812) | Same 17 legacy patches |
-| 2.0.21 / 5001968 | Galaxy XR recommended set (2.0.21/5001968) | Same 17 legacy patches |
-| 2.0.22 / 5002244 | Galaxy XR legacy foundation (through 2.0.22/5002244) | Same 17 legacy patches |
-| 2.0.23 / 5002363 | Galaxy XR recommended set (2.0.23/5002363) | 6 native Android XR patches |
-
-These are the 5 exact supported pairs. The 2 new bases each expose the same **22 individual patches** as 2.0.20/5001712: 20 stable and 2 experimental blue-noise patches. Every individual patch is off by default; each exact base has 1 default-enabled bundle. Existing option defaults remain unchanged, including Quest Pro identity for legacy bundles, Voice Recognition microphone, Final balanced OLED, neutral foveal gamma, and 60 ms Visual Delay.
-
-The new bases have independent native addresses and guards, not just compatibility labels. Their [validation record](diagnostics/steamlink-legacy-1812-1968/README.md) covers local static checks and pristine-source Morphe patching. Headset validation remains pending; this does not assert publication of a release.
-
-### Patches loaded by each bundle
-
-A bundle is a pure selector: selecting it loads exactly the patches listed below and performs no additional mutation of its own. Patch names match Morphe's patch list. A listed patch remains a no-op on a build where its own layout guard does not match.
-
-The 4 legacy bundles for **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, and **2.0.22/5002244** all select these same 17 patches:
-
-1. Android XR native permission names
-2. Device identity
-3. Force HMD initialization gates
-4. Force lobby permission-state gate
-5. Force stream XR gates
-6. GXR face bridge (version 5002318 and below)
-7. Galaxy XR high-resolution 3-projection fix
-8. Microphone input preset
-9. OLED color calibration
-10. Startup permission requests (before 5002322)
-11. Startup splash and XR launch mode (before 5002322)
-12. Unrestricted battery usage
-13. Visual Delay Fix
-14. XR Core Runtime
-15. XR Device Config Baseline
-16. XR Input Routing Config
-17. XR Manifest Capability Pack
-
-**Galaxy XR recommended set (2.0.23/5002363)** — 6 patches:
-
-1. GXR tongue bridge (version 5002322 and above)
-2. Galaxy XR high-resolution 3-projection fix
-3. Microphone input preset
-4. OLED color calibration
-5. Unrestricted battery usage
-6. Visual Delay Fix
-
-## Optional: USB streaming setup
-
-For **2.0.23/5002363**, the [manual Galaxy XR USB setup guide](Install/USB-STREAMING.md) configures Android RNDIS and the Windows USB network adapter. **USB streaming worked with the existing APK during a short Wi-Fi-off test**, with measured USB traffic and user-confirmed image/head-tracking continuity. No automatic USB patch is provided; [Quest-equivalent NCM remains unimplemented](diagnostics/steamlink-usb/QUEST-PARITY-2026-09-16.md). Keep Wi-Fi on for initial discovery in the tested workflow. Install the Galaxy USB device as NDIS device through windows driver manager. A cable connected only for ADB or file transfer is not a streaming link but it allows for ethernet like capabilities. Longer stability and starting entirely without Wi-Fi remain untested.
-
-## Optional: face and tongue tracking
-
-Install **VRCFaceTracking** and the matching [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC. In Steam Link, enable **OSC**, **eye sharing**, and **face sharing**, and set the output port to **9015**. Recommended older-build bundles include **GXR face bridge (version 5002318 and below)**; the 2.0.23/5002363 bundle instead includes **GXR tongue bridge (version 5002322 and above)**. Historical headset evidence for 5002322 does not establish runtime validation of 5002363. The tongue patch enables exact 2.0.23/5002363 with its independently verified native layout.
-
-## New base validation
-
-The [2.0.20/5001812 and 2.0.21/5001968 audit](diagnostics/steamlink-legacy-1812-1968/README.md) records exact native layouts, source APK identities, option transitions, bundle parity, and local Morphe results. The 5001712 reference is an analysis reconstruction; it is not pristine-source APK evidence.
-
-The [2.0.23/5002363 audit](diagnostics/steamlink-5002363/README.md) records the original APK, native addresses, patch scope, option checks and remaining headset validation. Its 7 stable individual adaptations and 2 optional blue-noise patches remain available; the decoder input buffering, UDP receive buffering and FEC duplicate reservation guard experiments were tested, did not work, and were removed from source on 2026-09-19. The 14 legacy patches remain excluded because this base already uses Valve's native Android XR paths.
+- **Steam Link VR** — released patch set. Controller tracking and haptics patches (HAL pose, velocity frame, pose extrapolation, grip haptics through Shizuku) are based on [@4uva4ek's Galaxy XR modules](https://github.com/4uva4ek). Per-build headset validation is ongoing; local static and patching evidence is recorded under [`diagnostics/`](diagnostics/).
+- **4XVR** — ported from [@logkim1's 4XVR-GalaxyXR patch set](https://github.com/logkim1/4XVR-GalaxyXR), which supplies the launch, HDR pipeline, playback and premium-hook work this port builds on. His work, credited. Headset validation of this repository's port is pending, so treat it as early software.
+- Not affiliated with Meta, Samsung, Valve or 4XVR.
 
 ## More information
 
-See the [technical reference](TECHNICAL_REFERENCE.md) for the full patch list, implementation details, validation notes, build instructions, and links to diagnostic documentation. Release changes are listed in the [changelog](CHANGELOG.md).
+See the [technical reference](TECHNICAL_REFERENCE.md) for the full patch list, implementation details, validation notes and build instructions. Release changes are listed in the [changelog](CHANGELOG.md).
 
 ## License
 
-Licensed under the [GNU General Public License v3.0](LICENSE).
+Licensed under the [GNU General Public License v3.0](LICENSE). Agent-facing instructions live in [AGENTS.md](AGENTS.md).

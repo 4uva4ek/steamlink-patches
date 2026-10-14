@@ -12,13 +12,14 @@ import unittest
 
 GENERATOR = Path(__file__).with_name("generate_patches_readme.py")
 CATEGORIES = (
-    "Recommended sets",
     "Image quality",
     "Tracking & audio",
     "Startup & permissions",
     "App & device identity",
     "Advanced XR compatibility",
-    "Experiments",
+    "Controller",
+    "Premium & purchases",
+    "Streaming & network",
 )
 
 
@@ -78,15 +79,15 @@ class GeneratePatchesReadmeTest(unittest.TestCase):
         text = self.render(entries)
         positions = [text.index(f"#### {category}\n") for category in CATEGORIES]
         self.assertEqual(positions, sorted(positions))
-        self.assertLess(text.index("[Alpha image](#alpha-image)"), text.index("[Patch 1](#patch-1)"))
-        self.assertLess(text.index("[Patch 1](#patch-1)"), text.index("[Zulu image](#zulu-image)"))
+        self.assertLess(text.index("[Alpha image](#alpha-image)"), text.index("[Patch 0](#patch-0)"))
+        self.assertLess(text.index("[Patch 0](#patch-0)"), text.index("[Zulu image](#zulu-image)"))
         for entry in entries:
             self.assertEqual(text.count(f"[{entry['name']}](#"), 1)
         self.assertIn("2.0.23 (5002363)", text)
         self.assertIn("Exact supported build", text)
         self.assertIn("First line<br>Second line | 5002363 |", text)
         self.assertIn("• Quality level<br>• fallbackOption", text)
-        self.assertIn("9 patches total", text)
+        self.assertIn("10 patches total", text)
 
     def test_legacy_catalog_retains_plain_table(self):
         text = self.render([patch("Zulu"), patch("Alpha")])
@@ -96,11 +97,11 @@ class GeneratePatchesReadmeTest(unittest.TestCase):
         self.assertIn("2 patches total", text)
 
     def test_categories_stay_inside_compatibility_and_universal_groups(self):
-        scoped = patch("Scoped", "Recommended sets")
+        scoped = patch("Scoped", "Subtitles & playback")
         scoped["compatiblePackages"].append(compatible_package("Legacy Steam Link", 5001812))
         universal = patch("Universal feature", "App & device identity", compatibility=False)
         text = self.render([scoped, universal, universal])
-        self.assertEqual(text.count("#### Recommended sets\n"), 2)
+        self.assertEqual(text.count("#### Subtitles & playback\n"), 2)
         self.assertEqual(text.count("[Scoped](#scoped)"), 2)
         self.assertEqual(text.count("[Universal feature](#universal-feature)"), 1)
         self.assertIn("5001812, 5002363", text)

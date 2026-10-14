@@ -3,10 +3,9 @@ package app.template.patches.steamlink
 import app.morphe.patcher.patch.Patch
 import app.template.patches.steamlink.androidxr.appearOnTopPatch
 import app.template.patches.steamlink.androidxr.androidXrUiExtensionPatch
-import app.template.patches.steamlink.androidxr.controllerVelocityPatch
 import app.template.patches.steamlink.androidxr.gxrFacebridgePatch
-import app.template.patches.steamlink.androidxr.gxrModernTongueBridgePatch
 import app.template.patches.steamlink.androidxr.unrestrictedBatteryUsagePatch
+import app.template.patches.steamlink.androidxr.xrCodecsSupportPatch
 import app.template.patches.steamlink.androidxr.xrCoreRuntimePatch
 import app.template.patches.steamlink.androidxr.xrDeviceConfigBaselinePatch
 import app.template.patches.steamlink.androidxr.xrDirectInputFixPatch
@@ -24,9 +23,11 @@ import app.template.patches.steamlink.binary.forceLobbyPermissionStateGatePatch
 import app.template.patches.steamlink.binary.forceStreamXrGatesPatch
 import app.template.patches.steamlink.binary.hmdOnlyPatch
 import app.template.patches.steamlink.binary.microphoneInputPresetPatch
+import app.template.patches.steamlink.binary.networkOptimizationsPatch
 import app.template.patches.steamlink.binary.oledCalibrationPatch
 import app.template.patches.steamlink.identity.changePackageNamePatch
 import app.template.patches.steamlink.identity.deviceIdentityPatch
+import app.template.patches.steamlink.identity.deviceIdentityNativeXrPatch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -35,42 +36,51 @@ import kotlin.test.assertTrue
 class PatchCompatibilityMatrixTest {
     
     @Test
-    fun individual_patches_are_not_globally_recommended() {
-        allIndividualPatches.forEach { patch ->
-            assertFalse(patch.default, patch.name)
+    fun individual_patches_are_recommended_on_supported_builds() {
+        assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
+        assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
+        listOf(
+            "2.0.20" to 5001712,
+            "2.0.20" to 5001812,
+            "2.0.21" to 5001968,
+            "2.0.22" to 5002244,
+        ).forEach { (version, versionCode) ->
+            assertEquals(
+                legacyRecommendedPatches,
+                recommendedFor(version, versionCode).toSet(),
+                "$version/$versionCode",
+            )
         }
-        recommendedBundles.forEach { patch ->
-            assertTrue(patch.default, patch.name)
-            assertTrue(oledCalibrationPatch in patch.dependencyClosure(), patch.name)
-            assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
-            assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
-        }
+        assertEquals(
+            nativeRecommendedPatches,
+            recommendedFor("2.0.23", 5002363).toSet(),
+            "2.0.23/5002363",
+        )
         assertEquals("Appear on top (legacy)", appearOnTopPatch.name)
-        assertEquals("GXR face bridge (version 5002318 and below)", gxrFacebridgePatch.name)
-        assertEquals("GXR tongue bridge (version 5002322 and above)", gxrModernTongueBridgePatch.name)
+        assertEquals("GXR face and tongue bridge", gxrFacebridgePatch.name)
     }
 
     @Test
-    fun exact_builds_select_one_recommendation_bundle() {
+    fun exact_builds_select_the_recommended_patch_set() {
         assertEquals(
-            listOf(galaxyXrRecommended5001712Patch),
-            recommendedFor("2.0.20", 5001712),
+            legacyRecommendedPatches,
+            recommendedFor("2.0.20", 5001712).toSet(),
         )
         assertEquals(
-            listOf(galaxyXrRecommended5001812Patch),
-            recommendedFor("2.0.20", 5001812),
+            legacyRecommendedPatches,
+            recommendedFor("2.0.20", 5001812).toSet(),
         )
         assertEquals(
-            listOf(galaxyXrRecommended5001968Patch),
-            recommendedFor("2.0.21", 5001968),
+            legacyRecommendedPatches,
+            recommendedFor("2.0.21", 5001968).toSet(),
         )
         assertEquals(
-            listOf(galaxyXrLegacyFoundationPatch),
-            recommendedFor("2.0.22", 5002244),
+            legacyRecommendedPatches,
+            recommendedFor("2.0.22", 5002244).toSet(),
         )
         assertEquals(
-            listOf(galaxyXrRecommended5002363Patch),
-            recommendedFor("2.0.23", 5002363),
+            nativeRecommendedPatches,
+            recommendedFor("2.0.23", 5002363).toSet(),
         )
         listOf(
             "2.0.20" to 5001740,
@@ -94,29 +104,30 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun modern_bundles_contain_only_the_requested_six_patches() {
-        listOf(galaxyXrRecommended5002363Patch).forEach { bundle ->
-            assertEquals(
-                setOf(
-                    xrGalaxyXrHighResolutionPatch,
-                    gxrModernTongueBridgePatch,
-                    microphoneInputPresetPatch,
-                    unrestrictedBatteryUsagePatch,
-                    hmdOnlyPatch,
-                    oledCalibrationPatch,
-                ),
-                bundle.dependencies.toSet(),
-            )
-            assertFalse(deviceIdentityPatch in bundle.dependencyClosure())
-            listOf(
-                forceHmdInitializationGatesPatch,
-                forceLobbyPermissionStateGatePatch,
-                forceStreamXrGatesPatch,
-                xrLauncherBootstrapPatch,
-                xrStartupPermissionsPatch,
-            ).forEach { patch ->
-                assertFalse(patch in bundle.dependencyClosure(), "${bundle.name}: ${patch.name}")
-            }
+    fun modern_recommended_set_contains_only_the_requested_seven_patches() {
+        assertEquals(
+            setOf(
+                xrGalaxyXrHighResolutionPatch,
+                gxrFacebridgePatch,
+                microphoneInputPresetPatch,
+                networkOptimizationsPatch,
+                unrestrictedBatteryUsagePatch,
+                hmdOnlyPatch,
+                oledCalibrationPatch,
+            ),
+            nativeRecommendedPatches,
+        )
+        assertTrue(nativeRecommendedPatches.all { it.default })
+        val modernClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
+        listOf(
+            forceHmdInitializationGatesPatch,
+            forceLobbyPermissionStateGatePatch,
+            forceStreamXrGatesPatch,
+            xrLauncherBootstrapPatch,
+            xrStartupPermissionsPatch,
+            deviceIdentityPatch,
+        ).forEach { patch ->
+            assertFalse(patch in modernClosure, patch.name)
         }
         assertTrue(oledCalibrationPatch.supports("2.0.23", 5002363))
         assertEquals("voice-recognition", microphoneInputPresetPatch.options["preset"].default)
@@ -125,33 +136,29 @@ class PatchCompatibilityMatrixTest {
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
         assertEquals(1.00f, oledCalibrationPatch.options["fovealGamma"].default)
-        assertFalse(deviceIdentityPatch in galaxyXrRecommended5002363Patch.dependencyClosure())
-        assertTrue(deviceIdentityPatch.supports("2.0.23", 5002363))
+        assertTrue(networkOptimizationsPatch.default)
+        assertEquals("Network Optimizations", networkOptimizationsPatch.name)
+        assertFalse(deviceIdentityPatch.supports("2.0.23", 5002363))
+        assertTrue(deviceIdentityNativeXrPatch.supports("2.0.23", 5002363))
         assertFalse(deviceIdentityPatch.supports("2.0.22", 5002322))
-        assertFalse(deviceIdentityPatch.default)
-        assertFalse(gxrFacebridgePatch.supports("2.0.23", 5002363))
-        assertTrue(gxrModernTongueBridgePatch.supports("2.0.23", 5002363))
-        assertFalse(gxrModernTongueBridgePatch.supports("2.0.22", 5002322))
-        listOf(forceHmdInitializationGatesPatch, forceLobbyPermissionStateGatePatch, forceStreamXrGatesPatch)
-            .forEach { assertFalse(it in galaxyXrRecommended5002363Patch.dependencyClosure()) }
-        listOf(
-            xrLauncherBootstrapPatch,
-            xrStartupPermissionsPatch,
-        ).forEach { patch ->
-            assertFalse(patch in galaxyXrRecommended5002363Patch.dependencyClosure(), patch.name)
-        }
+        assertTrue(deviceIdentityPatch.default)
+        assertFalse(deviceIdentityNativeXrPatch.default)
+        assertTrue(gxrFacebridgePatch.supports("2.0.23", 5002363))
+        assertFalse(gxrFacebridgePatch.supports("2.0.22", 5002322))
     }
 
     @Test
-    fun new_native_base_exposes_seven_individual_patches_and_no_legacy_mutations() {
+    fun new_native_base_exposes_nine_individual_patches_and_no_legacy_mutations() {
         val expected = setOf(
             xrGalaxyXrHighResolutionPatch,
-            gxrModernTongueBridgePatch,
+            gxrFacebridgePatch,
             microphoneInputPresetPatch,
+            networkOptimizationsPatch,
+            xrCodecsSupportPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
-            deviceIdentityPatch,
+            deviceIdentityNativeXrPatch,
         )
         assertEquals(expected, allIndividualPatches.filter { it.supports("2.0.23", 5002363) }.toSet())
         listOf("2.0.22" to 5002322, "2.0.22" to 5002363, "2.0.23" to 5002322, "2.0.23" to 5002364)
@@ -161,14 +168,15 @@ class PatchCompatibilityMatrixTest {
                 }
             }
         val excludedPublicPatches = allIndividualPatches.toSet() - expected
-        assertEquals(14, excludedPublicPatches.size)
-        assertTrue(
-            galaxyXrRecommended5002363Patch.dependencyClosure().intersect(excludedPublicPatches).isEmpty(),
-        )
+        assertEquals(13, excludedPublicPatches.size)
+        val modernClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
+        // Identity is optional on the native build (not in the recommended set), so the recommended
+        // closure does not reach the excluded legacy XR baseline chain.
+        assertTrue(modernClosure.intersect(excludedPublicPatches).isEmpty())
     }
 
     @Test
-    fun all_legacy_bundles_preserve_startup_behavior_through_explicit_patches() {
+    fun all_legacy_recommended_patches_preserve_startup_behavior_through_explicit_patches() {
         val expected = setOf(
             androidXrNativePermissionNamesPatch,
             forceHmdInitializationGatesPatch,
@@ -188,25 +196,16 @@ class PatchCompatibilityMatrixTest {
             xrManifestCapabilityPackPatch,
             deviceIdentityPatch,
         )
+        assertEquals(legacyRecommendedPatches, expected)
+        val closure = legacyRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
         listOf(
-            galaxyXrRecommended5001712Patch,
-            galaxyXrRecommended5001812Patch,
-            galaxyXrRecommended5001968Patch,
-            galaxyXrLegacyFoundationPatch,
-        ).forEach { bundle ->
-            assertEquals(expected, bundle.dependencies.toSet(), bundle.name)
-            val closure = bundle.dependencyClosure()
-            assertEquals(galaxyXrRecommended5001712Patch.dependencyClosure(), closure, bundle.name)
-            listOf(
-                appearOnTopPatch, changePackageNamePatch, controllerVelocityPatch,
-                fovealBlueNoisePatch, backgroundBlueNoisePatch,
-            )
-                .forEach { assertFalse(it in closure, "${bundle.name} unexpectedly includes ${it.name}") }
-        }
-        assertFalse(forceHmdInitializationGatesPatch.default)
-        assertFalse(forceLobbyPermissionStateGatePatch.default)
-        assertFalse(forceStreamXrGatesPatch.default)
-        assertFalse(controllerVelocityPatch.default)
+            appearOnTopPatch, changePackageNamePatch,
+            fovealBlueNoisePatch, backgroundBlueNoisePatch,
+        )
+            .forEach { assertFalse(it in closure, "recommended selection unexpectedly includes ${it.name}") }
+        assertTrue(forceHmdInitializationGatesPatch.default)
+        assertTrue(forceLobbyPermissionStateGatePatch.default)
+        assertTrue(forceStreamXrGatesPatch.default)
         assertFalse(changePackageNamePatch.default)
         assertFalse(appearOnTopPatch.default)
     }
@@ -218,8 +217,14 @@ class PatchCompatibilityMatrixTest {
         assertEquals(22, reference.size)
         listOf("2.0.20" to 5001812, "2.0.21" to 5001968).forEach { (version, code) ->
             val supported = completeCatalog.filter { it.supports(version, code) }.toSet()
-            assertEquals(reference, supported, "$version/$code")
-            supported.forEach { patch -> assertFalse(patch.default, "${patch.name}: $version/$code") }
+            // Codecs Support stays exact to 5001712 on the 2.0.20 line; the intermediate
+            // bases keep every other standalone patch.
+            assertEquals(reference - xrCodecsSupportPatch, supported, "$version/$code")
+            assertEquals(legacyRecommendedPatches, recommendedFor(version, code).toSet(), "$version/$code")
+            legacyRecommendedPatches.forEach { assertTrue(it.default, "${it.name}: $version/$code") }
+            (supported - legacyRecommendedPatches).forEach { patch ->
+                assertFalse(patch.default, "${patch.name}: $version/$code")
+            }
         }
         listOf(
             "2.0.20" to 5001968,
@@ -285,7 +290,7 @@ class PatchCompatibilityMatrixTest {
         assertTrue(xrManifestCapabilityPackPatch in routingClosure)
         assertTrue(xrCoreRuntimePatch in routingClosure)
 
-        listOf(xrGalaxyXrHighResolutionPatch, gxrFacebridgePatch, gxrModernTongueBridgePatch).forEach { patch ->
+        listOf(xrGalaxyXrHighResolutionPatch, gxrFacebridgePatch).forEach { patch ->
             val closure = patch.dependencyClosure()
             assertFalse(xrLauncherBootstrapPatch in closure, patch.name)
             assertFalse(xrPermissionSettingsBootstrapPatch in closure, patch.name)
@@ -294,7 +299,7 @@ class PatchCompatibilityMatrixTest {
     }
 
     private fun recommendedFor(version: String, versionCode: Int): List<Patch<*>> =
-        recommendedBundles.filter { patch ->
+        allTopLevelPatches.filter { patch ->
             patch.default && patch.supports(version, versionCode)
         }
 
@@ -313,28 +318,21 @@ class PatchCompatibilityMatrixTest {
     }
 
     private companion object {
-        val recommendedBundles = listOf(
-            galaxyXrRecommended5001712Patch,
-            galaxyXrRecommended5001812Patch,
-            galaxyXrRecommended5001968Patch,
-            galaxyXrRecommended5002363Patch,
-            galaxyXrLegacyFoundationPatch,
-        )
-
         val allIndividualPatches = listOf(
             xrStartupPermissionsPatch,
             androidXrNativePermissionNamesPatch,
             appearOnTopPatch,
             changePackageNamePatch,
-            controllerVelocityPatch,
             deviceIdentityPatch,
+            deviceIdentityNativeXrPatch,
             forceHmdInitializationGatesPatch,
             forceLobbyPermissionStateGatePatch,
             forceStreamXrGatesPatch,
             gxrFacebridgePatch,
-            gxrModernTongueBridgePatch,
             xrGalaxyXrHighResolutionPatch,
             microphoneInputPresetPatch,
+            networkOptimizationsPatch,
+            xrCodecsSupportPatch,
             oledCalibrationPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
@@ -343,6 +341,38 @@ class PatchCompatibilityMatrixTest {
             xrManifestCapabilityPackPatch,
             xrLauncherBootstrapPatch,
             xrInputRoutingConfigPatch,
+        )
+
+        val allTopLevelPatches = allIndividualPatches
+
+        val legacyRecommendedPatches = setOf(
+            androidXrNativePermissionNamesPatch,
+            forceHmdInitializationGatesPatch,
+            forceLobbyPermissionStateGatePatch,
+            forceStreamXrGatesPatch,
+            gxrFacebridgePatch,
+            xrGalaxyXrHighResolutionPatch,
+            microphoneInputPresetPatch,
+            oledCalibrationPatch,
+            unrestrictedBatteryUsagePatch,
+            hmdOnlyPatch,
+            xrCoreRuntimePatch,
+            xrDeviceConfigBaselinePatch,
+            xrInputRoutingConfigPatch,
+            xrLauncherBootstrapPatch,
+            xrStartupPermissionsPatch,
+            xrManifestCapabilityPackPatch,
+            deviceIdentityPatch,
+        )
+
+        val nativeRecommendedPatches = setOf(
+            xrGalaxyXrHighResolutionPatch,
+            gxrFacebridgePatch,
+            microphoneInputPresetPatch,
+            networkOptimizationsPatch,
+            unrestrictedBatteryUsagePatch,
+            hmdOnlyPatch,
+            oledCalibrationPatch,
         )
     }
 }
