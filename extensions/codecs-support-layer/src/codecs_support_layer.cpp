@@ -43,6 +43,7 @@
 
 #include "codec_sniff.h"
 #include "format_recipe.h"
+#include "av1_geometry.h"
 #include "sha256.h"
 
 #define EXPORT extern "C" __attribute__((visibility("default")))
@@ -54,7 +55,7 @@ using gxr::FormatEntry;
 using gxr::Sniffed;
 
 constexpr const char* kLayerName = "XR_APILAYER_local_GalaxyXR_codecs_support";
-constexpr const char* kBuild = "codecs-support-v4-20261014";
+constexpr const char* kBuild = "codecs-support-v5-20261014";
 constexpr const char* kDisableEnv = "GXR_DISABLE_CODECS_SUPPORT";
 constexpr const char* kSceneSoname = "libvrlink_scene.so";
 constexpr size_t kMaxSniffedAu = 4u << 20;
@@ -137,6 +138,10 @@ void* g_savedCrypto = nullptr;
 uint32_t g_savedFlags = 0;
 int g_auDumps = 0;              // first-AU structure diagnostics (one-shot per process)
 bool g_recipeLogged = false;    // recorded-recipe dump (one-shot per process)
+bool g_av1GeoDone = false;      // AV1 geometry parsed + patched for this session
+uint32_t g_av1FrameW = 0;       // real frame width (from the frame header)
+uint32_t g_av1FrameH = 0;       // real frame height
+gxr::Av1SeqInfo g_av1Seq{};     // sequence-header geometry of the live session
 std::map<void*, std::pair<size_t, uint8_t*>> g_inputPtrs;  // codec -> (idx, ptr)
 std::map<void*, void*> g_handleMap;                        // retired -> live
 
@@ -172,6 +177,80 @@ bool QueueAu(void* codec, const std::vector<uint8_t>& au, uint64_t timeUs, uint3
         LOG("re-queue attempt %d on %s failed", attempt, what);
     }
     return false;
+}
+
+// Walk one AU's OBUs (bounds-checked, AV1 rules); report the first
+// sequence-header (type 1) and frame-header (type 3) payload spans.
+bool FindAv1SeqAndFrame(const uint8_t* p, size_t n, size_t* seqOff, size_t* seqLen,
+                        size_t* fhOff, size_t* fhLen) {
+    if (!p || n < 2) return false;
+    bool haveSeq = false, haveFh = false;
+    size_t off = 0;
+    while (off < n) {
+        const uint8_t hb = p[off];
+        if (hb & 0x80) return haveSeq && haveFh;
+        const uint8_t type = (hb >> 3) & 0x0F;
+        if (type == 0 || (type >= 9 && type <= 14)) return haveSeq && haveFh;
+        const bool ext = ((hb >> 2) & 1) != 0;
+        const bool hasSize = ((hb >> 1) & 1) != 0;
+        off++;
+        if (ext) { if (off + 1 >= n) return haveSeq && haveFh; off += 2; }
+        uint64_t sz = 0;
+        if (hasSize) {
+            int shift = 0; size_t bytes = 0; bool done = false;
+            while (off < n && bytes < 8) {
+                const uint8_t b = p[off++]; bytes++;
+                sz |= (uint64_t)(b & 0x7F) << shift; shift += 7;
+                if (!(b & 0x80)) { done = true; break; }
+            }
+            if (!done) return haveSeq && haveFh;
+        }
+        if (type == 2) { if (off < n && p[off] == 0) off++; else return haveSeq && haveFh; sz = 0; }
+        else if (!hasSize) return haveSeq && haveFh;
+        if ((uint64_t)off + sz > n) return haveSeq && haveFh;
+        if (type == 1 && !haveSeq) { *seqOff = off; *seqLen = (size_t)sz; haveSeq = true; }
+        if (type == 3 && !haveFh) { *fhOff = off; *fhLen = (size_t)sz; haveFh = true; }
+        if (haveSeq && haveFh) return true;
+        off += (size_t)sz;
+    }
+    return haveSeq && haveFh;
+}
+
+// Patch every sequence-header OBU in place (repeatSpsPps streams carry one
+// per IDR, so later AUs need it too). Returns the number patched.
+int PatchAv1SeqHeaders(uint8_t* p, size_t n, uint32_t w, uint32_t h) {
+    if (!p || n < 2) return 0;
+    int patched = 0;
+    size_t off = 0;
+    while (off < n) {
+        const uint8_t hb = p[off];
+        if (hb & 0x80) return patched;
+        const uint8_t type = (hb >> 3) & 0x0F;
+        if (type == 0 || (type >= 9 && type <= 14)) return patched;
+        const bool ext = ((hb >> 2) & 1) != 0;
+        const bool hasSize = ((hb >> 1) & 1) != 0;
+        off++;
+        if (ext) { if (off + 1 >= n) return patched; off += 2; }
+        uint64_t sz = 0;
+        if (hasSize) {
+            int shift = 0; size_t bytes = 0; bool done = false;
+            while (off < n && bytes < 8) {
+                const uint8_t b = p[off++]; bytes++;
+                sz |= (uint64_t)(b & 0x7F) << shift; shift += 7;
+                if (!(b & 0x80)) { done = true; break; }
+            }
+            if (!done) return patched;
+        }
+        if (type == 2) { if (off < n && p[off] == 0) off++; else return patched; sz = 0; }
+        else if (!hasSize) return patched;
+        if ((uint64_t)off + sz > n) return patched;
+        if (type == 1) {
+            gxr::Av1SeqInfo si = gxr::ParseAv1SeqMax(p + off, (size_t)sz);
+            if (si.ok && gxr::PatchAv1SeqMax(p + off, (size_t)sz, si, w, h)) patched++;
+        }
+        off += (size_t)sz;
+    }
+    return patched;
 }
 
 // A MediaCodec output Surface accepts one producer connection at a time:
@@ -238,7 +317,44 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
         LOG("createDecoderByType(%s) failed; keeping stock path", mime);
         return false;
     }
+    // AV1 geometry: the host's sequence header carries the encoder's init max
+    // (3200x8192) while the real frame is smaller; the decoder then allocates
+    // the max and crops, and the client's placement math expects buffer ==
+    // frame. Parse both sizes, patch the sequence header in this AU down to
+    // the frame size, and hand the frame size to the format hints below.
+    if (!std::strcmp(mime, "video/av01")) {
+        size_t so = 0, sl = 0, fo = 0, fl = 0;
+        if (FindAv1SeqAndFrame(auCopy.data(), auCopy.size(), &so, &sl, &fo, &fl)) {
+            gxr::Av1SeqInfo si = gxr::ParseAv1SeqMax(auCopy.data() + so, sl);
+            if (si.ok) {
+                gxr::Av1FrameSize fs =
+                    gxr::ScanAv1FrameSize(auCopy.data() + fo, fl, si.widthBits, si.heightBits, si.maxW, si.maxH);
+                if (fs.ok) {
+                    LOG("geo: seq max=%ux%u bits=%u/%u frame=%ux%u; patching seq max + hints",
+                        si.maxW, si.maxH, si.widthBits, si.heightBits, fs.w, fs.h);
+                    if (gxr::PatchAv1SeqMax(auCopy.data() + so, sl, si, fs.w, fs.h)) {
+                        g_av1GeoDone = true;
+                        g_av1FrameW = fs.w;
+                        g_av1FrameH = fs.h;
+                        g_av1Seq = si;
+                    }
+                } else {
+                    LOG("geo: frame-size scan failed (seq max %ux%u)", si.maxW, si.maxH);
+                }
+            } else {
+                LOG("geo: sequence header parse failed");
+            }
+        } else {
+            LOG("geo: no sequence/frame-header OBUs in the first AU");
+        }
+    }
     std::vector<FormatEntry> entries = gxr::FilterCodecSwapRecipe(gxr::SubstituteMime(g_recipe, mime));
+    if (!std::strcmp(mime, "video/av01") && g_av1GeoDone) {
+        for (FormatEntry& e : entries) {
+            if (e.key == "width" || e.key == "max-width") e.ivalue = static_cast<int32_t>(g_av1FrameW);
+            else if (e.key == "height" || e.key == "max-height") e.ivalue = static_cast<int32_t>(g_av1FrameH);
+        }
+    }
     void* fmt = o_formatNew();
     if (!fmt) { LOG("format allocation failed; keeping stock path"); o_delete(live); return false; }
     for (const FormatEntry& e : entries) {
@@ -398,6 +514,14 @@ int32_t WrapQueueInput(void* codec, size_t idx, int64_t offset, size_t size, uin
                     gxr::SniffedName(sniffed));
                 g_sniffDone = true;
             }
+        }
+    }
+    if (live != codec && g_av1GeoDone && offset == 0 && size > 0) {
+        size_t cap = 0;
+        uint8_t* dst = o_getInput(live, idx, &cap);
+        if (dst && cap >= size) {
+            const int patched = PatchAv1SeqHeaders(dst + offset, size, g_av1FrameW, g_av1FrameH);
+            if (patched) LOG("geo: patched %d sequence header(s) this AU", patched);
         }
     }
     return o_queueInput(live, idx, offset, size, timeUs, flags);

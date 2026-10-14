@@ -10,6 +10,7 @@
 
 #include "../src/codec_sniff.h"
 #include "../src/format_recipe.h"
+#include "../src/av1_geometry.h"
 #include "../src/sha256.h"
 
 static int g_failures = 0;
@@ -173,11 +174,40 @@ static void CheckObuWalk() {
           "obu walk: unterminated size reported");
 }
 
+static void CheckAv1Geometry() {
+    using gxr::ParseAv1SeqMax;
+    using gxr::ScanAv1FrameSize;
+    using gxr::PatchAv1SeqMax;
+    // Captured from the live NVENC AV1 stream; ffprobe ground truth:
+    // max 3200x8192, frame 1536x6144, frame_width_bits 12 / height_bits 14.
+    std::vector<uint8_t> seq = {0x00, 0x00, 0x00, 0x96, 0xf7, 0x1f, 0xdf, 0xff, 0x00, 0x86, 0x70, 0x10};
+    auto si = ParseAv1SeqMax(seq.data(), seq.size());
+    CHECK(si.ok && si.maxW == 3200 && si.maxH == 8192 && si.widthBits == 12 && si.heightBits == 14,
+          "seq geometry: max 3200x8192 with 12/14-bit size fields");
+    std::vector<uint8_t> fh = {0x14, 0x02, 0xff, 0xaf, 0xfe, 0x3f, 0x3f, 0xf6, 0x3e, 0x10, 0x06, 0x0e,
+                               0x0e, 0x0e, 0x08, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x82, 0x08,
+                               0x20, 0x20, 0x00, 0x20, 0x04, 0x00, 0x90, 0x0c, 0x14};
+    auto fs = ScanAv1FrameSize(fh.data(), fh.size(), si.widthBits, si.heightBits, si.maxW, si.maxH);
+    CHECK(fs.ok && fs.w == 1536 && fs.h == 6144, "frame geometry: scan finds 1536x6144");
+    std::vector<uint8_t> patched = seq;
+    CHECK(PatchAv1SeqMax(patched.data(), patched.size(), si, fs.w, fs.h), "seq patch applies");
+    auto si2 = ParseAv1SeqMax(patched.data(), patched.size());
+    CHECK(si2.ok && si2.maxW == 1536 && si2.maxH == 6144 && si2.widthBits == 12 && si2.heightBits == 14,
+          "seq patch round-trips to 1536x6144");
+    CHECK(patched.size() == seq.size(), "seq patch keeps the OBU size");
+    CHECK(PatchAv1SeqMax(patched.data(), patched.size(), si2, si.maxW, si.maxH) == false,
+          "seq patch refuses to grow the max");
+    std::vector<uint8_t> junk(16, 0x00);
+    auto nofs = ScanAv1FrameSize(junk.data(), junk.size(), 12, 14, 3200, 8192);
+    CHECK(!nofs.ok, "frame scan rejects an all-zero payload");
+}
+
 int main() {
     CheckSha();
     CheckSniff();
     CheckRecipe();
     CheckObuWalk();
+    CheckAv1Geometry();
     std::printf("codecs-support pure logic: %d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }
