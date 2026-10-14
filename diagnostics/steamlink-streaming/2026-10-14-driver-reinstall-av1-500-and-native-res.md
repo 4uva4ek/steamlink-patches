@@ -33,6 +33,25 @@ regression. Verified live end-to-end; cause found; fix applied and confirmed.
 - Instrument: `GetRecommendedRenderTargetSize` / `Raw ideal render target scale` lines
   in `logs/vrcompositor.txt`.
 
+### Why run 1 missed it (code-verified, same day)
+- `DeviceProvider.cpp:110-112`: the early apply exists for exactly this class of race —
+  "vrlink reads its stream/profile keys from steamvr.vrsettings during its own init,
+  before any HMD Activate; write ours now so the FIRST connect of a session already runs
+  the current config (09-03 race)".
+- `GalaxyXR.cpp:359-366` (2026-09-03): vrlink reads its keys in its own init ~3 ms before
+  the shim's Activate (run-1 evidence 20:18:25.893 vs .896); the early apply moved the
+  writes to provider Init to beat it.
+- That fix covers STEADY STATE only: once the keys exist on disk, every later start reads
+  them at vrlink's driver init. Built-in vrlink loads before the external GXR driver
+  (18:55:35.26 load vs 18:55:40.1 GXR writes in the failing session), so the uncovered
+  case is the very FIRST start after install / Clean Settings, when the keys do not exist
+  yet. `GalaxyXR.cpp:430-431` states the consumption rule: keys are read at SteamVR start /
+  compositor init; mid-session toggles apply next launch — runtime cannot fix run 1.
+- Fix options (decision pending with owner): (A) install-time pre-seed of the default
+  tuning keys in the GUI vendor install flow (journaled; first run renders native);
+  (B) post-install "restart SteamVR once" notice (the vendor flow currently returns
+  silently — system-diagnostic.ts:342-359); (C) docs only.
+
 ## Install/uninstall semantics (BRIEF-C -> FINDINGS-C.md; spot-checked by parent)
 - Install (vendor build): managed copy to
   `%LOCALAPPDATA%/GalaxyXR/Drivers/GalaxyXRNative-<stamp>` + `vrpathreg.exe adddriver`
