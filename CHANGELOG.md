@@ -1,3 +1,9 @@
+## [1.28.0-dev.25](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.24...v1.28.0-dev.25) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Codecs support update ([67f5a36](https://github.com/AngelDark92/xr-porting-hub/commit/67f5a3667281ff75ad4c99c84842ef9c19458ae6))
+
 ## [1.28.0-dev.24](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.23...v1.28.0-dev.24) (2026-10-13)
 
 ### 🐛 Bug Fixes
