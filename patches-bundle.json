@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-14T14:49:51",
-  "description": "## [1.28.0-dev.28](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.27...v1.28.0-dev.28) (2026-10-14)\n\n### 🐛 Bug Fixes\n\n* codecs support v5 ([a008e34](https://github.com/AngelDark92/xr-porting-hub/commit/a008e342233fa1f65cfb7266d049734fab144d6b))",
-  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.28/patches-1.28.0-dev.28.mpp",
+  "created_at": "2026-10-14T15:14:28",
+  "description": "## [1.28.0-dev.29](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.28...v1.28.0-dev.29) (2026-10-14)\n\n### 🐛 Bug Fixes\n\n* codecs support v6 (AV1 AU walk past sized TD OBU) ([2eaa85c](https://github.com/AngelDark92/xr-porting-hub/commit/2eaa85c31a11ed9c5a1fde1ac87588e3c278fb3d))",
+  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.28.0-dev.29/patches-1.28.0-dev.29.mpp",
   "signature_download_url": "",
-  "version": "1.28.0-dev.28"
+  "version": "1.28.0-dev.29"
 }

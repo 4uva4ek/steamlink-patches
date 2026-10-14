@@ -1,3 +1,9 @@
+## [1.28.0-dev.29](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.28...v1.28.0-dev.29) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* codecs support v6 (AV1 AU walk past sized TD OBU) ([2eaa85c](https://github.com/AngelDark92/xr-porting-hub/commit/2eaa85c31a11ed9c5a1fde1ac87588e3c278fb3d))
+
 ## [1.28.0-dev.28](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.27...v1.28.0-dev.28) (2026-10-14)
 
 ### 🐛 Bug Fixes
