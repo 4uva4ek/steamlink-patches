@@ -1,3 +1,9 @@
+## [1.28.0](https://github.com/4uva4ek/xr-porting-hub/compare/v1.27.0...v1.28.0) (2026-10-14)
+
+### ✨ New Features
+
+* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([2720a5f](https://github.com/4uva4ek/xr-porting-hub/commit/2720a5fe7418822d73600ab6e50fde8beb944e0e))
+
 ## [1.27.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.26.0...v1.27.0) (2026-10-07)
 
 ### ✨ New Features

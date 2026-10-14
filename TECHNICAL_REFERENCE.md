@@ -64,9 +64,9 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.27.0](https://github.com/AngelDark92/steamlink-patches/releases/tag/v1.27.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;35 patches total
+> **[v1.28.0](https://github.com/4uva4ek/xr-porting-hub/releases/tag/v1.28.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;36 patches total
 <details open>
-<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;26 patches</summary>
+<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;27 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -118,6 +118,7 @@ This section is generated from the patch catalog during releases.
 |----------|----------------|----------------|-----------|
 | [Change package name](#change-package-name) | Renames the manifest package and Steam Link's internal VR-launch component so the patched app can coexist with the original installation. | 5001712, 5001812, 5001968, 5002244 | • Package name |
 | [Device identity](#device-identity) | Overrides the HMD identity reported to SteamVR. Recommended selects Meta Quest Pro for exact legacy bundle targets through 5002244, including 2.0.20/5001712; otherwise Galaxy XR. The Galaxy profile installs its complete transport identity while preserving stock controller/hand routing and extensions. Optional on 2.0.23/5002363; explicit Quest Pro and Pico profiles populate exact Galaxy XR product entries. | 5001712, 5001812, 5001968, 5002244, 5002363 | • HMD identity |
+| [Galaxy XR SteamVR driver (galaxyxr)](#galaxy-xr-steamvr-driver-galaxyxr) | Reports the headset and controllers to SteamVR through the resource-only `galaxyxr` driver installed by Galaxy XR VRLink Setup on the PC: Galaxy XR identity, {galaxyxr} icons, input profiles and controller models, and the calibrated grip offset. Replaces the Meta Quest Pro spoof; the PC driver must be installed or the controllers show no model. Controllers keep the oculus_touch type because vrlink accepts no other. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Grip offset position (cm, x,y,z)<br>• Grip offset rotation (deg, x,y,z) |
 
 #### Advanced XR compatibility
 

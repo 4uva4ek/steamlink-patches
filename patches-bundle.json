@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-07T08:13:33",
-  "description": "## [1.27.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.26.0...v1.27.0) (2026-10-07)\n\n### ✨ New Features\n\n* predict the controller HAL pose 60 ms ahead by default ([c8609ed](https://github.com/AngelDark92/steamlink-patches/commit/c8609edc2b1e48b9a3d0ee7947f14720b24cd15c))",
-  "download_url": "https://github.com/AngelDark92/steamlink-patches/releases/download/v1.27.0/patches-1.27.0.mpp",
+  "created_at": "2026-10-14T14:17:37",
+  "description": "## [1.28.0](https://github.com/4uva4ek/xr-porting-hub/compare/v1.27.0...v1.28.0) (2026-10-14)\n\n### ✨ New Features\n\n* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([2720a5f](https://github.com/4uva4ek/xr-porting-hub/commit/2720a5fe7418822d73600ab6e50fde8beb944e0e))",
+  "download_url": "https://github.com/4uva4ek/xr-porting-hub/releases/download/v1.28.0/patches-1.28.0.mpp",
   "signature_download_url": "",
-  "version": "1.27.0"
+  "version": "1.28.0"
 }
