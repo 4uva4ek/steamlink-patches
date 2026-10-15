@@ -515,9 +515,9 @@
     },
     {
       "name": "Codecs Support",
-      "description": "Only for exact 2.0.20/5001712 and 2.0.23/5002363: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Requires the matching driver setting and headset validation.",
+      "description": "Exact 2.0.20/5001712: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Recommended on this base; requires the matching driver setting.",
       "category": "Streaming & network",
-      "default": false,
+      "default": true,
       "dependencies": [],
       "compatiblePackages": [
         {
@@ -541,7 +541,17 @@
               "description": "Verified Steam Link 2.0.20 build 5001712."
             }
           ]
-        },
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Codecs Support (2.0.23/5002363)",
+      "description": "Optional on exact 2.0.23/5002363: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Not part of the recommended set; headset validation pending.",
+      "category": "Streaming & network",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
           "name": "Steam Link Experimental",

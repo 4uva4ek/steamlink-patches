@@ -5,6 +5,7 @@ import app.template.patches.steamlink.androidxr.appearOnTopPatch
 import app.template.patches.steamlink.androidxr.androidXrUiExtensionPatch
 import app.template.patches.steamlink.androidxr.gxrFacebridgePatch
 import app.template.patches.steamlink.androidxr.unrestrictedBatteryUsagePatch
+import app.template.patches.steamlink.androidxr.xrCodecsSupportNativeXrPatch
 import app.template.patches.steamlink.androidxr.xrCodecsSupportPatch
 import app.template.patches.steamlink.androidxr.xrCoreRuntimePatch
 import app.template.patches.steamlink.androidxr.xrDeviceConfigBaselinePatch
@@ -39,8 +40,12 @@ class PatchCompatibilityMatrixTest {
     fun individual_patches_are_recommended_on_supported_builds() {
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
+        assertEquals(
+            legacyRecommendedPatches5001712,
+            recommendedFor("2.0.20", 5001712).toSet(),
+            "2.0.20/5001712",
+        )
         listOf(
-            "2.0.20" to 5001712,
             "2.0.20" to 5001812,
             "2.0.21" to 5001968,
             "2.0.22" to 5002244,
@@ -63,7 +68,7 @@ class PatchCompatibilityMatrixTest {
     @Test
     fun exact_builds_select_the_recommended_patch_set() {
         assertEquals(
-            legacyRecommendedPatches,
+            legacyRecommendedPatches5001712,
             recommendedFor("2.0.20", 5001712).toSet(),
         )
         assertEquals(
@@ -154,7 +159,7 @@ class PatchCompatibilityMatrixTest {
             gxrFacebridgePatch,
             microphoneInputPresetPatch,
             networkOptimizationsPatch,
-            xrCodecsSupportPatch,
+            xrCodecsSupportNativeXrPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
@@ -168,7 +173,7 @@ class PatchCompatibilityMatrixTest {
                 }
             }
         val excludedPublicPatches = allIndividualPatches.toSet() - expected
-        assertEquals(13, excludedPublicPatches.size)
+        assertEquals(14, excludedPublicPatches.size)
         val modernClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
         // Identity is optional on the native build (not in the recommended set), so the recommended
         // closure does not reach the excluded legacy XR baseline chain.
@@ -333,6 +338,7 @@ class PatchCompatibilityMatrixTest {
             microphoneInputPresetPatch,
             networkOptimizationsPatch,
             xrCodecsSupportPatch,
+            xrCodecsSupportNativeXrPatch,
             oledCalibrationPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
@@ -364,6 +370,10 @@ class PatchCompatibilityMatrixTest {
             xrManifestCapabilityPackPatch,
             deviceIdentityPatch,
         )
+
+        // Codecs Support is recommended only on the exact 2.0.20/5001712 base; the other legacy
+        // bases keep the 17-patch set and the native build keeps its 7-patch set.
+        val legacyRecommendedPatches5001712 = legacyRecommendedPatches + xrCodecsSupportPatch
 
         val nativeRecommendedPatches = setOf(
             xrGalaxyXrHighResolutionPatch,

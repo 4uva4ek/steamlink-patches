@@ -4,8 +4,9 @@ Implementation notes, compatibility details, validation status, and build instru
 
 ## Steam Link 2.0.20 / 5001812 and 2.0.21 / 5001968
 
-Both exact bases expose the same 17-patch recommended set and 22 standalone
-patches as 2.0.20/5001712. Native addresses, complete-function guards and shader
+Both exact bases expose the same 17-patch recommended set and 21 standalone
+patches; 2.0.20/5001712 exposes 22 — it alone adds **Codecs Support**, which is
+recommended there and exact to that build. Native addresses, complete-function guards and shader
 callers were derived independently for each build. Both use the verified
 2-projection helper, mouse-only SDL routing and array-shaped HMD extension
 configuration. The 2 blue-noise experiments remain default-off and outside the
@@ -26,7 +27,7 @@ Steam Link VR (`com.valvesoftware.steamlinkvr`) was not built for Android XR. Th
 
 Target APK: `com.valvesoftware.steamlinkvr`. Exact compatibility metadata and guarded adaptations include v2.0.20/5001712, v2.0.20/5001812, v2.0.21/5001968, v2.0.22/5002244, and v2.0.23/5002363. The permission-free high-resolution fix accepts exactly those 5 builds; 5001712 and 5002244 have verified layouts, while 5002363 is a decoded-base adaptation with pending headset validation. Reconstruction, quad-view, permission-matrix, warm-up/omit, and DFR re-arm experiments are retired.
 
-Use Morphe Manager 1.30.0 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is one global value per patch, so the recommended defaults live on the individual patches: all 4 legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244) default-enable the same [17 individual patches](PATCH_CATALOG.md#recommended-set-per-exact-build), including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches, and Morphe Manager auto-selects them for the detected build. 2.0.23/5002363 default-enables only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, and Visual Delay Fix (60 ms). The full GXR face bridge is restricted to the 4 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
+Use Morphe Manager 1.30.0 or newer with compatibility checks enabled for build-specific filtering. Manager 1.7 cannot distinguish APKs that share versionName `2.0.22`, and Expert mode may intentionally show incompatible patches. Morphe's `default` flag is one global value per patch, so the recommended defaults live on the individual patches: all 4 legacy bases (2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244) default-enable the [legacy recommended set](PATCH_CATALOG.md#recommended-set-per-exact-build) — 17 patches on 5001812, 5001968 and 5002244, and 18 on 5001712, which additionally recommends **Codecs Support** — including the 3 native force-gate patches, required XR foundation patches, Device identity with the Meta Quest Pro spoof, and both explicit older startup patches, and Morphe Manager auto-selects it for the detected build. 2.0.23/5002363 default-enables only GXR tongue bridge (native face tracking), Galaxy XR high-resolution fix, Microphone input preset (Voice Recognition), OLED color calibration (`final-balanced`), Unrestricted battery usage, Network Optimizations, and Visual Delay Fix (60 ms). The full GXR face bridge is restricted to the 4 legacy builds so it cannot replace Valve's native 5002363 face mappings. **Appear on top (legacy)** and **Change package name** are never recommended.
 
 **Startup permission requests (before 5002322)** and **Startup splash and XR launch mode (before 5002322)** are members of the legacy recommended set, default-enabled on all 4 legacy bases and independently deselectable. The permission patch declares missing hand, eye, face, microphone and Bluetooth permissions and enables their startup requests. The splash patch enables the black startup screen and unmanaged VRLink start-mode override; older legacy builds also receive panel sizing. The shared helper defaults both behaviors off. Earlier battery/overlay settings flows use a transparent bootstrap unless those explicit patches are selected.
 
@@ -64,7 +65,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.0](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;48 patches total
+> **[v1.28.0](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
@@ -188,7 +189,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -219,7 +220,8 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Codecs Support](#codecs-support) | Only for exact 2.0.20/5001712 and 2.0.23/5002363: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Requires the matching driver setting and headset validation. | 5001712, 5002363 |  |
+| [Codecs Support](#codecs-support) | Exact 2.0.20/5001712: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Recommended on this base; requires the matching driver setting. | 5001712 |  |
+| [Codecs Support (2.0.23/5002363)](#codecs-support-2-0-23-5002363) | Optional on exact 2.0.23/5002363: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Not part of the recommended set; headset validation pending. | 5002363 |  |
 
 </details>
 
