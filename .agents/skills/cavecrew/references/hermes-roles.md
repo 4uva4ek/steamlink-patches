@@ -4,7 +4,7 @@ Hermes auto-loads project `AGENTS.md` (git-root to cwd chain, per-file character
 
 Hermes child facts (observed, not preset inheritance):
 
-- Child gets isolated context, its own terminal session and the workspace's project context files; it knows nothing of the parent conversation. Paste the role contract, the task, and every path into `goal`/`context`.
+- Child gets isolated context, its own terminal session and the workspace's project context files; it knows nothing of the parent conversation. The role contract, the task, and every path must reach the child, but NOT verbatim inside `goal`/`context`: the contracts contain backticks, braces and angle brackets, which break the `delegate_task` JSON payload (parse failure). Write the contract + task to a scratch file (Hermes scratch dir works) and keep the dispatch text punctuation-safe: goal/context = "Read file C:/.../<task>.md FIRST with read_file. It contains your cavecrew role contract and your full task. Follow it exactly." Pair with `output_schema` so receipts come back structured.
 - Child inherits the parent model and tools. `delegate_task` has no per-child model pin, so the `model: haiku` frontmatter in `.github/agents/` does not exist on Hermes. Do not promise a cheap model.
 - Child cannot ask questions (`clarify` unavailable). Ambiguous spec means the child must answer `ambiguous. ask: <one question>.`
 - Child summaries are self-reports. The parent re-verifies: re-read the cited lines, run the checks itself.
@@ -93,7 +93,7 @@ Optional `output_schema`:
 
 ## Main-thread duties on the Hermes host
 
-1. Load the relevant role section above; paste it plus paths into the child's `context`.
+1. Load the relevant role section above; deliver it plus paths to the child via the punctuation-safe scratch-file pattern (the child-facts bullet) — never paste contract text raw into `context`.
 2. Chain: investigator, then builder, then reviewer. Never send 3+ files to a builder or general feedback to a reviewer.
 3. After the child returns: the parent re-reads the diff, runs the project checks itself, and owns the verification claim.
 4. Keep the compressed receipts, exact paths/numbers, and unknown-versus-observed distinctions of the parent Cavecrew skill.
