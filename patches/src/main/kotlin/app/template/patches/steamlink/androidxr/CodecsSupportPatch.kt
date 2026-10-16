@@ -135,25 +135,28 @@ internal fun installCodecsSupportResources(
     return true
 }
 
-@Suppress("unused")
-val xrCodecsSupportPatch = rawResourcePatch(
-    name = "Codecs Support",
-    description = "Only for exact 2.0.20/5001712 and 2.0.23/5002363: lets the headset client " +
-        "decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. " +
-        "A bundled OpenXR layer detects the host's codec from the first video frame and " +
-        "switches the decoder in place; stock HEVC streams are untouched. Requires the " +
-        "matching driver setting and headset validation.",
-    default = false,
+// Morphe exposes one global `default` flag per patch object, so recommendation scope is expressed
+// with one object per scope over this single shared guarded body: the recommended `Codecs Support`
+// covers exact 2.0.20/5001712, while `Codecs Support (2.0.23/5002363)` stays optional so the
+// native build is never auto-selected the codecs layer.
+private fun createCodecsSupportPatch(
+    name: String,
+    description: String,
+    default: Boolean,
+    compatibilities: List<Compatibility>,
+) = rawResourcePatch(
+    name = name,
+    description = description,
+    default = default,
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)
-    compatibleWith(*(COMPATIBILITIES_STEAM_LINK_5001712 + COMPATIBILITIES_STEAM_LINK_5002363)
-        .map { exact ->
-            Compatibility(
-                name = EXPERIMENTAL_COMPATIBILITY_NAME,
-                packageName = requireNotNull(exact.packageName),
-                targets = exact.targets,
-            )
-        }.toTypedArray())
+    compatibleWith(*compatibilities.map { exact ->
+        Compatibility(
+            name = EXPERIMENTAL_COMPATIBILITY_NAME,
+            packageName = requireNotNull(exact.packageName),
+            targets = exact.targets,
+        )
+    }.toTypedArray())
     execute {
         if (!isCodecsSupportSteamLinkBuild(packageMetadata.versionName, packageMetadata.versionCode)) {
             return@execute
@@ -163,3 +166,25 @@ val xrCodecsSupportPatch = rawResourcePatch(
         installCodecsSupportResources(apkRoot, packageMetadata.versionName, packageMetadata.versionCode)
     }
 }
+
+@Suppress("unused")
+val xrCodecsSupportPatch = createCodecsSupportPatch(
+    name = "Codecs Support",
+    description = "Exact 2.0.20/5001712: lets the headset client decode H.264 or AV1 streams " +
+        "selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects " +
+        "the host's codec from the first video frame and switches the decoder in place; stock " +
+        "HEVC streams are untouched. Recommended on this base; requires the matching driver setting.",
+    default = true,
+    compatibilities = COMPATIBILITIES_STEAM_LINK_5001712,
+)
+
+@Suppress("unused")
+val xrCodecsSupportNativeXrPatch = createCodecsSupportPatch(
+    name = "Codecs Support (2.0.23/5002363)",
+    description = "Optional on exact 2.0.23/5002363: lets the headset client decode H.264 or AV1 " +
+        "streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer " +
+        "detects the host's codec from the first video frame and switches the decoder in place; " +
+        "stock HEVC streams are untouched. Not part of the recommended set; headset validation pending.",
+    default = false,
+    compatibilities = COMPATIBILITIES_STEAM_LINK_5002363,
+)

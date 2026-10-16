@@ -14,15 +14,23 @@ import kotlin.test.assertTrue
 
 class CodecsSupportPatchTest {
     @Test
-    fun `exact compatibility remains optional and experimental-only`() {
-        assertFalse(xrCodecsSupportPatch.default)
+    fun `per-scope defaults stay exact and experimental-only`() {
+        assertTrue(xrCodecsSupportPatch.default)
+        assertFalse(xrCodecsSupportNativeXrPatch.default)
         assertTrue(xrCodecsSupportPatch.dependencies.isEmpty())
+        assertTrue(xrCodecsSupportNativeXrPatch.dependencies.isEmpty())
         assertTrue(xrCodecsSupportPatch.compatibility.orEmpty()
             .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
-        val targets = xrCodecsSupportPatch.compatibility.orEmpty().flatMap { it.targets }
-        assertEquals(setOf("2.0.20", "2.0.23"), targets.map { it.version }.toSet())
-        assertEquals(setOf(5001712, 5002363),
-            targets.flatMap { it.versionCodes.orEmpty().values }.toSet())
+        assertTrue(xrCodecsSupportNativeXrPatch.compatibility.orEmpty()
+            .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+        val legacyTargets = xrCodecsSupportPatch.compatibility.orEmpty().flatMap { it.targets }
+        assertEquals(setOf("2.0.20"), legacyTargets.map { it.version }.toSet())
+        assertEquals(setOf(5001712),
+            legacyTargets.flatMap { it.versionCodes.orEmpty().values }.toSet())
+        val nativeTargets = xrCodecsSupportNativeXrPatch.compatibility.orEmpty().flatMap { it.targets }
+        assertEquals(setOf("2.0.23"), nativeTargets.map { it.version }.toSet())
+        assertEquals(setOf(5002363),
+            nativeTargets.flatMap { it.versionCodes.orEmpty().values }.toSet())
         assertTrue(isCodecsSupportSteamLinkBuild("2.0.20", "5001712"))
         assertTrue(isCodecsSupportSteamLinkBuild("2.0.23", "5002363"))
         listOf("2.0.20" to "5001812", "2.0.21" to "5001968", "2.0.22" to "5002244",
