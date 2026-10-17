@@ -1,7 +1,6 @@
 package app.template.patches.steamlink.binary
 
 import app.morphe.patcher.patch.PatchException
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import kotlin.test.*
 
 class BlueNoisePatchTest {
@@ -15,18 +14,18 @@ class BlueNoisePatchTest {
     )
 
     @Test
-    fun `blue noise is one separate default off patch on the exact pairs`() {
+    fun `blue noise is default on with the foveal layer on the exact pairs`() {
         assertEquals("Blue-noise dithering", blueNoisePatch.name)
-        assertFalse(blueNoisePatch.default)
+        assertTrue(blueNoisePatch.default)
         assertTrue(blueNoisePatch.dependencies.isEmpty())
-        assertEquals(false, blueNoisePatch.options["fovea"].default)
+        assertEquals(true, blueNoisePatch.options["fovea"].default)
         assertEquals(false, blueNoisePatch.options["background"].default)
         assertTrue("inputDepth" !in blueNoisePatch.options.keys)
         assertEquals(setOf("2.0.20" to 5001712,
                 "2.0.20" to 5001812,
                 "2.0.21" to 5001968, "2.0.22" to 5002244, "2.0.23" to 5002363),
             blueNoisePatch.compatibility.orEmpty().flatMap { compatibility ->
-                assertEquals(EXPERIMENTAL_COMPATIBILITY_NAME, compatibility.name)
+                assertEquals("Steam Link", compatibility.name)
                 compatibility.targets.map { target ->
                     assertFalse(target.description.isNullOrBlank())
                     target.version to assertNotNull(target.versionCodes).values.distinct().single()

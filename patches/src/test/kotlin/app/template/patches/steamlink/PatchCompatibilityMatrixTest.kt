@@ -107,13 +107,14 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun modern_recommended_set_contains_only_the_requested_seven_patches() {
+    fun modern_recommended_set_contains_only_the_requested_eight_patches() {
         assertEquals(
             setOf(
                 xrGalaxyXrHighResolutionPatch,
                 gxrFacebridgePatch,
                 microphoneInputPresetPatch,
                 networkOptimizationsPatch,
+                blueNoisePatch,
                 unrestrictedBatteryUsagePatch,
                 hmdOnlyPatch,
                 oledCalibrationPatch,
@@ -150,12 +151,13 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun new_native_base_exposes_nine_individual_patches_and_no_legacy_mutations() {
+    fun new_native_base_exposes_ten_individual_patches_and_no_legacy_mutations() {
         val expected = setOf(
             xrGalaxyXrHighResolutionPatch,
             gxrFacebridgePatch,
             microphoneInputPresetPatch,
             networkOptimizationsPatch,
+            blueNoisePatch,
             xrCodecsSupportNativeXrPatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
@@ -196,7 +198,7 @@ class PatchCompatibilityMatrixTest {
             xrLauncherBootstrapPatch,
             xrStartupPermissionsPatch,
             xrManifestCapabilityPackPatch,
-            deviceIdentityPatch,
+            deviceIdentityPatch, blueNoisePatch,
         )
         assertEquals(legacyRecommendedPatches, expected)
         val closure = legacyRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
@@ -213,7 +215,7 @@ class PatchCompatibilityMatrixTest {
 
     @Test
     fun new_legacy_bases_preserve_all_21_standalone_patches_and_optional_defaults() {
-        val completeCatalog = allIndividualPatches + listOf(blueNoisePatch)
+        val completeCatalog = allIndividualPatches
         val reference = completeCatalog.filter { it.supports("2.0.20", 5001712) }.toSet()
         assertEquals(21, reference.size)
         listOf("2.0.20" to 5001812, "2.0.21" to 5001968).forEach { (version, code) ->
@@ -332,7 +334,7 @@ class PatchCompatibilityMatrixTest {
             gxrFacebridgePatch,
             xrGalaxyXrHighResolutionPatch,
             microphoneInputPresetPatch,
-            networkOptimizationsPatch,
+            networkOptimizationsPatch, blueNoisePatch,
             xrCodecsSupportPatch,
             xrCodecsSupportNativeXrPatch,
             oledCalibrationPatch,
@@ -364,11 +366,11 @@ class PatchCompatibilityMatrixTest {
             xrLauncherBootstrapPatch,
             xrStartupPermissionsPatch,
             xrManifestCapabilityPackPatch,
-            deviceIdentityPatch,
+            deviceIdentityPatch, blueNoisePatch,
         )
 
         // Codecs Support is recommended only on the exact 2.0.20/5001712 base; the other legacy
-        // bases keep the 17-patch set and the native build keeps its 7-patch set.
+        // bases keep the 18-patch set and the native build keeps its 8-patch set.
         val legacyRecommendedPatches5001712 = legacyRecommendedPatches + xrCodecsSupportPatch
 
         val nativeRecommendedPatches = setOf(
@@ -376,6 +378,7 @@ class PatchCompatibilityMatrixTest {
             gxrFacebridgePatch,
             microphoneInputPresetPatch,
             networkOptimizationsPatch,
+            blueNoisePatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,

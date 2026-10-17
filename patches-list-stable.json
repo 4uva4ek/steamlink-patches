@@ -269,6 +269,145 @@
       "options": []
     },
     {
+      "name": "Blue-noise dithering",
+      "description": "Adds static blue noise after video colour processing and fade, independently selectable on the foveal and the background/base layer; 8-bit or 10-bit input, always 8-bit sRGB output. Recommended on all exact bases with the foveal layer on by default. Turn OLED's VD-like fovea toggle off when foveal blue noise is used. Unknown host shaders pass through unchanged.",
+      "category": "Image quality",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.20",
+              "versionCodes": {
+                "ARM64_V8A": 5001712,
+                "ARMEABI_V7A": 5001712,
+                "X86_64": 5001712,
+                "X86": 5001712
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Verified Steam Link 2.0.20 build 5001712."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.20",
+              "versionCodes": {
+                "ARM64_V8A": 5001812,
+                "ARMEABI_V7A": 5001812,
+                "X86_64": 5001812,
+                "X86": 5001812
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.21",
+              "versionCodes": {
+                "ARM64_V8A": 5001968,
+                "ARMEABI_V7A": 5001968,
+                "X86_64": 5001968,
+                "X86": 5001968
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 5002244,
+                "ARMEABI_V7A": 5002244,
+                "X86_64": 5002244,
+                "X86": 5002244
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Verified Steam Link 2.0.22 build 5002244."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.23",
+              "versionCodes": {
+                "ARM64_V8A": 5002363,
+                "ARMEABI_V7A": 5002363,
+                "X86_64": 5002363,
+                "X86": 5002363
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "fovea",
+          "title": "Foveal layer",
+          "description": "Static blue noise on the foveal (masked) layer only. The foveal draw caller and the 8-bit sRGB framebuffer state are verified per draw; requires the exact stock shader or an OLED calibration with its VD-like fovea toggle off.",
+          "required": true,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "background",
+          "title": "Background layer",
+          "description": "Static blue noise on the complete base projection, including the part underneath the foveal overlay; the foveal program is never dithered by this selection.",
+          "required": true,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Change package name",
       "description": "Renames the package and Steam Link's internal VR-launch component, so the patched app can be installed next to the original.",
       "category": "App & device identity",
@@ -1115,7 +1254,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -1568,7 +1707,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -1735,7 +1874,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2309,7 +2448,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2429,7 +2568,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }

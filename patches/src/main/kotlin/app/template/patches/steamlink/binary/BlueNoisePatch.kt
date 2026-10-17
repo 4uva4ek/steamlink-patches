@@ -4,43 +4,33 @@ import app.template.patches.shared.PatchCategories
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.rawResourcePatch
 import app.morphe.patcher.patch.booleanOption
-import app.morphe.patcher.patch.AppTarget
-import app.morphe.patcher.patch.Compatibility
-import app.morphe.patcher.patch.SupportedAbi
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK
 
 /** One selectable patch owning both blue-noise layers. The two former per-layer patches and
  * their declared-depth option merged: 8-bit and 10-bit input share the same final 8-bit sRGB
- * quantizer, so no runtime or declared depth exists. Layer toggles stay independent and the
- * helper rebuilds owned configurations from the final source, order-independently. */
+ * quantizer, so no runtime or declared depth exists. Recommended and default-enabled on every
+ * exact Steam Link base: the foveal layer is on by default, the background layer is opt-in,
+ * and the helper rebuilds owned configurations from the final source, order-independently. */
 @Suppress("unused")
 val blueNoisePatch = rawResourcePatch(
     name = "Blue-noise dithering",
     description = "Adds static blue noise after video colour processing and fade, independently " +
         "selectable on the foveal and the background/base layer; 8-bit or 10-bit input, always " +
-        "8-bit sRGB output. Turn OLED's VD-like fovea toggle off when foveal blue noise is used. " +
-        "Unknown host shaders pass through unchanged.",
-    default = false,
+        "8-bit sRGB output. Recommended on all exact bases with the foveal layer on by default. " +
+        "Turn OLED's VD-like fovea toggle off when foveal blue noise is used. Unknown host " +
+        "shaders pass through unchanged.",
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
-    compatibleWith(*BLUE_NOISE_LAYOUTS.map { layout ->
-        Compatibility(
-            name = EXPERIMENTAL_COMPATIBILITY_NAME,
-            packageName = "com.valvesoftware.steamlinkvr",
-            targets = listOf(AppTarget(
-                version = layout.version,
-                versionCodes = SupportedAbi.entries.associateWith { layout.code.toInt() },
-                description = "Exact native blue-noise adaptation ${layout.version}/${layout.code}; static validation only.",
-            )),
-        )
-    }.toTypedArray())
+    compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
 
     val fovea by booleanOption(
         key = "fovea",
-        default = false,
+        default = true,
         title = "Foveal layer",
         description = "Static blue noise on the foveal (masked) layer only. The foveal draw caller " +
-            "and the 8-bit sRGB framebuffer state are verified per draw.",
+            "and the 8-bit sRGB framebuffer state are verified per draw; requires the exact stock " +
+            "shader or an OLED calibration with its VD-like fovea toggle off.",
         required = true,
     )
 

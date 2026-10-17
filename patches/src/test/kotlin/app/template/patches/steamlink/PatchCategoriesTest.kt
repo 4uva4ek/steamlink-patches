@@ -71,7 +71,7 @@ class PatchCategoriesTest {
                 xrStartupPermissionsPatch, xrManifestCapabilityPackPatch,
                 deviceIdentityPatch,
                 xrCodecsSupportPatch,
-                networkOptimizationsPatch,
+                networkOptimizationsPatch, blueNoisePatch,
             ),
             publicPatches.filter { it.default }.toSet(),
         )
@@ -95,7 +95,7 @@ class PatchCategoriesTest {
             val name = channel.name
             assertEquals(channel.name.lowercase(), generated.get("channel").asString)
             val entries = generated.getAsJsonArray("patches").map { it.asJsonObject }
-            assertEquals(if (channel == ReleaseChannel.STABLE) 22 else 31, entries.size, name)
+            assertEquals(if (channel == ReleaseChannel.STABLE) 23 else 31, entries.size, name)
             val names = entries.map { it.get("name").asString }
             assertEquals(names.sorted(), names, name)
             assertEquals(names.size, names.toSet().size, name)

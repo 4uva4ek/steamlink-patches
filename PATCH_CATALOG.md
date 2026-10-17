@@ -63,7 +63,7 @@ Separate, default-off experiment for exact **2.0.22/5002322** and **2.0.23/50023
 
 The current catalog supports exactly **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, **2.0.22/5002244**, and **2.0.23/5002363**. Compatibility uses the exact version name and build code, never a version range. Historical references to 5001740, 5002296, 5002313, 5002318, and 5002322 below do not make those builds selectable.
 
-The 5001812 and 5001968 adaptations each expose **20 individual patches** (**19 stable + 1 blue-noise patch**) — every 5001712 patch except Codecs Support, which is exact to 5001712. The legacy recommended set lives as defaults on the individual patches (17 members on 5001812, 5001968 and 5002244; 18 on 5001712, which adds Codecs Support), with the same dependency closure and option defaults, and Morphe Manager auto-selects it for the detected exact version and build. The optional 3 patches on those bases are Appear on top, Change package name, and blue-noise dithering (two layer toggles).
+The 5001812 and 5001968 adaptations each expose **20 individual patches** (**all 20 stable individual patches**) — every 5001712 patch except Codecs Support, which is exact to 5001712. The legacy recommended set lives as defaults on the individual patches (18 members on 5001812, 5001968 and 5002244; 19 on 5001712, which adds Codecs Support), with the same dependency closure and option defaults, and Morphe Manager auto-selects it for the detected exact version and build. The optional 2 patches on those bases are Appear on top and Change package name.
 
 Native addresses were independently adapted for both new bases. The [exact-base validation record](diagnostics/steamlink-legacy-1812-1968/README.md) covers local static/native checks and pristine-source Morphe validation; headset validation remains pending and publication is not claimed. The 5001712 reference is an analysis reconstruction, so its regression checks do not establish pristine-source APK patching.
 
@@ -71,7 +71,7 @@ Startup permissions and splash/XR launch-mode edits are separate patches, part o
 
 ### Steam Link 2.0.23 / 5002363
 
-This exact pair exposes 8 stable individual patches plus 1 optional blue-noise patch (two layer toggles); the 7-patch recommended set is default-enabled: GXR face and tongue bridge, Galaxy XR high-resolution 3-projection fix, Microphone input preset, OLED color calibration, Unrestricted battery usage, Visual Delay Fix, and Network Optimizations. Device identity (2.0.23/5002363) stays available but is not part of the recommended set; it remains optional and off by default. Native targets: OLED shader `0x970a1`; format MOVs `0x10c840`, `0x10c8b0`, `0x10c920`; microphone `0xf44c0`; HMD pose hook `0x101f1c`; tongue block `0x141c6c`. High resolution uses the 3-projection API layer. Legacy mutations and retired experiments remain excluded.
+This exact pair exposes 10 individual patches; the 8-patch recommended set is default-enabled: GXR face and tongue bridge, Galaxy XR high-resolution 3-projection fix, Microphone input preset, OLED color calibration, Blue-noise dithering (fovea default), Unrestricted battery usage, Visual Delay Fix, and Network Optimizations. Device identity (2.0.23/5002363) stays available but is not part of the recommended set; it remains optional and off by default. Native targets: OLED shader `0x970a1`; format MOVs `0x10c840`, `0x10c8b0`, `0x10c920`; microphone `0xf44c0`; HMD pose hook `0x101f1c`; tongue block `0x141c6c`. High resolution uses the 3-projection API layer. Legacy mutations and retired experiments remain excluded.
 
 See the [5002363 validation](diagnostics/steamlink-5002363/README.md), [native targets](diagnostics/steamlink-5002363/native-targets.md), and [Java/config targets](diagnostics/steamlink-5002363/surface-targets.md).
 
@@ -79,7 +79,7 @@ See the [5002363 validation](diagnostics/steamlink-5002363/README.md), [native t
 
 The recommended set is the individual patches themselves, default-enabled and auto-selected for the detected exact version and build code.
 
-The 17 individual patches below are default-enabled and auto-selected on 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244; exact 2.0.20/5001712 auto-selects the same set plus its 18th, Codecs Support:
+The 18 individual patches below are default-enabled and auto-selected on 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244; exact 2.0.20/5001712 auto-selects the same set plus its 19th, Codecs Support:
 
 1. Android XR native permission names
 2. Force HMD initialization gates
@@ -98,9 +98,10 @@ The 17 individual patches below are default-enabled and auto-selected on 2.0.20/
 15. XR Manifest Capability Pack
 16. Device identity (Recommended: Meta Quest Pro / `Oculus Quest Pro` model)
 17. Startup permission requests (before 5002322)
-18. Codecs Support (exact 2.0.20/5001712 only)
+18. Blue-noise dithering (fovea default, background opt-in; OLED's VD-like fovea toggle must stay off)
+19. Codecs Support (exact 2.0.20/5001712 only)
 
-Leave **HMD identity** on **Recommended**, or explicitly select **Meta Quest Pro**, for the legacy builds. The exact 5001712, 5001812, 5001968, and 5002244 targets resolve Recommended to `meta-quest-pro`. Explicit Samsung, Stock, or PICO choices remain authoritative. The 7-patch 5002363 recommended set does not select Device identity (2.0.23/5002363), which stays optional and off by default.
+Leave **HMD identity** on **Recommended**, or explicitly select **Meta Quest Pro**, for the legacy builds. The exact 5001712, 5001812, 5001968, and 5002244 targets resolve Recommended to `meta-quest-pro`. Explicit Samsung, Stock, or PICO choices remain authoritative. The 8-patch 5002363 recommended set does not select Device identity (2.0.23/5002363), which stays optional and off by default.
 
 The legacy Device identity entry depends on XR Device Config Baseline, so the baseline runs before the identity
 override. The legacy Quest payload preserves SamsungVST tracking, Galaxy XR controller and eye
@@ -525,7 +526,8 @@ Custom host replacements can still bypass the embedded shader modification.
 
 ### Blue-noise dithering (`blueNoisePatch`)
 
-**Separate patch; default off; excluded from the recommended set and the stable catalog.**
+**Recommended and default-enabled on all 5 exact bases; included in the stable catalog and the
+per-build recommended set. The foveal layer is on by default; the background layer is opt-in.**
 Exact bases: **2.0.20/5001712**, **2.0.20/5001812**, **2.0.21/5001968**, **2.0.22/5002244**, **2.0.23/5002363**.
 
 The two former per-layer patches merged into one selectable patch with two independent
@@ -535,7 +537,7 @@ identical for both depths, and there is no stream-depth branch for the client to
 
 | Option | Default | Behavior |
 |---|---|---|
-| `fovea` | `false` | Static blue noise on the foveal (masked) layer only; verifies the exact foveal draw caller and the 8-bit sRGB framebuffer/write state per draw. The base draw is excluded. |
+| `fovea` | `true` | Static blue noise on the foveal (masked) layer only; verifies the exact foveal draw caller and the 8-bit sRGB framebuffer/write state per draw. The base draw is excluded. |
 | `background` | `false` | Static blue noise on the complete base projection, including the part underneath the foveal overlay; only the exact opaque shader and background draw caller are eligible, and the foveal program is not dithered by this selection. |
 
 A static, original 128×128 R8 blue-noise tile selects neighboring 8-bit output codes
