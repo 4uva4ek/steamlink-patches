@@ -1,3 +1,9 @@
+## [1.29.0-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.1...v1.29.0-dev.1) (2026-10-17)
+
+### ✨ New Features
+
+* Add unit tests and GxrSpacewarpLayerPatch functionality, merged dithering patches ([c3e5a6c](https://github.com/AngelDark92/xr-porting-hub/commit/c3e5a6c2e91b26a7ad826eae4d56e56161bb8079))
+
 ## [1.28.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0...v1.28.1) (2026-10-16)
 
 ### 🐛 Bug Fixes

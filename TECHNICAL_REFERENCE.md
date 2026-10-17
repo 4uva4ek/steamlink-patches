@@ -65,7 +65,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.1](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;48 patches total
+> **[v1.29.0-dev.1](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.29.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
@@ -189,7 +189,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -221,6 +221,7 @@ This section is generated from the patch catalog during releases.
 |----------|----------------|----------------|-----------|
 | [Codecs Support](#codecs-support) | Exact 2.0.20/5001712: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Recommended on this base; requires the matching driver setting. | 5001712 |  |
 | [Codecs Support (2.0.23/5002363)](#codecs-support-2-0-23-5002363) | Optional on exact 2.0.23/5002363: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Not part of the recommended set; headset validation pending. | 5002363 |  |
+| [GXR spacewarp layer (experimental)](#gxr-spacewarp-layer-experimental) | Exact 2.0.20/5001712 and 2.0.23/5002363: synthesizes a projection frame from the two most recent decoded frames when the video stream misses a display tick, via a bundled OpenXR implicit layer gated on each base's pinned scene-library layout (per-base pin profiles selected at runtime; the layer itself re-verifies the base's identity anchor before any hook). The client's composition layers stay untouched; any construction or layout failure stands down to the stock renderer. Experimental: headset validation pending, so it is not part of the recommended set. | 5001712, 5002363 |  |
 
 </details>
 
