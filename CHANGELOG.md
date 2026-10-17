@@ -1,3 +1,10 @@
+## [1.29.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.1...v1.29.0) (2026-10-17)
+
+### ✨ New Features
+
+* add blue-noise dithering patch with default enabled ([11c3ae2](https://github.com/AngelDark92/xr-porting-hub/commit/11c3ae2c03723d0bdd7469567a35f91e90afdb2a))
+* Add unit tests and GxrSpacewarpLayerPatch functionality, merged dithering patches ([c3e5a6c](https://github.com/AngelDark92/xr-porting-hub/commit/c3e5a6c2e91b26a7ad826eae4d56e56161bb8079))
+
 ## [1.29.0-dev.2](https://github.com/AngelDark92/xr-porting-hub/compare/v1.29.0-dev.1...v1.29.0-dev.2) (2026-10-17)
 
 ### ✨ New Features
