@@ -65,7 +65,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.28.1](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
+> **[v1.28.1](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.28.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;48 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
@@ -139,7 +139,7 @@ This section is generated from the patch catalog during releases.
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
 | [Galaxy XR high-resolution 3-projection fix](#galaxy-xr-high-resolution-3-projection-fix) | Permission-free high-resolution fix: appends a static 2x2 Android-surface compositor trigger and leaves each build's native projection layers and formats, including future RGB10_A2, untouched. No image copy. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [OLED color calibration](#oled-color-calibration) | Applies OLED gamma/saturation calibration with 8-bit sRGB output, plus optional VD-like SDR foveal processing and a separate foveal gamma. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363; visible improvement needs headset verification. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Calibration profile<br>• Gamma<br>• Saturation<br>• Fovea VD-Like Input 10 bit<br>• Fovea VD-Like Input 8 bit<br>• Foveal gamma adjustment |
+| [OLED color calibration](#oled-color-calibration) | Applies OLED gamma/saturation calibration with 8-bit sRGB output, plus optional VD-like SDR foveal processing and a separate foveal gamma. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363; visible improvement needs headset verification. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Calibration profile<br>• Gamma<br>• Saturation<br>• Fovea VD-like SDR processing<br>• Foveal gamma adjustment |
 
 #### Tracking & audio
 
@@ -189,7 +189,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
+<summary>📦 Steam Link Experimental&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -202,8 +202,7 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Background blue-noise dithering](#background-blue-noise-dithering) | Adds static blue noise after video colour processing and fade, on the background/base layer only; 8-bit or 10-bit input, always 8-bit sRGB output. Selectable per layer, but turn OLED's VD-like fovea options off when combining. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
-| [Foveal blue-noise dithering](#foveal-blue-noise-dithering) | Adds static blue noise after video colour processing and fade, on the foveal layer only; 8-bit or 10-bit input, always 8-bit sRGB output. Selectable per layer, but turn OLED's VD-like fovea options off when combining. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Declared input depth |
+| [Blue-noise dithering](#blue-noise-dithering) | Adds static blue noise after video colour processing and fade, independently selectable on the foveal and the background/base layer; 8-bit or 10-bit input, always 8-bit sRGB output. Turn OLED's VD-like fovea toggle off when foveal blue noise is used. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Foveal layer<br>• Background layer |
 | [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation. | 5001812 |  |
 
 #### Controller

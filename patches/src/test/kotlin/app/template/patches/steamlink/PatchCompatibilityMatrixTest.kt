@@ -17,8 +17,7 @@ import app.template.patches.steamlink.androidxr.xrManifestCapabilityPackPatch
 import app.template.patches.steamlink.androidxr.xrPermissionSettingsBootstrapPatch
 import app.template.patches.steamlink.androidxr.xrStartupPermissionsPatch
 import app.template.patches.steamlink.binary.androidXrNativePermissionNamesPatch
-import app.template.patches.steamlink.binary.backgroundBlueNoisePatch
-import app.template.patches.steamlink.binary.fovealBlueNoisePatch
+import app.template.patches.steamlink.binary.blueNoisePatch
 import app.template.patches.steamlink.binary.forceHmdInitializationGatesPatch
 import app.template.patches.steamlink.binary.forceLobbyPermissionStateGatePatch
 import app.template.patches.steamlink.binary.forceStreamXrGatesPatch
@@ -38,8 +37,7 @@ class PatchCompatibilityMatrixTest {
     
     @Test
     fun individual_patches_are_recommended_on_supported_builds() {
-        assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
-        assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
+        assertEquals(false, oledCalibrationPatch.options["foveaVdLike"].default)
         assertEquals(
             legacyRecommendedPatches5001712,
             recommendedFor("2.0.20", 5001712).toSet(),
@@ -138,8 +136,7 @@ class PatchCompatibilityMatrixTest {
         assertEquals("voice-recognition", microphoneInputPresetPatch.options["preset"].default)
         assertEquals(60, hmdOnlyPatch.options["offsetMs"].default)
         assertEquals("final-balanced", oledCalibrationPatch.options["profile"].default)
-        assertEquals(false, oledCalibrationPatch.options["foveaVdLike10Bit"].default)
-        assertEquals(false, oledCalibrationPatch.options["foveaVdLike8Bit"].default)
+        assertEquals(false, oledCalibrationPatch.options["foveaVdLike"].default)
         assertEquals(1.00f, oledCalibrationPatch.options["fovealGamma"].default)
         assertTrue(networkOptimizationsPatch.default)
         assertEquals("Network Optimizations", networkOptimizationsPatch.name)
@@ -204,8 +201,7 @@ class PatchCompatibilityMatrixTest {
         assertEquals(legacyRecommendedPatches, expected)
         val closure = legacyRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
         listOf(
-            appearOnTopPatch, changePackageNamePatch,
-            fovealBlueNoisePatch, backgroundBlueNoisePatch,
+            appearOnTopPatch, changePackageNamePatch, blueNoisePatch,
         )
             .forEach { assertFalse(it in closure, "recommended selection unexpectedly includes ${it.name}") }
         assertTrue(forceHmdInitializationGatesPatch.default)
@@ -216,10 +212,10 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun new_legacy_bases_preserve_all_22_standalone_patches_and_optional_defaults() {
-        val completeCatalog = allIndividualPatches + listOf(fovealBlueNoisePatch, backgroundBlueNoisePatch)
+    fun new_legacy_bases_preserve_all_21_standalone_patches_and_optional_defaults() {
+        val completeCatalog = allIndividualPatches + listOf(blueNoisePatch)
         val reference = completeCatalog.filter { it.supports("2.0.20", 5001712) }.toSet()
-        assertEquals(22, reference.size)
+        assertEquals(21, reference.size)
         listOf("2.0.20" to 5001812, "2.0.21" to 5001968).forEach { (version, code) ->
             val supported = completeCatalog.filter { it.supports(version, code) }.toSet()
             // Codecs Support stays exact to 5001712 on the 2.0.20 line; the intermediate

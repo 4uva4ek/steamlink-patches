@@ -1774,18 +1774,9 @@
           "values": null
         },
         {
-          "key": "foveaVdLike10Bit",
-          "title": "Fovea VD-Like Input 10 bit",
-          "description": "VD-informed SDR processing for declared 10-bit input: use highp sampling, retain Valve's decoder colour correction, bypass the calibration profile on the foveal layer, and add no shader noise. The separate foveal gamma adjustment still applies. Output is 8-bit sRGB. Does not negotiate host depth or reproduce VD's raw-YUV decoder import. Mutually exclusive with the 8-bit option and separate blue-noise patch.",
-          "required": true,
-          "type": "kotlin.Boolean",
-          "default": false,
-          "values": null
-        },
-        {
-          "key": "foveaVdLike8Bit",
-          "title": "Fovea VD-Like Input 8 bit",
-          "description": "Uses the same VD-informed SDR foveal processing for declared 8-bit input, retaining Valve's decoder colour correction while bypassing the calibration profile and adding no shader noise. The separate foveal gamma adjustment still applies. Output is 8-bit sRGB. Cannot recover precision already lost in the source. Mutually exclusive with the 10-bit option and separate blue-noise patch; does not negotiate host depth.",
+          "key": "foveaVdLike",
+          "title": "Fovea VD-like SDR processing",
+          "description": "VD-informed SDR foveal processing: highp sampling, Valve's decoder colour correction retained, the calibration profile bypassed on the foveal layer, and no shader noise. The separate foveal gamma adjustment still applies. Output is 8-bit sRGB. The former 10-bit and 8-bit variants selected the same processing and are now one toggle. Does not negotiate host depth or reproduce VD's raw-YUV decoder import. Turn off when blue-noise dithering is selected on the foveal layer.",
           "required": true,
           "type": "kotlin.Boolean",
           "default": false,
