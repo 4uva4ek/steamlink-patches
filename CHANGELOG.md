@@ -1,3 +1,9 @@
+## [1.31.1-dev.5](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.4...v1.31.1-dev.5) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Add telemetry support and tests for Steam Link Android XR ([31b7092](https://github.com/AngelDark92/xr-porting-hub/commit/31b7092643c592185427437cbac765d1044204f5))
+
 ## [1.31.1-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.3...v1.31.1-dev.4) (2026-10-18)
 
 ### 🐛 Bug Fixes
