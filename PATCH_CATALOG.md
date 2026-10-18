@@ -6,7 +6,7 @@ This catalog documents the hub's patch sets; the primary one is Steam Link VR (`
 
 ## Current patch categories
 
-All 31 selectable patches use 7 categories in Morphe Manager 1.30.0 or newer.
+All 32 selectable Steam Link patches use 7 categories in Morphe Manager 1.30.0 or newer.
 Categories organize the list; exact-build guards, patch dependencies and defaults remain authoritative.
 The retired entries below are historical records and are not selectable.
 
@@ -15,10 +15,21 @@ The retired entries below are historical records and are not selectable.
 | Image quality | 4 | [Galaxy XR high-resolution 3-projection fix](#galaxy-xr-high-resolution-3-projection-fix-xrgalaxyxrhighresolutionpatch); [OLED color calibration](#oled-color-calibration-oledcalibrationpatch); Full-FOV foveal canvas; [Blue-noise dithering](#blue-noise-dithering-bluenoisepatch) |
 | Tracking & audio | 4 | [Visual Delay Fix](#visual-delay-fix-hmdonlypatch); [GXR face and tongue bridge](#gxr-face-and-tongue-bridge-gxrfacebridgepatch); [XR Input Routing Config](#xr-input-routing-config-xrinputroutingconfigpatch); [Microphone input preset](#microphone-input-preset-microphoneinputpresetpatch) |
 | Startup & permissions | 4 | [Startup permission requests (before 5002322)](#startup-permission-requests-before-5002322-xrstartuppermissionspatch); [Startup splash and XR launch mode (before 5002322)](#startup-splash-and-xr-launch-mode-before-5002322-xrlauncherbootstrappatch); [Unrestricted battery usage](#unrestricted-battery-usage-unrestrictedbatteryusagepatch); [Appear on top (legacy)](#appear-on-top-legacy-appearontoppatch) |
-| App & device identity | 3 | [Change package name](#change-package-name-changepackagenamepatch); [Device identity](#device-identity-deviceidentitypatch); [Device identity (2.0.23/5002363)](#device-identity-20235002363-deviceidentitynativexrpatch) |
+| App & device identity | 5 | [Change package name](#change-package-name-changepackagenamepatch); [Device identity](#device-identity-deviceidentitypatch); [Device identity (2.0.23/5002363)](#device-identity-20235002363-deviceidentitynativexrpatch); Galaxy XR vendor driver; [OpenXR CPU and GPU BOOST](#openxr-cpu-and-gpu-boost-performanceboostpatch) |
 | Advanced XR compatibility | 7 | [XR Core Runtime](#xr-core-runtime-xrcoreruntimepatch); [XR Device Config Baseline](#xr-device-config-baseline-xrdeviceconfigbaselinepatch); [XR Manifest Capability Pack](#xr-manifest-capability-pack-xrmanifestcapabilitypackpatch); [Android XR native permission names; Force HMD initialization gates; Force lobby permission-state gate; Force stream XR gates](#native-xr-compatibility-gates) |
 | Controller | 5 | [Controller pose extrapolation](#controller-pose-extrapolation-controllerposeextrapolationpatch); [Controller velocity frame](#controller-velocity-frame-controllervelocityframepatch); [Controller tracking from the controller HAL through Shizuku](#controller-tracking-from-the-controller-hal-through-shizuku-controllerhalposepatch); [Controller grip haptics through Shizuku](#controller-grip-haptics-through-shizuku-controllergriphapticspatch); [Controller angular world to local](#controller-angular-world-to-local-controllerangularlocalpatch) (angular adapter; exact 2.0.23/5002363 only). All default off; none in the recommended set. |
 | Streaming & network | 3 | [Codecs Support](#codecs-support-codecssupportpatch) (exact 2.0.20/5001712; experimental, recommended); [Codecs Support (2.0.23/5002363)](#codecs-support-20235002363-xrcodecssupportnativexrpatch) (exact 2.0.23/5002363; experimental, optional); [Network Optimizations](#network-optimizations-networkoptimizationspatch) (exact 2.0.23/5002363 only; recommended) |
+
+## OpenXR CPU and GPU BOOST (`performanceBoostPatch`)
+
+Optional, default off; available in stable and experimental catalogs for all five
+registered exact Steam Link bases. Adds `lib/arm64-v8a/libgxr_performance_boost.so`
+and `assets/openxr/1/api_layers/implicit.d/XR_APILAYER_local_GalaxyXR_performance_boost.json`.
+Existing APK code and rendering resources are unchanged. The layer requests CPU/GPU
+BOOST on session creation/start; clocks and thermal policy remain runtime-controlled.
+Other performance-hint layers or later application hints can override this request.
+See [implementation and rollback](extensions/performance-boost/README.md) and
+[validation](diagnostics/steamlink-performance-boost/validation-2026-10-18.md).
 
 ## Uber link rescan disable (experimental) — RETIRED 2026-10-11 (tested, did not work; removed from source)
 

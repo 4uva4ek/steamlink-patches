@@ -65,7 +65,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.29.0](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.29.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
+> **[v1.29.0](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.29.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
@@ -125,7 +125,7 @@ This section is generated from the patch catalog during releases.
 </details>
 
 <details open>
-<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;23 patches</summary>
+<summary>📦 Steam Link&nbsp;&nbsp;•&nbsp;&nbsp;24 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -168,6 +168,7 @@ This section is generated from the patch catalog during releases.
 | [Device identity](#device-identity) | Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the legacy targets through 5002244. Explicit profiles override that. | 5001712, 5001812, 5001968, 5002244 | • HMD identity |
 | [Device identity (2.0.23/5002363)](#device-identity-2-0-23-5002363) | Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; not part of the recommended set. Explicit profiles override that. | 5002363 | • HMD identity |
 | [Galaxy XR SteamVR driver (galaxyxr)](#galaxy-xr-steamvr-driver-galaxyxr) | Reports the headset and controllers to SteamVR through the resource-only `galaxyxr` driver installed by Galaxy XR VRLink Setup on the PC: Galaxy XR identity, {galaxyxr} icons, input profiles and controller models, and the calibrated grip offset. Replaces the Meta Quest Pro spoof; the PC driver must be installed or the controllers show no model. Controllers keep the oculus_touch type because vrlink accepts no other. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Grip offset position (cm, x,y,z)<br>• Grip offset rotation (deg, x,y,z) |
+| [OpenXR CPU and GPU BOOST](#openxr-cpu-and-gpu-boost) | Requests the OpenXR BOOST performance hint for CPU and GPU on each session start. The runtime still controls clocks and thermal limits. Unsupported runtimes continue without BOOST. Adds an APK-local API layer; no root required. All repository-supported Steam Link builds; runtime performance benefit is not yet measured. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### Advanced XR compatibility
 
