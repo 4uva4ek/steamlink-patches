@@ -125,13 +125,7 @@ val xrFovealCanvasPatch = rawResourcePatch(
     default = false,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.map { exact ->
-        Compatibility(
-            name = "Steam Link",
-            packageName = requireNotNull(exact.packageName),
-            targets = exact.targets.map { it.copy(isExperimental = true) },
-        )
-    }.toTypedArray())
+    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.toTypedArray())
     execute {
         if (!isFovealCanvasSteamLinkBuild(packageMetadata.versionName, packageMetadata.versionCode)) {
             return@execute

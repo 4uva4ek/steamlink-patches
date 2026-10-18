@@ -108,23 +108,21 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun modern_recommended_set_contains_only_the_requested_nine_patches() {
+    fun modern_recommended_set_contains_only_the_requested_seven_patches() {
         assertEquals(
             setOf(
                 xrGalaxyXrHighResolutionPatch,
                 gxrFacebridgePatch,
                 microphoneInputPresetPatch,
-                networkOptimizationsPatch,
                 blueNoisePatch,
                 unrestrictedBatteryUsagePatch,
                 hmdOnlyPatch,
                 oledCalibrationPatch,
-                controllerAngularLocalPatch,
             ),
             nativeRecommendedPatches,
         )
         assertTrue(nativeRecommendedPatches.all { it.default })
-        val modernClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
+        val nativeClosure = nativeRecommendedPatches.flatMap { it.dependencyClosure() }.toSet()
         listOf(
             forceHmdInitializationGatesPatch,
             forceLobbyPermissionStateGatePatch,
@@ -133,7 +131,7 @@ class PatchCompatibilityMatrixTest {
             xrStartupPermissionsPatch,
             deviceIdentityPatch,
         ).forEach { patch ->
-            assertFalse(patch in modernClosure, patch.name)
+            assertFalse(patch in nativeClosure, patch.name)
         }
         assertTrue(oledCalibrationPatch.supports("2.0.23", 5002363))
         assertEquals("voice-recognition", microphoneInputPresetPatch.options["preset"].default)
@@ -141,7 +139,7 @@ class PatchCompatibilityMatrixTest {
         assertEquals("final-balanced", oledCalibrationPatch.options["profile"].default)
         assertEquals(false, oledCalibrationPatch.options["foveaVdLike"].default)
         assertEquals(1.00f, oledCalibrationPatch.options["fovealGamma"].default)
-        assertTrue(networkOptimizationsPatch.default)
+        assertFalse(networkOptimizationsPatch.default)
         assertEquals("Network Optimizations", networkOptimizationsPatch.name)
         assertFalse(deviceIdentityPatch.supports("2.0.23", 5002363))
         assertTrue(deviceIdentityNativeXrPatch.supports("2.0.23", 5002363))
@@ -374,19 +372,17 @@ class PatchCompatibilityMatrixTest {
         )
 
         // Codecs Support is recommended only on the exact 2.0.20/5001712 base; the other legacy
-        // bases keep the 18-patch set and the native build keeps its 9-patch set.
+        // bases keep the 18-patch set and the native build keeps its 7-patch set.
         val legacyRecommendedPatches5001712 = legacyRecommendedPatches + xrCodecsSupportPatch
 
         val nativeRecommendedPatches = setOf(
             xrGalaxyXrHighResolutionPatch,
             gxrFacebridgePatch,
             microphoneInputPresetPatch,
-            networkOptimizationsPatch,
             blueNoisePatch,
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
-            controllerAngularLocalPatch,
         )
     }
 }

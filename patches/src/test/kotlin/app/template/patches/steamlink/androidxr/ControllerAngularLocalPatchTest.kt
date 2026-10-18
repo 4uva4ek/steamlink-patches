@@ -8,9 +8,9 @@ import java.io.File
 import java.util.zip.ZipFile
 
 class ControllerAngularLocalPatchTest {
-    @Test fun metadataIsExactExperimentalDefault() {
+    @Test fun metadataIsExactExperimentalOptIn() {
         val patch = controllerAngularLocalPatch
-        assertTrue(patch.default)
+        assertFalse(patch.default)
         assertTrue(patch.dependencies.isEmpty())
         assertEquals("Controller", patch.category)
         assertEquals(setOf("com.valvesoftware.steamlinkvr"),
@@ -18,7 +18,7 @@ class ControllerAngularLocalPatchTest {
         val compatibility = patch.compatibility!!.first()
         assertEquals("Steam Link",compatibility.name)
         val target = compatibility.targets.single()
-        assertTrue(target.isExperimental)
+        assertFalse(target.isExperimental)
         assertEquals("2.0.23",target.version)
         assertEquals(setOf(5002363),target.versionCodes!!.values.toSet())
         assertTrue(isControllerAngularLocalBuild("2.0.23","5002363"))

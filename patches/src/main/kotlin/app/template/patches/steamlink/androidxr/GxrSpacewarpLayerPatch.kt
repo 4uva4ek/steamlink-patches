@@ -239,20 +239,8 @@ val gxrSpacewarpLayerPatch = rawResourcePatch(
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)
     compatibleWith(
-        *COMPATIBILITIES_STEAM_LINK_5002363.map { exact ->
-            Compatibility(
-                name = "Steam Link",
-                packageName = requireNotNull(exact.packageName),
-                targets = exact.targets.map { it.copy(isExperimental = true) },
-            )
-        }.toTypedArray(),
-        *COMPATIBILITIES_STEAM_LINK_5001712.map { exact ->
-            Compatibility(
-                name = "Steam Link",
-                packageName = requireNotNull(exact.packageName),
-                targets = exact.targets.map { it.copy(isExperimental = true) },
-            )
-        }.toTypedArray(),
+        *COMPATIBILITIES_STEAM_LINK_5002363.toTypedArray(),
+        *COMPATIBILITIES_STEAM_LINK_5001712.toTypedArray(),
     )
     execute {
         // Morphe executes dependencies recursively without rechecking compatibility.

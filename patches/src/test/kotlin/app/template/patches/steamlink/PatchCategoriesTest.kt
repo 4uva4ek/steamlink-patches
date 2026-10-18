@@ -73,9 +73,8 @@ class PatchCategoriesTest {
                 xrInputRoutingConfigPatch, xrLauncherBootstrapPatch,
                 xrStartupPermissionsPatch, xrManifestCapabilityPackPatch,
                 deviceIdentityPatch,
-                controllerAngularLocalPatch,
                 xrCodecsSupportPatch,
-                networkOptimizationsPatch, blueNoisePatch,
+                blueNoisePatch,
             ),
             publicPatches.filter { it.default }.toSet(),
         )

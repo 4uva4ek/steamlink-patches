@@ -28,20 +28,6 @@ internal enum class ReleaseChannel {
     }
 }
 
-internal fun targetsForReleaseChannel(
-    compatibility: app.morphe.patcher.patch.Compatibility,
-    releaseChannel: ReleaseChannel,
-) = compatibility.targets.filter { target ->
-    // Patch release channel and APK-version support are independent. Projection experiments
-    // stay in the experimental bundle even though Steam Link 2.0.22 itself is a stable target.
-    when (releaseChannel) {
-        ReleaseChannel.STABLE -> !target.isExperimental
-        // Pre-release bundles are a superset: retain stable patches and add experimental ones.
-        ReleaseChannel.EXPERIMENTAL -> true
-        ReleaseChannel.ALL -> true
-    }
-}
-
 fun main(args: Array<String>) {
     val releaseChannel =
         ReleaseChannel.from(args.firstOrNull() ?: System.getenv("MORPHE_RELEASE_CHANNEL"))
@@ -101,10 +87,16 @@ internal fun buildPatchListJson(
     releaseChannel: ReleaseChannel,
 ): String {
     val patchesMap = patches.sortedBy { it.name }.mapNotNull { patch ->
+        // The experimental release channel is an explicit list of patch names: per-build
+        // isExperimental flags stay a build-level display mark and never gate the channel
+        // (release channel and APK-version support stay independent). New experimental
+        // patches join EXPERIMENTAL_CHANNEL_PATCHES and get their targets from the shared
+        // experimental compatibility lists in Constants.
+        if (releaseChannel == ReleaseChannel.STABLE && patch.name in EXPERIMENTAL_CHANNEL_PATCHES) {
+            return@mapNotNull null
+        }
         val compatiblePackages = patch.compatibility?.mapNotNull { compat ->
-            val filteredTargets = targetsForReleaseChannel(compat, releaseChannel)
-
-            if (filteredTargets.isEmpty()) {
+            if (compat.targets.isEmpty()) {
                 null
             } else {
                 JsonCompatibility(
@@ -115,7 +107,7 @@ internal fun buildPatchListJson(
                     // Format as #RRGGBB string for readability; null if not set
                     appIconColor = compat.appIconColor?.let { "#%06X".format(it) },
                     signatures = compat.signatures,
-                    targets = filteredTargets.map { target ->
+                    targets = compat.targets.map { target ->
                         JsonCompatibility.Target(
                             version = target.version,
                             versionCodes = target.versionCodes?.mapKeys { it.key.name },
@@ -173,6 +165,19 @@ internal fun buildPatchListJson(
 
     return gson.toJson(jsonObject)
 }
+
+/** The experimental release channel, by patch name; sync with the channel canary test. */
+internal val EXPERIMENTAL_CHANNEL_PATCHES = setOf(
+    "Codecs Support",
+    "Codecs Support (2.0.23/5002363)",
+    "Controller angular world to local",
+    "Controller grip haptics through Shizuku",
+    "Controller pose extrapolation",
+    "Controller tracking from the controller HAL through Shizuku",
+    "Controller velocity frame",
+    "Full-FOV foveal canvas (experimental)",
+    "GXR spacewarp layer (experimental)",
+)
 
 /** JSON representation of a patch entry in patches-list.json. */
 @Suppress("unused")

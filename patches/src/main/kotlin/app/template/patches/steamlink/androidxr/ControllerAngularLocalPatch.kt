@@ -44,14 +44,10 @@ val controllerAngularLocalPatch = rawResourcePatch(
         "Needs: the Velocity Frame runtime correction active in the app (it does not enable it itself); " +
         "not with stock velocities or the old velocity patches. " +
         CONTRIBUTOR_4UVA_4EK,
-    default = true,
+    default = false,
 ) {
     category(PatchCategories.CONTROLLER)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5002363.map { exact -> Compatibility(
-        name = "Steam Link",
-        packageName = requireNotNull(exact.packageName),
-        targets = exact.targets.map { it.copy(isExperimental = true) },
-    ) }.toTypedArray())
+    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5002363.toTypedArray())
     execute {
         if (!isControllerAngularLocalTarget(packageMetadata.packageName, packageMetadata.versionName, packageMetadata.versionCode)) return@execute
         validateControllerAngularLocalScene(get("lib/arm64-v8a/libvrlink_scene.so").readBytes())

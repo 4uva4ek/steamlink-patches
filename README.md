@@ -43,6 +43,15 @@ Downgrade lists the builds Meta still serves. If the build you need is not offer
 
 The [full patch list](TECHNICAL_REFERENCE.md#full-patch-list) is in the technical reference. Do not assume another build is compatible because it has the same version name.
 
+## Controller fixes
+
+Controller patches are optional; pose extrapolation and velocity frame are off by default. Use one path:
+
+- **Non-root:** **Controller pose extrapolation** + **Controller velocity frame**. Add the 2 Shizuku controller patches if Shizuku is running and granted to Steam Link.
+- **Root (KernelSU):** no controller patch — use the KernelSU modules with the controller fixes. The PC-side Galaxy XR SteamVR driver is optional for VRLink compatibility.
+
+Which patch, which build, and when: [Controller fixes — what to apply](CONTROLLER-FIXES.md).
+
 ## Optional
 
 - **Face and tongue tracking** (Steam Link): install VRCFaceTracking and the [Galaxy XR LinkFT module](https://github.com/compdoge/LinkFT) on your PC, then enable **OSC**, **eye sharing** and **face sharing** in Steam Link and set the output port to **9015**.

@@ -1,6 +1,8 @@
 package app.template.patches.steamlink.androidxr
 
+import app.template.patches.shared.Constants.isExperimentalSteamLinkBuild
 import com.google.gson.JsonParser
+import kotlin.test.assertEquals
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -17,7 +19,11 @@ class PerformanceBoostPatchTest {
             assertEquals("com.valvesoftware.steamlinkvr", compatibility.packageName)
             assertEquals("Steam Link", compatibility.name)
             compatibility.targets.flatMap { target ->
-                assertFalse(target.isExperimental)
+                assertEquals(
+                    isExperimentalSteamLinkBuild(target.version!!, target.versionCodes!!.values.first().toString()),
+                    target.isExperimental,
+                    target.version,
+                )
                 target.versionCodes!!.values.map { target.version to it }
             }
         }.toSet()

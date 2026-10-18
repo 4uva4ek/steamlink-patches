@@ -82,7 +82,14 @@ class ControllerGripHapticsPatchTest {
         assertEquals("Controller grip haptics through Shizuku", controllerGripHapticsPatch.name)
 
         val compatibilities = controllerGripHapticsPatch.compatibility.orEmpty()
-        assertTrue(compatibilities.all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
+        assertTrue(compatibilities.all { it.name == "Steam Link" })
+        assertEquals(
+            setOf("2.0.20/5001812", "2.0.21/5001968", "2.0.22/5002244"),
+            compatibilities.flatMap { it.targets }
+                .filter { it.isExperimental }
+                .map { it.version + "/" + it.versionCodes!!.values.toSet().single() }
+                .toSet(),
+        )
         assertEquals(
             setOf(5001712, 5001812, 5001968, 5002244, 5002363),
             compatibilities.flatMap { it.targets }.flatMap { it.versionCodes!!.values }.toSet(),

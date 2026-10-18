@@ -160,7 +160,7 @@ val networkOptimizationsPatch = rawResourcePatch(
     description = "Keeps streaming smooth after Wi-Fi hiccups: lost packets are re-requested, recent " +
         "video frames are kept, and bigger buffers absorb bursts; headset verification still " +
         "pending. Builds: 2.0.23/5002363 only.",
-    default = true,
+    default = false,
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_5002363.toTypedArray())

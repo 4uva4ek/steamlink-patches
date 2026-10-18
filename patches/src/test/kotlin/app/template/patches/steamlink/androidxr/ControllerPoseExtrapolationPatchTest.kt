@@ -54,7 +54,14 @@ class ControllerPoseExtrapolationPatchTest {
         assertTrue(controllerPoseExtrapolationPatch.dependencies.isEmpty())
 
         val compatibilities = controllerPoseExtrapolationPatch.compatibility.orEmpty()
-        assertTrue(compatibilities.all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
+        assertTrue(compatibilities.all { it.name == "Steam Link" })
+        assertEquals(
+            setOf("2.0.20/5001812", "2.0.21/5001968", "2.0.22/5002244"),
+            compatibilities.flatMap { it.targets }
+                .filter { it.isExperimental }
+                .map { it.version + "/" + it.versionCodes!!.values.toSet().single() }
+                .toSet(),
+        )
         assertEquals(
             listOf("2.0.20" to 5001712, "2.0.20" to 5001812, "2.0.21" to 5001968, "2.0.22" to 5002244,
                 "2.0.23" to 5002363),

@@ -107,7 +107,15 @@ class ControllerHalPosePatchTest {
         assertTrue(shizukuBridgeManifestPatch in controllerHalPosePatch.dependencies, controllerHalPosePatch.name)
         val compatibilities = controllerHalPosePatch.compatibility.orEmpty()
         assertTrue(
-            compatibilities.all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } },
+            compatibilities.all { it.name == "Steam Link" },
+            controllerHalPosePatch.name,
+        )
+        assertEquals(
+            setOf("2.0.20/5001812", "2.0.21/5001968", "2.0.22/5002244"),
+            compatibilities.flatMap { it.targets }
+                .filter { it.isExperimental }
+                .map { it.version + "/" + it.versionCodes!!.values.toSet().single() }
+                .toSet(),
             controllerHalPosePatch.name,
         )
         assertEquals(

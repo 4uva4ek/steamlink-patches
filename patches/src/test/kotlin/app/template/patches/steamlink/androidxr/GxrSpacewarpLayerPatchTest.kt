@@ -26,7 +26,10 @@ class GxrSpacewarpLayerPatchTest {
         assertFalse(gxrSpacewarpLayerPatch.default)
         assertTrue(gxrSpacewarpLayerPatch.dependencies.isEmpty())
         assertTrue(gxrSpacewarpLayerPatch.compatibility.orEmpty()
-            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
+            .all { it.name == "Steam Link" })
+        // Both declared bases are fully supported: no per-build experimental mark.
+        assertTrue(gxrSpacewarpLayerPatch.compatibility.orEmpty().flatMap { it.targets }
+            .none { it.isExperimental })
         val nativeTargets = gxrSpacewarpLayerPatch.compatibility.orEmpty().flatMap { it.targets }
         assertEquals(setOf("2.0.20", "2.0.23"), nativeTargets.map { it.version }.toSet())
         assertEquals(setOf(5001712, 5002363),
