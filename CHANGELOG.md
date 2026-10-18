@@ -1,3 +1,13 @@
+## [1.30.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.29.0...v1.30.0) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* **ci:** authenticate optional unit test dependency resolution ([4e9dc0c](https://github.com/AngelDark92/xr-porting-hub/commit/4e9dc0c4a63f5a1aea87fdfdb092bf4b3e189ff2))
+
+### ✨ New Features
+
+* **steamlink:** add optional OpenXR CPU and GPU BOOST ([02b931c](https://github.com/AngelDark92/xr-porting-hub/commit/02b931c44d9be3141d2064bbaa7b45e1f4d42c13))
+
 ## [1.29.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.1...v1.29.0) (2026-10-17)
 
 ### ✨ New Features
