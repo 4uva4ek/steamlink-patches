@@ -111,7 +111,7 @@ private val androidXrLibPatch = resourcePatch {
 @Suppress("unused")
 val xrCoreRuntimePatch = bytecodePatch(
     name = "XR Core Runtime",
-    description = "Installs the XR runtime bridge resources and extension DEX that the other XR patches need.",
+    description = "Installs the bridge files the other XR patches need.",
     default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
@@ -122,7 +122,7 @@ val xrCoreRuntimePatch = bytecodePatch(
 @Suppress("unused")
 val xrDeviceConfigBaselinePatch = rawResourcePatch(
     name = "XR Device Config Baseline",
-    description = "Installs baseline Galaxy XR HMD, controller and default config payloads plus the dashboard bootstrap assets.",
+    description = "Installs the default Galaxy XR headset and controller settings plus the dashboard files.",
     default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
@@ -494,7 +494,7 @@ internal val xrStartupSplashUiPatch = bytecodePatch {
 @Suppress("unused")
 val xrLauncherBootstrapPatch = resourcePatch(
     name = "Startup splash and XR launch mode (before 5002322)",
-    description = "Adds the Launching Steam Link splash and unmanaged VRLink startup on older builds. Requests no permissions; pick Startup permission requests for those.",
+    description = "Adds the Launching Steam Link splash and full-space VR start mode on older builds; requests no permissions (pick Startup permission requests for those).",
     default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
@@ -656,7 +656,7 @@ val xrLauncherBootstrapPatch = resourcePatch(
 @Suppress("unused")
 val xrInputRoutingConfigPatch = rawResourcePatch(
     name = "XR Input Routing Config",
-    description = "Installs ui_config.json so XR pointer and button input reaches the launcher UI.",
+    description = "Installs the settings file that routes pointer and button input to the launcher UI.",
     default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
@@ -695,7 +695,7 @@ internal val xrStartupPermissionDeclarationsPatch = resourcePatch {
 @Suppress("unused")
 val xrStartupPermissionsPatch = bytecodePatch(
     name = "Startup permission requests (before 5002322)",
-    description = "Requests hand, eye, face, microphone and Bluetooth permissions at startup on older builds. Battery settings and the splash are separate patches.",
+    description = "Requests hand, eye, face, microphone and Bluetooth permissions at startup on older builds; battery settings and the splash are separate patches.",
     default = true,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)

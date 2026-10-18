@@ -112,6 +112,7 @@ CATEGORY_ORDER = (
     "App & device identity",
     "Advanced XR compatibility",
     "Controller",
+    "Controllers (Shizuku)",
     "Premium & purchases",
     "Streaming & network",
 )

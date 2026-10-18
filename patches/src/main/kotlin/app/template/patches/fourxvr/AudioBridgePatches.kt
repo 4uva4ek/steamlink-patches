@@ -38,8 +38,7 @@ private const val V4_MEDIA_PLAYER_SUBTITLE_LISTENER =
 @Suppress("unused")
 internal val fourXvrAudioBridgePayloadPatch = rawResourcePatch(
     name = "Audio bridge payload (4XVR)",
-    description = "Installs the bundled 5.1-channel AAudio bridge native for exact 4XVR 2.0.22 " +
-        "build 20022. " +
+    description = "Adds the bundled sound engine that lets 4XVR play 5.1 surround sound on the headset speakers. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
@@ -56,10 +55,7 @@ internal val fourXvrAudioBridgePayloadPatch = rawResourcePatch(
 @Suppress("unused")
 internal val fourXvrAudioBridgePatch = bytecodePatch(
     name = "5.1-channel audio bridge (4XVR)",
-    description = "Routes the AAudio calls of Vr4pMediaPlayer and its audio runnable through the " +
-        "bundled 5.1-channel bridge, initializes the bridge in Main4XActivity and refreshes the " +
-        "subtitle style on the playback-speed tick for exact 4XVR 2.0.22 build 20022. " +
-        "Headset validation pending. " +
+    description = "Switches 4XVR video playback to 5.1 surround sound on the headset speakers. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {

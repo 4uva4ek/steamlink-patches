@@ -117,9 +117,7 @@ internal val REFRESH_PROFILE_EDITS = listOf(
 @Suppress("unused")
 internal val fourXvrRefreshProfilePatch = rawResourcePatch(
     name = "Galaxy XR refresh profile (72 Hz, 4XVR)",
-    description = "Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) " +
-        "so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. " +
-        "Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation. " +
+    description = "Runs 4XVR's picture at Galaxy XR's native 72 Hz rate instead of 60 Hz. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
@@ -181,11 +179,7 @@ internal val OVR_STUB_EDITS = listOf(
 @Suppress("unused")
 internal val fourXvrPlatformDecouplingPatch = rawResourcePatch(
     name = "Meta platform decoupling (4XVR)",
-    description = "Stubs the 11 exported Oculus platform-init/entitlement/message functions in " +
-        "libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build " +
-        "requires the Meta platform channel to stay inert on a non-Meta runtime: without these " +
-        "stubs the app hangs on the splash — the OpenXR session is created but never presents " +
-        "its first frame (Galaxy XR on-device A/B, 2026-10-12). Meta-store VIP flows degrade. " +
+    description = "Keeps the Meta store calls out of the way, so 4XVR starts instead of hanging on its splash screen. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {

@@ -170,10 +170,7 @@ private fun createCodecsSupportPatch(
 @Suppress("unused")
 val xrCodecsSupportPatch = createCodecsSupportPatch(
     name = "Codecs Support",
-    description = "Exact 2.0.20/5001712: lets the headset client decode H.264 or AV1 streams " +
-        "selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects " +
-        "the host's codec from the first video frame and switches the decoder in place; stock " +
-        "HEVC streams are untouched. Recommended on this base; requires the matching driver setting.",
+    description = "Exact 2.0.20/5001712: lets the headset decode the H.264 or AV1 video the GalaxyXR driver's Stream codec setting picks; stock HEVC streams are untouched. Needs: the matching driver codec setting.",
     default = true,
     compatibilities = COMPATIBILITIES_STEAM_LINK_5001712,
 )
@@ -181,10 +178,7 @@ val xrCodecsSupportPatch = createCodecsSupportPatch(
 @Suppress("unused")
 val xrCodecsSupportNativeXrPatch = createCodecsSupportPatch(
     name = "Codecs Support (2.0.23/5002363)",
-    description = "Optional on exact 2.0.23/5002363: lets the headset client decode H.264 or AV1 " +
-        "streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer " +
-        "detects the host's codec from the first video frame and switches the decoder in place; " +
-        "stock HEVC streams are untouched. Not part of the recommended set; headset validation pending.",
+    description = "Optional on exact 2.0.23/5002363: lets the headset decode the H.264 or AV1 video the GalaxyXR driver picks; stock HEVC streams are untouched. Needs: the matching driver codec setting. Headset validation pending.",
     default = false,
     compatibilities = COMPATIBILITIES_STEAM_LINK_5002363,
 )

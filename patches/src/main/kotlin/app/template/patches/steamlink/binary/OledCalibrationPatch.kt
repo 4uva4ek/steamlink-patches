@@ -336,7 +336,9 @@ internal fun setProjectionSwapchainFormat(
 @Suppress("unused")
 val oledCalibrationPatch = rawResourcePatch(
     name = "OLED color calibration",
-    description = "Applies OLED gamma/saturation calibration with 8-bit sRGB output, plus optional VD-like SDR foveal processing and a separate foveal gamma. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363; visible improvement needs headset verification.",
+    description = "Tunes the OLED headset's color with gamma and saturation presets, plus optional " +
+        "center-of-view tweaks; visible improvement needs headset verification. " +
+        "Builds: 5001712, 5001812, 5001968, 5002244, 5002363.",
     default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
@@ -346,13 +348,14 @@ val oledCalibrationPatch = rawResourcePatch(
         key = "profile",
         default = "final-balanced",
         values = mapOf(
-            "Initial tested (gamma 1.06, saturation 1.12)" to "initial",
-            "Final balanced tested (gamma 1.20, saturation 1.45)" to "final-balanced",
-            "Neutral comparison (gamma 1.00, saturation 1.00)" to "neutral",
+            "Tested early (gamma 1.06, sat 1.12)" to "initial",
+            "Tested balanced (gamma 1.20, sat 1.45)" to "final-balanced",
+            "Neutral (gamma 1.00, sat 1.00)" to "neutral",
             "Custom gamma and saturation" to "custom",
         ),
         title = "Calibration profile",
-        description = "Selects gamma and saturation for both layers when the VD options are off, or for the base layer when a VD foveal option is on.",
+        description = "Presets gamma and saturation. Applies to both layers, or only the background " +
+            "when a VD-like center option is on.",
         required = true,
     )
 
@@ -363,7 +366,7 @@ val oledCalibrationPatch = rawResourcePatch(
         default = 1.20f,
         step = 0.01f,
         title = "Gamma",
-        description = "Used by Custom profile. Allowed range: 0.50 to 2.50.",
+        description = "Used with the Custom profile. Higher darkens dark tones. Range: 0.50 to 2.50.",
         required = true,
     )
 
@@ -374,15 +377,17 @@ val oledCalibrationPatch = rawResourcePatch(
         default = 1.45f,
         step = 0.01f,
         title = "Saturation",
-        description = "Used by Custom profile. Allowed range: 0.00 to 3.00.",
+        description = "Used with the Custom profile. Higher makes colors more intense. Range: 0.00 to 3.00.",
         required = true,
     )
 
     val foveaVdLike by booleanOption(
         key = "foveaVdLike",
         default = false,
-        title = "Fovea VD-like SDR processing",
-        description = "VD-informed SDR foveal processing: highp sampling, Valve's decoder colour correction retained, the calibration profile bypassed on the foveal layer, and no shader noise. The separate foveal gamma adjustment still applies. Output is 8-bit sRGB. The former 10-bit and 8-bit variants selected the same processing and are now one toggle. Does not negotiate host depth or reproduce VD's raw-YUV decoder import. Turn off when blue-noise dithering is selected on the foveal layer.",
+        title = "VD-like center mode",
+        description = "A sharper center look (VD-style), keeping Valve's color correction and " +
+            "8-bit output. Skips the profile above in the center; the center gamma below still " +
+            "applies. Turn off when Blue-noise dithering's center option is on.",
         required = true,
     )
 
@@ -392,8 +397,10 @@ val oledCalibrationPatch = rawResourcePatch(
         max = 1.30f,
         default = 1.00f,
         step = 0.01f,
-        title = "Foveal gamma adjustment",
-        description = "Additional gamma on the foveal layer only, after its colour processing. 1.00 leaves it unchanged; higher values darken shadows and midtones. Try 1.02 first for a lighter foveal region. Works with either VD option or both off, before fade and optional blue-noise dithering. Background calibration and edge blending stay unchanged; this is manual compensation, not a verified seam fix.",
+        title = "Center gamma adjustment",
+        description = "Extra gamma for the center only. 1.00 = unchanged; higher darkens dark " +
+            "tones. Try 1.02 first for a slightly lighter center. The background keeps the " +
+            "profile above; this is a manual tweak, not a verified seam fix.",
         required = true,
     )
 

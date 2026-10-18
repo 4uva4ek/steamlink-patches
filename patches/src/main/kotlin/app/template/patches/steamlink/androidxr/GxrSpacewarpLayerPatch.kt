@@ -233,14 +233,9 @@ internal fun installGxrSpacewarpResources(
 @Suppress("unused")
 val gxrSpacewarpLayerPatch = rawResourcePatch(
     name = "GXR spacewarp layer (experimental)",
-    description = "Exact 2.0.20/5001712 and 2.0.23/5002363: synthesizes a projection " +
-        "frame from the two most recent decoded frames when the video stream misses a " +
-        "display tick, via a bundled OpenXR implicit layer gated on each base's pinned " +
-        "scene-library layout (per-base pin profiles selected at runtime; the layer " +
-        "itself re-verifies the base's identity anchor before any hook). The client's " +
-        "composition layers stay untouched; any construction or layout failure stands " +
-        "down to the stock renderer. Experimental: headset validation pending, so it is " +
-        "not part of the recommended set.",
+    description = "Makes up a frame from the two latest decoded video frames when the stream misses a " +
+        "display tick; any failure stands down to the stock renderer. Builds: 2.0.20/5001712, 2.0.23/5002363. " +
+        "Experimental: headset validation pending.",
     default = false,
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)

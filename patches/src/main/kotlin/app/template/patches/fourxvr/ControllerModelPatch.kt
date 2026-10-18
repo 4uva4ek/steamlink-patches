@@ -23,9 +23,7 @@ private val CONTROLLER_ASSETS = listOf(
 @Suppress("unused")
 internal val fourXvrControllerModelsPatch = rawResourcePatch(
     name = "Galaxy XR controller models (4XVR)",
-    description = "Replaces the four Quest 3 controller assets with the Galaxy XR reference " +
-        "models (2048x2048 textures, re-authored meshes) for exact 4XVR 2.0.22 build 20022. " +
-        "Static asset swap; headset validation pending. " +
+    description = "Replaces the Quest 3 controller artwork and shapes with the Galaxy XR controller models. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {

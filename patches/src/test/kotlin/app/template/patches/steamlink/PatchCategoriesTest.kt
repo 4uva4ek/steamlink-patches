@@ -40,7 +40,10 @@ class PatchCategoriesTest {
         ),
         "Controller" to listOf(
             controllerPoseExtrapolationPatch, controllerVelocityFramePatch,
-            controllerGripHapticsPatch, controllerHalPosePatch, controllerAngularLocalPatch,
+            controllerAngularLocalPatch,
+        ),
+        "Controllers (Shizuku)" to listOf(
+            controllerGripHapticsPatch, controllerHalPosePatch,
         ),
         "Streaming & network" to listOf(
             xrCodecsSupportPatch,
@@ -53,7 +56,7 @@ class PatchCategoriesTest {
     @Test
     fun `every public patch carries its agreed category and default`() {
         assertEquals(32, publicPatches.size)
-        assertEquals(listOf(4, 4, 4, 5, 7, 5, 3), groups.values.map { it.size })
+        assertEquals(listOf(4, 4, 4, 5, 7, 3, 2, 3), groups.values.map { it.size })
         groups.forEach { (category, patches) ->
             patches.forEach { patch ->
                 assertEquals(category, patch.category, patch.name)
@@ -105,8 +108,10 @@ class PatchCategoriesTest {
                 assertEquals(patch.category, entry.get("category").asString, patch.name)
                 assertEquals(patch.default, entry.get("default").asBoolean, patch.name)
             }
-            assertEquals(if (channel == ReleaseChannel.STABLE) 0 else 5,
+            assertEquals(if (channel == ReleaseChannel.STABLE) 0 else 3,
                 entries.count { it.get("category").asString == "Controller" }, name)
+            assertEquals(if (channel == ReleaseChannel.STABLE) 0 else 2,
+                entries.count { it.get("category").asString == "Controllers (Shizuku)" }, name)
         }
     }
 }

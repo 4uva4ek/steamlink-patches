@@ -88,10 +88,7 @@ internal fun upsertManifestPermission(
 @Suppress("unused")
 internal val fourXvrLaunchCompatibilityPatch = resourcePatch(
     name = "Galaxy XR launch compatibility (4XVR)",
-    description = "Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and " +
-        "the Galaxy XR manifest declarations (OpenXR 1.1, passthrough, hand and eye input) for " +
-        "exact 4XVR 2.0.22 build 20022. " +
-        "Decoded-base adaptation; headset validation pending. " +
+    description = "Installs the standard XR files 4XVR needs to start on Galaxy XR instead of closing right after opening. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {

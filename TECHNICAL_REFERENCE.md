@@ -65,7 +65,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.30.0](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.30.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
+> **[v1.31.0-dev.1](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.31.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;50 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
@@ -80,47 +80,47 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [HDR pipeline payload (4XVR)](#hdr-pipeline-payload-4xvr) | Installs the modified libplacebo 7.360.1 (LGPL-2.1-or-later), the 4XVR HDR bridge native and the bundled open-source notices for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [libplacebo HDR pipeline (4XVR)](#libplacebo-hdr-pipeline-4xvr) | Loads the HDR bridge, routes the decoder output surface through it for the FP16 hand-off, detects HLG from the video MediaFormat and keeps the bridge informed of movie/seek transitions for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [HDR pipeline payload (4XVR)](#hdr-pipeline-payload-4xvr) | Adds the HDR video component and its open-source notices; built on libplacebo (LGPL-2.1-or-later). Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [libplacebo HDR pipeline (4XVR)](#libplacebo-hdr-pipeline-4xvr) | HDR videos play with their full colors and brightness. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Tracking & audio
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [5.1-channel audio bridge (4XVR)](#5-1-channel-audio-bridge-4xvr) | Routes the AAudio calls of Vr4pMediaPlayer and its audio runnable through the bundled 5.1-channel bridge, initializes the bridge in Main4XActivity and refreshes the subtitle style on the playback-speed tick for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Audio bridge payload (4XVR)](#audio-bridge-payload-4xvr) | Installs the bundled 5.1-channel AAudio bridge native for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Galaxy XR controller models (4XVR)](#galaxy-xr-controller-models-4xvr) | Replaces the four Quest 3 controller assets with the Galaxy XR reference models (2048x2048 textures, re-authored meshes) for exact 4XVR 2.0.22 build 20022. Static asset swap; headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [5.1-channel audio bridge (4XVR)](#5-1-channel-audio-bridge-4xvr) | Switches 4XVR video playback to 5.1 surround sound on the headset speakers. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Audio bridge payload (4XVR)](#audio-bridge-payload-4xvr) | Adds the bundled sound engine that lets 4XVR play 5.1 surround sound on the headset speakers. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Galaxy XR controller models (4XVR)](#galaxy-xr-controller-models-4xvr) | Replaces the Quest 3 controller artwork and shapes with the Galaxy XR controller models. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Startup & permissions
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Galaxy XR launch compatibility (4XVR)](#galaxy-xr-launch-compatibility-4xvr) | Installs the Khronos OpenXR loader 1.1.58, the 4XVR view-config API layer and the Galaxy XR manifest declarations (OpenXR 1.1, passthrough, hand and eye input) for exact 4XVR 2.0.22 build 20022. Decoded-base adaptation; headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Galaxy XR launcher icon (4XVR)](#galaxy-xr-launcher-icon-4xvr) | Re-exposes the stock 4XVR launcher artwork under the canonical ic_launcher/ic_launcher_round names (adaptive icon plus density PNGs) and points the manifest at them, matching the Steam Link icon shape for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Popup refresh on resume (4XVR)](#popup-refresh-on-resume-4xvr) | Re-checks the 4XVR startup popups after the activity resumes or returns from system settings: hides the All-files-access prompt once external storage access is granted (the stock flow never re-checks the result of its 0x59E2 request) and hides the release-notes window when its saved version already covers the installed build, for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Startup and UI continuity helper (4XVR)](#startup-and-ui-continuity-helper-4xvr) | Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build 20022. Headless validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Galaxy XR launch compatibility (4XVR)](#galaxy-xr-launch-compatibility-4xvr) | Installs the standard XR files 4XVR needs to start on Galaxy XR instead of closing right after opening. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Galaxy XR launcher icon (4XVR)](#galaxy-xr-launcher-icon-4xvr) | Restores the proper 4XVR icon on the device's app launcher and in the patch manager. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Popup refresh on resume (4XVR)](#popup-refresh-on-resume-4xvr) | Re-checks the first-launch prompts after you return from system settings. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Startup and UI continuity helper (4XVR)](#startup-and-ui-continuity-helper-4xvr) | Keeps the startup greeting and on-screen notifications working when the app rebuilds its display. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Advanced XR compatibility
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Frame-synced render dispatch (4XVR)](#frame-synced-render-dispatch-4xvr) | Drains the render dispatch queue before every frame, hands scene switches to RenderDispatch.requestScene instead of the retired render runnable, and routes window teardown through the dispatch for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Galaxy XR refresh profile (72 Hz, 4XVR)](#galaxy-xr-refresh-profile-72-hz-4xvr) | Clamps the InitializeDevice refresh-rate picker floors (121.0f/91.0f -> 73.0f) so exact 4XVR 2.0.22 build 20022 requests Galaxy XR's 72 Hz mode. Three guarded bytes in libvr4p-oculus.so; runtime application pending headset validation. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Meta platform decoupling (4XVR)](#meta-platform-decoupling-4xvr) | Stubs the 11 exported Oculus platform-init/entitlement/message functions in libovrplatformloader.so of exact 4XVR 2.0.22 build 20022. The reference Galaxy XR build requires the Meta platform channel to stay inert on a non-Meta runtime: without these stubs the app hangs on the splash — the OpenXR session is created but never presents its first frame (Galaxy XR on-device A/B, 2026-10-12). Meta-store VIP flows degrade. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Render dispatch payload (4XVR)](#render-dispatch-payload-4xvr) | Installs the 4XVR render dispatch native (frame-synced scene queue and adaptive theater background updates) for exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Frame-synced render dispatch (4XVR)](#frame-synced-render-dispatch-4xvr) | Syncs scene changes and screen updates to the display's frame rhythm, keeping playback smooth. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Galaxy XR refresh profile (72 Hz, 4XVR)](#galaxy-xr-refresh-profile-72-hz-4xvr) | Runs 4XVR's picture at Galaxy XR's native 72 Hz rate instead of 60 Hz. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Meta platform decoupling (4XVR)](#meta-platform-decoupling-4xvr) | Keeps the Meta store calls out of the way, so 4XVR starts instead of hanging on its splash screen. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Render dispatch payload (4XVR)](#render-dispatch-payload-4xvr) | Adds the scene-timing engine that keeps 4XVR visuals and screens in step with the frames. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Premium & purchases
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Premium unlock (4XVR, experimental)](#premium-unlock-4xvr-experimental) | Removes the 4XVR premium gate on Galaxy XR, where the Meta Store cannot be reached to verify a purchase: every start forces the app's own VIP state on through ChangeCurVIPStateClear(true), the same state transition a store purchase applies, so IsMP() is true and the trial playback limiter stays off. The dead Meta-store Buy entry points re-assert the unlocked state instead of calling the native checkout; the Buy buttons are hidden in favor of the Sync slot. Exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Premium unlock (4XVR, experimental)](#premium-unlock-4xvr-experimental) | Unlocks premium playback without a store check on Galaxy XR, where the store cannot be reached. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 #### Subtitles & playback
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Subtitle suite (4XVR)](#subtitle-suite-4xvr) | Adds the subtitle position controls row, the enlarged subtitle panel height, immediate config persistence on color-tab changes, the custom subtitle font load and the wrapped-cue size clamp for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
-| [Subtitle suite payload (4XVR)](#subtitle-suite-payload-4xvr) | Installs the subtitle position native library used by the 4XVR subtitle suite controls on exact 4XVR 2.0.22 build 20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Subtitle suite (4XVR)](#subtitle-suite-4xvr) | Moves subtitles around, enlarges the subtitle panel and loads your own subtitle font. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
+| [Subtitle suite payload (4XVR)](#subtitle-suite-payload-4xvr) | Adds the subtitle engine used by the 4XVR subtitle controls. Builds: 4XVR 2.0.22/20022. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR. | 20022 |  |
 
 </details>
 
@@ -138,55 +138,55 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Blue-noise dithering](#blue-noise-dithering) | Adds static blue noise after video colour processing and fade, independently selectable on the foveal and the background/base layer; 8-bit or 10-bit input, always 8-bit sRGB output. Recommended on all exact bases with the foveal layer on by default. Turn OLED's VD-like fovea toggle off when foveal blue noise is used. Unknown host shaders pass through unchanged. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Foveal layer<br>• Background layer |
-| [Galaxy XR high-resolution 3-projection fix](#galaxy-xr-high-resolution-3-projection-fix) | Permission-free high-resolution fix: appends a static 2x2 Android-surface compositor trigger and leaves each build's native projection layers and formats, including future RGB10_A2, untouched. No image copy. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [OLED color calibration](#oled-color-calibration) | Applies OLED gamma/saturation calibration with 8-bit sRGB output, plus optional VD-like SDR foveal processing and a separate foveal gamma. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363; visible improvement needs headset verification. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Calibration profile<br>• Gamma<br>• Saturation<br>• Fovea VD-like SDR processing<br>• Foveal gamma adjustment |
+| [Blue-noise dithering](#blue-noise-dithering) | Adds fine grain that hides harsh color steps, with separate on/off choices for the center and the background. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Center of the view<br>• Background |
+| [Galaxy XR high-resolution 3-projection fix](#galaxy-xr-high-resolution-3-projection-fix) | Permission-free high-resolution fix: adds a small Android-surface trigger and leaves the renderer's own formats, including future RGB10_A2, untouched. No image copy. Builds: 5001712, 5001812, 5001968, 5002244, 5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [OLED color calibration](#oled-color-calibration) | Tunes the OLED headset's color with gamma and saturation presets, plus optional center-of-view tweaks; visible improvement needs headset verification. Builds: 5001712, 5001812, 5001968, 5002244, 5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Calibration profile<br>• Gamma<br>• Saturation<br>• VD-like center mode<br>• Center gamma adjustment |
 
 #### Tracking & audio
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [GXR face and tongue bridge](#gxr-face-and-tongue-bridge) | Installs the Galaxy XR face transport for the VRCFT module, per exact build: the face-tracking bridge layer (XR_FB_face_tracking2 to XR_ANDROID_face_tracking) and the FACE_TRACKING permission on the legacy targets 5001712/5001812/5001968/5002244; the tongue out/left/right/up/down transport slots (keeping Valve's native face expressions and standard TongueOut) on 2.0.23/5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [Microphone input preset](#microphone-input-preset) | Selects Steam Link's AAudio microphone processing mode. On Galaxy XR, Voice Recognition was clearer and louder than stock Voice Communication. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Microphone mode |
-| [Visual Delay Fix](#visual-delay-fix) | Offsets the HMD OpenXR pose-query time and zeroes the exported HMD velocity fields, so head tracking leads the rendered frame. Controllers are unaffected. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Pose offset (ms) |
-| [XR Input Routing Config](#xr-input-routing-config) | Installs ui_config.json so XR pointer and button input reaches the launcher UI. | 5001712, 5001812, 5001968, 5002244 |  |
+| [GXR face and tongue bridge](#gxr-face-and-tongue-bridge) | Face and tongue feed for the VRCFT module: the face bridge on 5001712/5001812/5001968/5002244, tongue out/left/right/up/down slots on 2.0.23/5002363; Valve's own expressions and tongue-out keep working. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Microphone input preset](#microphone-input-preset) | Switches the microphone's capture mode; Voice Recognition tested clearest and loudest on Galaxy XR. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Microphone mode |
+| [Visual Delay Fix](#visual-delay-fix) | Re-times the headset's position report so head movement shows up sooner; controller movement is untouched. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Head motion offset (ms) |
+| [XR Input Routing Config](#xr-input-routing-config) | Installs the settings file that routes pointer and button input to the launcher UI. | 5001712, 5001812, 5001968, 5002244 |  |
 
 #### Startup & permissions
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Appear on top (legacy)](#appear-on-top-legacy) | Legacy overlay fallback for older builds: adds SYSTEM_ALERT_WINDOW and the compositor signal window. | 5001712, 5001812, 5001968, 5002244 |  |
-| [Startup permission requests (before 5002322)](#startup-permission-requests-before-5002322) | Requests hand, eye, face, microphone and Bluetooth permissions at startup on older builds. Battery settings and the splash are separate patches. | 5001712, 5001812, 5001968, 5002244 |  |
-| [Startup splash and XR launch mode (before 5002322)](#startup-splash-and-xr-launch-mode-before-5002322) | Adds the Launching Steam Link splash and unmanaged VRLink startup on older builds. Requests no permissions; pick Startup permission requests for those. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Appear on top (legacy)](#appear-on-top-legacy) | Legacy overlay fallback for older builds: lets Steam Link draw its panel over other screens. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Startup permission requests (before 5002322)](#startup-permission-requests-before-5002322) | Requests hand, eye, face, microphone and Bluetooth permissions at startup on older builds; battery settings and the splash are separate patches. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Startup splash and XR launch mode (before 5002322)](#startup-splash-and-xr-launch-mode-before-5002322) | Adds the Launching Steam Link splash and full-space VR start mode on older builds; requests no permissions (pick Startup permission requests for those). | 5001712, 5001812, 5001968, 5002244 |  |
 | [Unrestricted battery usage](#unrestricted-battery-usage) | Opens Android's Battery usage page at startup so Unrestricted can be selected for XR streaming. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### App & device identity
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Change package name](#change-package-name) | Renames the package and Steam Link's internal VR-launch component, so the patched app can be installed next to the original. | 5001712, 5001812, 5001968, 5002244 | • Package name |
-| [Device identity](#device-identity) | Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the legacy targets through 5002244. Explicit profiles override that. | 5001712, 5001812, 5001968, 5002244 | • HMD identity |
-| [Device identity (2.0.23/5002363)](#device-identity-2-0-23-5002363) | Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; not part of the recommended set. Explicit profiles override that. | 5002363 | • HMD identity |
-| [Galaxy XR SteamVR driver (galaxyxr)](#galaxy-xr-steamvr-driver-galaxyxr) | Reports the headset and controllers to SteamVR through the resource-only `galaxyxr` driver installed by Galaxy XR VRLink Setup on the PC: Galaxy XR identity, {galaxyxr} icons, input profiles and controller models, and the calibrated grip offset. Replaces the Meta Quest Pro spoof; the PC driver must be installed or the controllers show no model. Controllers keep the oculus_touch type because vrlink accepts no other. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Grip offset position (cm, x,y,z)<br>• Grip offset rotation (deg, x,y,z) |
-| [OpenXR CPU and GPU BOOST](#openxr-cpu-and-gpu-boost) | Requests the OpenXR BOOST performance hint for CPU and GPU on each session start. The runtime still controls clocks and thermal limits. Unsupported runtimes continue without BOOST. Adds an APK-local API layer; no root required. All repository-supported Steam Link builds; runtime performance benefit is not yet measured. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Change package name](#change-package-name) | Renames the app so the patched Steam Link can install next to the original. Builds: 5001712 to 5002244. | 5001712, 5001812, 5001968, 5002244 | • Package name |
+| [Device identity](#device-identity) | Sets the headset name SteamVR sees, with Meta Quest Pro as the recommended profile. Builds: 5001712 to 5002244. | 5001712, 5001812, 5001968, 5002244 | • Headset identity |
+| [Device identity (2.0.23/5002363)](#device-identity-2-0-23-5002363) | Sets the headset name SteamVR sees; optional, so it stays out of the recommended set. Builds: exact 2.0.23/5002363. | 5002363 | • Headset identity |
+| [Galaxy XR SteamVR driver (galaxyxr)](#galaxy-xr-steamvr-driver-galaxyxr) | Sets Galaxy XR headset and controller names in SteamVR, replacing the Meta Quest Pro spoof. Builds: 5001712 to 5002363. Needs: Galaxy XR VRLink Setup on the PC, or controllers show no model. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Grip offset position (cm, x,y,z)<br>• Grip offset rotation (deg, x,y,z) |
+| [OpenXR CPU and GPU BOOST](#openxr-cpu-and-gpu-boost) | Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### Advanced XR compatibility
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Android XR native permission names](#android-xr-native-permission-names) | Rewrites native Oculus face/eye permission checks to the Android XR names, on exact 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244 builds. | 5001712, 5001812, 5001968, 5002244 |  |
-| [Force HMD initialization gates](#force-hmd-initialization-gates) | Bypasses the 2 capability gates in QSVLDeviceHmd::Init, on exact 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244 builds. | 5001712, 5001812, 5001968, 5002244 |  |
-| [Force lobby permission-state gate](#force-lobby-permission-state-gate) | Bypasses the permission-state gate in XrSceneLobby, on exact 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244 builds. | 5001712, 5001812, 5001968, 5002244 |  |
-| [Force stream XR gates](#force-stream-xr-gates) | Bypasses the 3 XR gates in the stream path, on exact 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968 and 2.0.22/5002244 builds. | 5001712, 5001812, 5001968, 5002244 |  |
-| [XR Core Runtime](#xr-core-runtime) | Installs the XR runtime bridge resources and extension DEX that the other XR patches need. | 5001712, 5001812, 5001968, 5002244 |  |
-| [XR Device Config Baseline](#xr-device-config-baseline) | Installs baseline Galaxy XR HMD, controller and default config payloads plus the dashboard bootstrap assets. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Android XR native permission names](#android-xr-native-permission-names) | Swaps the app's built-in face and eye permission names to the ones Android XR needs. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Force HMD initialization gates](#force-hmd-initialization-gates) | Removes 2 headset startup checks so tracking starts even when the app's own checks would stop it. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Force lobby permission-state gate](#force-lobby-permission-state-gate) | Skips a lobby permission check so the room screen loads normally. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244. | 5001712, 5001812, 5001968, 5002244 |  |
+| [Force stream XR gates](#force-stream-xr-gates) | Removes 3 XR checks on the streaming path so video can start. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244. | 5001712, 5001812, 5001968, 5002244 |  |
+| [XR Core Runtime](#xr-core-runtime) | Installs the bridge files the other XR patches need. | 5001712, 5001812, 5001968, 5002244 |  |
+| [XR Device Config Baseline](#xr-device-config-baseline) | Installs the default Galaxy XR headset and controller settings plus the dashboard files. | 5001712, 5001812, 5001968, 5002244 |  |
 | [XR Manifest Capability Pack](#xr-manifest-capability-pack) | Adds the Android XR/OpenXR permissions, features and app properties Steam Link needs. | 5001712, 5001812, 5001968, 5002244 |  |
 
 #### Streaming & network
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Network Optimizations](#network-optimizations) | Improves Steam Link 2.0.23's streaming transport: a loss burst large enough to overflow the retransmission-request buffer now re-requests the accumulated missing packets instead of aborting the stream, the frame-reorder (backtrack) window widens from 6 to 12 frames, a momentarily-starving decoder keeps its buffered frames instead of flushing them, and the UDP send buffer for retransmission requests grows from 128 KiB to 1 MiB. No bitrate, resolution or quality setting is changed. Exact 2.0.23/5002363 only; headset validation pending. | 5002363 |  |
+| [Network Optimizations](#network-optimizations) | Keeps streaming smooth after Wi-Fi hiccups: lost packets are re-requested, recent video frames are kept, and bigger buffers absorb bursts; headset verification still pending. Builds: 2.0.23/5002363 only. | 5002363 |  |
 
 </details>
 
@@ -204,25 +204,30 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye and submits it as the 2nd projection, keeping the background projection and any static trigger quad. Requires headset validation. | 5001812 |  |
+| [Full-FOV foveal canvas (experimental)](#full-fov-foveal-canvas-experimental) | Only for exact 2.0.20/5001812: draws just the foveal image on a transparent 5000x6000 canvas per eye, keeping the background view. Needs: headset validation. | 5001812 |  |
 
 #### Controller
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Controller angular world to local](#controller-angular-world-to-local) | Adapts already corrected OpenXR angular velocity to Steam Link 2.0.23's local controller axes. Requires the active Galaxy XR OpenXR Velocity Frame runtime module; do not use with stock runtime velocities or old HAL/velocity/extrapolation APK layers. Changes angular velocity only, not poses, linear velocity or prediction. Exact 2.0.23/5002363 only; headset A/B validation pending. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5002363 |  |
-| [Controller grip haptics through Shizuku](#controller-grip-haptics-through-shizuku) | Routes controller vibration to the grip vibrator instead of the trigger, which Galaxy XR uses for every OpenXR vibration. The grip one needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without it vibration is stock. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [Controller pose extrapolation](#controller-pose-extrapolation) | Makes the Galaxy XR runtime extrapolate controller poses to the time VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose. Adds an OpenXR API layer; no Steam Link code changes. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [Controller tracking from the controller HAL through Shizuku](#controller-tracking-from-the-controller-hal-through-shizuku) | Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime, removing the runtime's ~35 ms sample lag, and filters jitter out of pose and velocity. The HAL needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without Shizuku tracking stays as it is. Steam Link 2.0.23: angular velocity is reported local to the grip pose. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Controller angular world to local](#controller-angular-world-to-local) | Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Needs: the Velocity Frame correction active; not with stock velocities or the old velocity patches. Exact 2.0.23/5002363 only; headset validation pending. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5002363 |  |
+| [Controller pose extrapolation](#controller-pose-extrapolation) | Makes Galaxy XR predict controller poses to the moment VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose; no Steam Link code is changed. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 | [Controller velocity frame](#controller-velocity-frame) | Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads, so thrown objects leave in the right direction. Stock, they arrive in a controller-attached frame. Adds an OpenXR API layer; no Steam Link code is changed. Steam Link 2.0.23: angular velocity is reported local to the streamed pose. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+
+#### Controllers (Shizuku)
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
+|----------|----------------|----------------|-----------|
+| [Controller grip haptics through Shizuku](#controller-grip-haptics-through-shizuku) | Routes controller vibration to the grip vibrator instead of the trigger Galaxy XR uses by default. Needs: Shizuku running with its permission granted to Steam Link; without it vibration stays stock. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Controller tracking from the controller HAL through Shizuku](#controller-tracking-from-the-controller-hal-through-shizuku) | Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime, removing the runtime's ~35 ms sample lag, and filters jitter out of pose and velocity. The HAL needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without Shizuku tracking stays as it is. Steam Link 2.0.23: angular velocity is reported local to the grip pose. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### Streaming & network
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Codecs Support](#codecs-support) | Exact 2.0.20/5001712: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Recommended on this base; requires the matching driver setting. | 5001712 |  |
-| [Codecs Support (2.0.23/5002363)](#codecs-support-2-0-23-5002363) | Optional on exact 2.0.23/5002363: lets the headset client decode H.264 or AV1 streams selected by the GalaxyXR driver's Stream codec setting. A bundled OpenXR layer detects the host's codec from the first video frame and switches the decoder in place; stock HEVC streams are untouched. Not part of the recommended set; headset validation pending. | 5002363 |  |
-| [GXR spacewarp layer (experimental)](#gxr-spacewarp-layer-experimental) | Exact 2.0.20/5001712 and 2.0.23/5002363: synthesizes a projection frame from the two most recent decoded frames when the video stream misses a display tick, via a bundled OpenXR implicit layer gated on each base's pinned scene-library layout (per-base pin profiles selected at runtime; the layer itself re-verifies the base's identity anchor before any hook). The client's composition layers stay untouched; any construction or layout failure stands down to the stock renderer. Experimental: headset validation pending, so it is not part of the recommended set. | 5001712, 5002363 |  |
+| [Codecs Support](#codecs-support) | Exact 2.0.20/5001712: lets the headset decode the H.264 or AV1 video the GalaxyXR driver's Stream codec setting picks; stock HEVC streams are untouched. Needs: the matching driver codec setting. | 5001712 |  |
+| [Codecs Support (2.0.23/5002363)](#codecs-support-2-0-23-5002363) | Optional on exact 2.0.23/5002363: lets the headset decode the H.264 or AV1 video the GalaxyXR driver picks; stock HEVC streams are untouched. Needs: the matching driver codec setting. Headset validation pending. | 5002363 |  |
+| [GXR spacewarp layer (experimental)](#gxr-spacewarp-layer-experimental) | Makes up a frame from the two latest decoded video frames when the stream misses a display tick; any failure stands down to the stock renderer. Builds: 2.0.20/5001712, 2.0.23/5002363. Experimental: headset validation pending. | 5001712, 5002363 |  |
 
 </details>
 
@@ -240,7 +245,7 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Controller angular world to local](#controller-angular-world-to-local) | Adapts already corrected OpenXR angular velocity to Steam Link 2.0.23's local controller axes. Requires the active Galaxy XR OpenXR Velocity Frame runtime module; do not use with stock runtime velocities or old HAL/velocity/extrapolation APK layers. Changes angular velocity only, not poses, linear velocity or prediction. Exact 2.0.23/5002363 only; headset A/B validation pending. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5002363 |  |
+| [Controller angular world to local](#controller-angular-world-to-local) | Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Needs: the Velocity Frame correction active; not with stock velocities or the old velocity patches. Exact 2.0.23/5002363 only; headset validation pending. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5002363 |  |
 
 </details>
 

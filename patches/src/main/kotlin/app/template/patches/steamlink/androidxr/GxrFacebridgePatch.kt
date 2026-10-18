@@ -80,11 +80,9 @@ internal val gxrFaceTrackingManifestPatch = resourcePatch {
 @Suppress("unused")
 val gxrFacebridgePatch = rawResourcePatch(
     name = "GXR face and tongue bridge",
-    description = "Installs the Galaxy XR face transport for the VRCFT module, per exact build: the " +
-        "face-tracking bridge layer (XR_FB_face_tracking2 to XR_ANDROID_face_tracking) and the " +
-        "FACE_TRACKING permission on the legacy targets 5001712/5001812/5001968/5002244; the tongue " +
-        "out/left/right/up/down transport slots (keeping Valve's native face expressions and standard " +
-        "TongueOut) on 2.0.23/5002363.",
+    description = "Face and tongue feed for the VRCFT module: the face bridge " +
+        "on 5001712/5001812/5001968/5002244, tongue out/left/right/up/down slots on 2.0.23/5002363; " +
+        "Valve's own expressions and tongue-out keep working.",
     default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)

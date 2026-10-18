@@ -157,7 +157,9 @@ internal fun applyNetworkOptimizationsMain(bytes: ByteArray): ByteArray {
 @Suppress("unused")
 val networkOptimizationsPatch = rawResourcePatch(
     name = "Network Optimizations",
-    description = "Improves Steam Link 2.0.23's streaming transport: a loss burst large enough to overflow the retransmission-request buffer now re-requests the accumulated missing packets instead of aborting the stream, the frame-reorder (backtrack) window widens from 6 to 12 frames, a momentarily-starving decoder keeps its buffered frames instead of flushing them, and the UDP send buffer for retransmission requests grows from 128 KiB to 1 MiB. No bitrate, resolution or quality setting is changed. Exact 2.0.23/5002363 only; headset validation pending.",
+    description = "Keeps streaming smooth after Wi-Fi hiccups: lost packets are re-requested, recent " +
+        "video frames are kept, and bigger buffers absorb bursts; headset verification still " +
+        "pending. Builds: 2.0.23/5002363 only.",
     default = true,
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)

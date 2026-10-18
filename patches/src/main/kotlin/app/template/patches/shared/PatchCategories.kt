@@ -9,6 +9,7 @@ internal object PatchCategories {
     const val ADVANCED_XR_COMPATIBILITY = "Advanced XR compatibility"
     const val SUBTITLES_AND_PLAYBACK = "Subtitles & playback"
     const val CONTROLLER = "Controller"
+    const val CONTROLLERS_SHIZUKU = "Controllers (Shizuku)"
     const val PREMIUM_AND_PURCHASES = "Premium & purchases"
     const val STREAMING_AND_NETWORK = "Streaming & network"
 }

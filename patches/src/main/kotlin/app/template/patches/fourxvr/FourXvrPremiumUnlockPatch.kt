@@ -101,13 +101,7 @@ private fun retargetCheckoutFlowToPremiumUnlock(
 @Suppress("unused")
 internal val fourXvrPremiumUnlockPatch = bytecodePatch(
     name = "Premium unlock (4XVR, experimental)",
-    description = "Removes the 4XVR premium gate on Galaxy XR, where the Meta Store cannot be " +
-        "reached to verify a purchase: every start forces the app's own VIP state on through " +
-        "ChangeCurVIPStateClear(true), the same state transition a store purchase applies, so " +
-        "IsMP() is true and the trial playback limiter stays off. The dead Meta-store Buy entry " +
-        "points re-assert the unlocked state instead of calling the native checkout; the Buy " +
-        "buttons are hidden in favor of the Sync slot. Exact 4XVR 2.0.22 build 20022. " +
-        "Headset validation pending. " +
+    description = "Unlocks premium playback without a store check on Galaxy XR, where the store cannot be reached. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = false,
 ) {

@@ -73,7 +73,7 @@ private val appearOnTopManifestPatch = resourcePatch {
 @Suppress("unused")
 val appearOnTopPatch = bytecodePatch(
     name = "Appear on top (legacy)",
-    description = "Legacy overlay fallback for older builds: adds SYSTEM_ALERT_WINDOW and the compositor signal window.",
+    description = "Legacy overlay fallback for older builds: lets Steam Link draw its panel over other screens.",
     default = false,
 ) {
     category(PatchCategories.STARTUP_AND_PERMISSIONS)
@@ -308,7 +308,8 @@ private val androidSurfaceTriggerResourcesPatch = androidSurfaceTriggerResources
 @Suppress("unused")
 val xrGalaxyXrHighResolutionPatch = resourcePatch(
     name = "Galaxy XR high-resolution 3-projection fix",
-    description = "Permission-free high-resolution fix: appends a static 2x2 Android-surface compositor trigger and leaves each build's native projection layers and formats, including future RGB10_A2, untouched. No image copy. Exact builds 5001712, 5001812, 5001968, 5002244, 5002363.",
+    description = "Permission-free high-resolution fix: adds a small Android-surface trigger and leaves the renderer's own " +
+        "formats, including future RGB10_A2, untouched. No image copy. Builds: 5001712, 5001812, 5001968, 5002244, 5002363.",
     default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)

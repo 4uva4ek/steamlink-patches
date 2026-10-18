@@ -115,6 +115,16 @@ Spawn 2-3 `cavecrew-investigator` calls in one message (different angles: defs v
 **Single-shot edit** (when site is already known):
 Skip investigator. Hand exact path:line to `cavecrew-builder` directly.
 
+**Repo-wide text pass** (descriptions/labels across many files):
+1. Main thread: build the inventory from the generated aggregate, sweep the test tree for
+   pinned strings, list mirror surfaces (generated catalogs, readme docs).
+2. Write per-batch scratch job files: role contract + allowed file list + locked phrases
+   + receipt shape; then one delegate message with one child per directory batch.
+3. Reviewer child over the full diff, then the main thread runs the regen pipeline and
+   the remnant sweep itself.
+Never edit a file a running child still holds — main-thread and child edits to the same
+file race and lose edits; hold later waves until the children finish.
+
 ## What NOT to do
 
 - Don't use `cavecrew-builder` when you don't already know the file. Spawn investigator first or main thread will eat tokens passing context.

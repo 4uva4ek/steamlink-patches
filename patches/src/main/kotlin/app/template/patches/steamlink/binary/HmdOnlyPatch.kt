@@ -426,8 +426,9 @@ internal fun patchVisualDelay(
 @Suppress("unused")
 val hmdOnlyPatch = rawResourcePatch(
     name = "Visual Delay Fix",
-    description = "Offsets the HMD OpenXR pose-query time and zeroes the exported HMD velocity fields, " +
-        "so head tracking leads the rendered frame. Controllers are unaffected.",
+    description = "Re-times the headset's position report so head movement shows up sooner; " +
+        "controller movement is untouched. Builds: 2.0.20/5001712, 2.0.20/5001812, " +
+        "2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363.",
     default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
@@ -439,9 +440,10 @@ val hmdOnlyPatch = rawResourcePatch(
         max = 4000,
         default = 60,
         step = 1,
-        title = "Pose offset (ms)",
+        title = "Head motion offset (ms)",
         // 60 ms tested default for Galaxy XR; max 4000 ms (4 s) practical upper bound
-        description = "libvrlink_scene.so: AArch64 MOVZ/MOVK at PLT cave adds value×1e6 ns to X2 in QSVLDeviceHmd::GetPose. Tested default: 60 ms. Allowed range: 0 to 4000 ms.",
+        description = "Shifts the headset's motion report by this many milliseconds. Tested " +
+            "default: 60 ms. Allowed range: 0 to 4000 ms.",
         required = true,
     )
 

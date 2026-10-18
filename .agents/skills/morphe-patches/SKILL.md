@@ -55,7 +55,7 @@ A new app is a new package, never a widening of an existing patch. Checklist:
 
 1. `shared/Constants.kt`: a private `data class <App>Build(version, versionCode)`, its exact build list, an `is<App><Build>(version, versionCode)` helper that every patch body re-checks, a `Compatibility` built on the primary `AppTarget` constructor with a distinct `name`, and an exposed `COMPATIBILITIES_<APP>`. Never touch another app's lists.
 2. Layout: patches `app/template/patches/<app>/`, payloads `resources/<app>/<group>/`, extension smali `resources/<app>/smali/<package path>/`, tests `test/.../<app>/`.
-3. Categories: reuse `shared/PatchCategories.kt`; a new category needs the matching `PatchCategoriesTest` group map and expected counts in the same change. That test enumerates patches by hand (it does not discover new top-level patches), so a new app's patches stay outside its category and catalog assertions until they are listed there explicitly. A new category also needs an entry in `CATEGORY_ORDER` in `.github/scripts/generate_patches_readme.py`; unknown categories are appended alphabetically after the known ones.
+3. Categories: reuse `shared/PatchCategories.kt`; a new category needs the matching `PatchCategoriesTest` group map and expected counts in the same change. That test enumerates patches by hand (it does not discover new top-level patches), so a new app's patches stay outside its category and catalog assertions until they are listed there explicitly. A new category also needs an entry in `CATEGORY_ORDER` in `.github/scripts/generate_patches_readme.py`; unknown categories are appended alphabetically after the known ones. Adding OR moving categories also updates `PatchCategoriesTest`'s numeric asserts in the same change: the group-size `assertEquals(listOf(...))`, the stable/experimental entry totals, and any per-category count assert (e.g. the Controller count).
 4. Extension payload: a JavaExec task mirroring `assembleExtension` (input that app's smali dir, args `a -a 33 -o <out>`) emitting `<app>-extension.mpe`, plus `resources.srcDir(...)` and `processResources`/`sourcesJar` dependsOn. Never merge two apps' classes into one `.mpe`.
 5. Every patch declares `compatibleWith(*COMPATIBILITIES_<APP>.toTypedArray())` and re-checks the exact pair first: `if (!is<App><Build>(packageMetadata.versionName, packageMetadata.versionCode)) return@execute`.
 6. Payloads load through one private loader per app (`object {}.javaClass.getResourceAsStream("/<app>/<path>")`) that errors with the missing path.
@@ -98,7 +98,8 @@ the tracked `patches-list*.json` catalogs. Tests pin some wording:
   against `OptionalXrPatches.kt`.
 - `ControllerHalPosePatchTest` / `ControllerVelocityFramePatchTest` assert `needs Shizuku`,
   `local to the grip pose`, `local to the streamed pose`, `in the base space`.
-- `UberLinkRescanDisablePatchTest` asserts `2.0.23/5002363` and `Experimental`.
+- `GxrSpacewarpLayerPatchTest` asserts `2.0.23/5002363`, `2.0.20/5001712` and `stand` in the description; `FourXvrBundleTest` asserts the premium patch `name` contains `experimental` (rename no patch whose name or text a test pins).
+- Sweeps beat lists: grep `patches/src/test` for `.description`/`patchSource.contains`/name assertions before a text pass and treat every hit as locked verbatim; keep build-id pins (`2.0.23/5002363`) inside the rewritten text.
 - The 4XVR tests cover the new app instead of wording: `FourXvrNativeGuardTest` pins
   `libvr4p-oculus.so` and `libovrplatformloader.so` size/SHA-256 plus the refresh-profile
   and stub edit bytes and fails closed on wrong-size, wrong-hash or unpinned layouts;
@@ -107,10 +108,36 @@ the tracked `patches-list*.json` catalogs. Tests pin some wording:
 
 Rewriting a description therefore needs a matching test update (or keep the phrase), then
 `:patches:generatePatchesList` to rewrite all 4 root catalogs, and `:patches:test`.
+`:patches:generatePatchesList` rewrites all 4 root catalogs: it always writes
+`patches-list-stable.json` (STABLE), `patches-list-experimental.json` (EXPERIMENTAL) and
+`patches-list-all.json` (ALL), and stamps `patches-list.json` (mirror of `patches-list-stable.json`,
+byte-identical) with the selected `-PreleaseChannel` (release prep uses `stable`). A bare run
+without `-PreleaseChannel` stamps `patches-list.json` as channel `all` (49 patches) — wrong shape;
+run `-PreleaseChannel=stable` locally.
 `:patches:generatePatchesList` no longer depends on `test` (CI and the release build never
 run tests), so the local `:patches:test` run at the end of the task is the only thing that
 catches a broken assertion.
 Option and AppTarget descriptions are not covered by these assertions.
+
+House description style (user-approved): one short plain-words sentence plus
+`Builds: <exact ids/pairs>. Needs: <requirement>.` Keep every build id/pair the old text
+named; omit `Needs:` when only a normal install is required; keep credit appends intact
+and excluded from the length budget; no jargon beyond app/tool names. Names keep
+pinned suffixes like `(experimental)` unchanged.
+
+Option texts: `stringOption(...)`/`intSliderOption(...)` carry user-facing `title` and
+`description`, plus a `values` map whose left keys are display labels and right keys the
+stored settings — reword left keys only when clearly long, never the right-side values,
+and keep the mapping 1:1.
+
+For a repo-wide text pass (all descriptions plus option texts): build the inventory from
+the root `patches` key of `patches-list-all.json` (a recursive walk over-picks
+`compatiblePackages` rows because they carry `name` fields too), map patch names to source
+files by grepping `name = "`, then hand one directory batch per parallel child a
+scratch-file job (role contract + allowed file list + locked phrases + receipt shape),
+run the reviewer over the diff, then regenerate: `:patches:generatePatchesList`, the
+readme generator, `:patches:test`, and a remnant sweep expecting zero old-phrase matches
+outside `CHANGELOG.md` and `diagnostics/` (history is never rewritten).
 
 ## Bytecode editing
 
