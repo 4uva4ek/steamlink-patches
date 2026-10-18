@@ -1,3 +1,9 @@
+## [1.31.1-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.3...v1.31.1-dev.4) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Refactor Steam Link build compatibility and experimental flags ([cdeba3a](https://github.com/AngelDark92/xr-porting-hub/commit/cdeba3af23a4c94906d56b511cb1bc860087926c))
+
 ## [1.31.1-dev.3](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.2...v1.31.1-dev.3) (2026-10-18)
 
 ### 🐛 Bug Fixes

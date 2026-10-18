@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-18T13:29:30",
-  "description": "## [1.31.1-dev.3](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.2...v1.31.1-dev.3) (2026-10-18)\n\n### 🐛 Bug Fixes\n\n* Update patch descriptions and remove experimental patches ([f45d3d9](https://github.com/AngelDark92/xr-porting-hub/commit/f45d3d9cdd73b73770c89dd0e987fd4133124934))",
-  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.31.1-dev.3/patches-1.31.1-dev.3.mpp",
+  "created_at": "2026-10-18T14:26:37",
+  "description": "## [1.31.1-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.3...v1.31.1-dev.4) (2026-10-18)\n\n### 🐛 Bug Fixes\n\n* Refactor Steam Link build compatibility and experimental flags ([cdeba3a](https://github.com/AngelDark92/xr-porting-hub/commit/cdeba3af23a4c94906d56b511cb1bc860087926c))",
+  "download_url": "https://github.com/AngelDark92/xr-porting-hub/releases/download/v1.31.1-dev.4/patches-1.31.1-dev.4.mpp",
   "signature_download_url": "",
-  "version": "1.31.1-dev.3"
+  "version": "1.31.1-dev.4"
 }
