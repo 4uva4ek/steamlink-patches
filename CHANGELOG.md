@@ -1,3 +1,9 @@
+## [1.31.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.30.0...v1.31.0) (2026-10-18)
+
+### ✨ New Features
+
+* upadted patch descriptions for clarity and consistency across multiple patches, including updates to category names and improved explanations. ([be8fe64](https://github.com/AngelDark92/xr-porting-hub/commit/be8fe6495f632e34b02a4ba9ba30eb912e9c6497))
+
 ## [1.31.0-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.30.0...v1.31.0-dev.1) (2026-10-18)
 
 ### ✨ New Features
