@@ -1,3 +1,9 @@
+## [1.31.1-dev.2](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.1...v1.31.1-dev.2) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* update patches for Galaxy XR high-resolution 3-projection and Controller angular world to local adapter ([d30c129](https://github.com/AngelDark92/xr-porting-hub/commit/d30c129071bc567ff10e73c2a0f18547236b841a))
+
 ## [1.31.1-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.0...v1.31.1-dev.1) (2026-10-18)
 
 ### 🐛 Bug Fixes
