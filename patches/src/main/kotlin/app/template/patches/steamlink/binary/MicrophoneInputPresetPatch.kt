@@ -86,7 +86,9 @@ internal fun patchNativeMicrophonePreset(
 @Suppress("unused")
 val microphoneInputPresetPatch = rawResourcePatch(
     name = "Microphone input preset",
-    description = "Selects Steam Link's AAudio microphone processing mode. On Galaxy XR, Voice Recognition was clearer and louder than stock Voice Communication.",
+    description = "Switches the microphone's capture mode; Voice Recognition tested clearest and " +
+        "loudest on Galaxy XR. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, " +
+        "2.0.22/5002244, 2.0.23/5002363.",
     default = true,
 ) {
     category(PatchCategories.TRACKING_AND_AUDIO)
@@ -96,13 +98,14 @@ val microphoneInputPresetPatch = rawResourcePatch(
         key = "preset",
         default = "voice-recognition",
         values = mapOf(
-            "Voice Recognition (Best from my tests)" to "voice-recognition",
+            "Voice Recognition (tested best)" to "voice-recognition",
             "Voice Communication (Valve stock)" to "voice-communication",
             "Voice Performance (quiet)" to "voice-performance",
             "Unprocessed (quiet)" to "unprocessed",
         ),
         title = "Microphone mode",
-        description = "Voice Recognition was the clearest usable-level mode in Galaxy XR recordings. Voice Performance and Unprocessed were substantially quieter; Voice Communication sounded more processed.",
+        description = "Voice Recognition was the clearest and loudest tested on Galaxy XR. Voice " +
+            "Performance and Unprocessed are much quieter; Voice Communication sounds more processed.",
         required = true,
     )
 

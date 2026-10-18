@@ -389,13 +389,13 @@ private fun createDeviceIdentityPatch(
         key = "profile",
         default = "recommended",
         values = mapOf(
-            "Recommended for this build (legacy Quest Pro / native Galaxy XR)" to "recommended",
+            "Recommended for this build" to "recommended",
             "Samsung Galaxy XR" to "samsung-galaxy-xr",
             "Stock identity (no change)" to "stock-no-change",
             "Meta Quest Pro" to "meta-quest-pro",
             "PICO 4 Pro" to "pico-4-pro",
         ),
-        title = "HMD identity",
+        title = "Headset identity",
         description = profileDescription,
         required = true,
     )
@@ -446,23 +446,21 @@ private fun createDeviceIdentityPatch(
 @Suppress("unused")
 val deviceIdentityPatch = createDeviceIdentityPatch(
     name = "Device identity",
-    description = "Overrides the HMD identity reported to SteamVR. Recommended: Meta Quest Pro on the " +
-        "legacy targets through 5002244. Explicit profiles override that.",
+    description = "Sets the headset name SteamVR sees, with Meta Quest Pro as the recommended profile. " +
+        "Builds: 5001712 to 5002244.",
     default = true,
     compatibilities = COMPATIBILITIES_STEAM_LINK_LEGACY,
-    profileDescription = "Recommended selects this build's recommended profile: Meta Quest Pro on the " +
-        "legacy targets through 5002244. Explicit profiles override that choice. Verified legacy " +
-        "payloads are preserved.",
+    profileDescription = "Recommended picks Meta Quest Pro for this build. Any other choice sets that headset " +
+        "directly, using the verified built-in data.",
 )
 
 @Suppress("unused")
 val deviceIdentityNativeXrPatch = createDeviceIdentityPatch(
     name = "Device identity (2.0.23/5002363)",
-    description = "Overrides the HMD identity reported to SteamVR for exact 2.0.23/5002363. Optional; " +
-        "not part of the recommended set. Explicit profiles override that.",
+    description = "Sets the headset name SteamVR sees; optional, so it stays out of the recommended set. " +
+        "Builds: exact 2.0.23/5002363.",
     default = false,
     compatibilities = COMPATIBILITIES_STEAM_LINK_5002363,
-    profileDescription = "Recommended selects this build's recommended profile: the Galaxy XR identity " +
-        "on 2.0.23/5002363. Explicit profiles override that choice. Native-XR routing and the in-place " +
-        "identity upsert are preserved.",
+    profileDescription = "Recommended picks the Galaxy XR headset identity for this build. Any other choice " +
+        "sets that headset directly.",
 )

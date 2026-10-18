@@ -41,10 +41,9 @@ internal fun controllerAngularLocalResource(name: String): ByteArray =
 @Suppress("unused")
 val controllerAngularLocalPatch = rawResourcePatch(
     name = "Controller angular world to local",
-    description = "Adapts already corrected OpenXR angular velocity to Steam Link 2.0.23's local controller axes. " +
-        "Requires the active Galaxy XR OpenXR Velocity Frame runtime module; do not use with stock runtime velocities " +
-        "or old HAL/velocity/extrapolation APK layers. Changes angular velocity only, not poses, linear velocity or prediction. " +
-        "Exact 2.0.23/5002363 only; headset A/B validation pending. " +
+    description = "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. " +
+        "Needs: the Velocity Frame correction active; not with stock velocities or the old velocity patches. " +
+        "Exact 2.0.23/5002363 only; headset validation pending. " +
         STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {

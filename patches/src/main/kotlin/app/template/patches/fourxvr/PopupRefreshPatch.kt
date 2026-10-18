@@ -33,11 +33,7 @@ private fun MutableMethod.alreadyCallsOnHostResume(): Boolean =
 @Suppress("unused")
 internal val fourXvrPopupRefreshPatch = bytecodePatch(
     name = "Popup refresh on resume (4XVR)",
-    description = "Re-checks the 4XVR startup popups after the activity resumes or returns from " +
-        "system settings: hides the All-files-access prompt once external storage access is " +
-        "granted (the stock flow never re-checks the result of its 0x59E2 request) and hides the " +
-        "release-notes window when its saved version already covers the installed build, for " +
-        "exact 4XVR 2.0.22 build 20022. Headset validation pending. " +
+    description = "Re-checks the first-launch prompts after you return from system settings. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {

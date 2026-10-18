@@ -79,7 +79,7 @@ private val changePackageNameOption = stringOption(
     default = "Default",
     values = mapOf("Default" to "Default"),
     title = "Package name",
-    description = "Accepts either a full Java package name (for example, com.valvesoftware.steamlinkvr.galaxyxr) or a display suffix (for example, Galaxy XR). Suffix input appends to app name and generates a package suffix automatically.",
+    description = "Type a short name like Galaxy XR to add it to the app name as a package suffix, or a full package name like com.valvesoftware.steamlinkvr.galaxyxr.",
     required = true,
 ) {
     it == "Default" || (it != null && it.isNotBlank())
@@ -121,7 +121,7 @@ private val changePackageNameBytecodePatch = bytecodePatch {
 @Suppress("unused")
 val changePackageNamePatch = resourcePatch(
     name = "Change package name",
-    description = "Renames the package and Steam Link's internal VR-launch component, so the patched app can be installed next to the original.",
+    description = "Renames the app so the patched Steam Link can install next to the original. Builds: 5001712 to 5002244.",
     default = false,
 ) {
     category(PatchCategories.APP_AND_DEVICE_IDENTITY)

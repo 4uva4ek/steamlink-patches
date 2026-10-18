@@ -20,10 +20,8 @@ internal fun performanceBoostResource(name: String): ByteArray =
 @Suppress("unused")
 val performanceBoostPatch = rawResourcePatch(
     name = "OpenXR CPU and GPU BOOST",
-    description = "Requests the OpenXR BOOST performance hint for CPU and GPU on each session start. " +
-        "The runtime still controls clocks and thermal limits. Unsupported runtimes continue without BOOST. " +
-        "Adds an APK-local API layer; no root required. All repository-supported Steam Link builds; " +
-        "runtime performance benefit is not yet measured.",
+    description = "Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks " +
+        "and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured.",
     default = false,
 ) {
     category(PatchCategories.APP_AND_DEVICE_IDENTITY)

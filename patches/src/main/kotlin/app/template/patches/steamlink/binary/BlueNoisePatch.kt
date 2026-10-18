@@ -14,11 +14,9 @@ import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK
 @Suppress("unused")
 val blueNoisePatch = rawResourcePatch(
     name = "Blue-noise dithering",
-    description = "Adds static blue noise after video colour processing and fade, independently " +
-        "selectable on the foveal and the background/base layer; 8-bit or 10-bit input, always " +
-        "8-bit sRGB output. Recommended on all exact bases with the foveal layer on by default. " +
-        "Turn OLED's VD-like fovea toggle off when foveal blue noise is used. Unknown host " +
-        "shaders pass through unchanged.",
+    description = "Adds fine grain that hides harsh color steps, with separate on/off choices " +
+        "for the center and the background. Builds: 2.0.20/5001712, 2.0.20/5001812, " +
+        "2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363.",
     default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
@@ -27,19 +25,19 @@ val blueNoisePatch = rawResourcePatch(
     val fovea by booleanOption(
         key = "fovea",
         default = true,
-        title = "Foveal layer",
-        description = "Static blue noise on the foveal (masked) layer only. The foveal draw caller " +
-            "and the 8-bit sRGB framebuffer state are verified per draw; requires the exact stock " +
-            "shader or an OLED calibration with its VD-like fovea toggle off.",
+        title = "Center of the view",
+        description = "Fine grain in the center of the view only. Uses the exact stock video " +
+            "shader or an OLED calibration; turn that patch's VD-like center option off when " +
+            "this is on.",
         required = true,
     )
 
     val background by booleanOption(
         key = "background",
         default = false,
-        title = "Background layer",
-        description = "Static blue noise on the complete base projection, including the part " +
-            "underneath the foveal overlay; the foveal program is never dithered by this selection.",
+        title = "Background",
+        description = "Fine grain over the whole background, including under the center overlay " +
+            "on top; the center's own grain choice is not touched.",
         required = true,
     )
 

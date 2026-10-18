@@ -43,7 +43,7 @@ val controllerHalPosePatch = rawResourcePatch(
         STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
-    category(PatchCategories.CONTROLLER)
+    category(PatchCategories.CONTROLLERS_SHIZUKU)
     compatibleWith(*(COMPATIBILITIES_STEAM_LINK_NATIVE_XR_EXPERIMENTAL + COMPATIBILITIES_STEAM_LINK_LEGACY_EXPERIMENTAL).toTypedArray())
     dependsOn(
         shizukuBridgeExtensionPatch,

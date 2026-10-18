@@ -25,10 +25,7 @@ private const val GXR_TOAST_CONTINUITY = "Lcn/vr4p/patch/GxrToastContinuity;"
 @Suppress("unused")
 internal val fourXvrToastContinuityPatch = bytecodePatch(
     name = "Startup and UI continuity helper (4XVR)",
-    description = "Registers the bundled GxrToastContinuity helper, whose I610UEU2AZF3-gated " +
-        "memory-buildup fix and toast continuity keep the Galaxy XR UI pipeline warm across " +
-        "activity recreation, right after Main4XActivity.onCreate for exact 4XVR 2.0.22 build " +
-        "20022. Headless validation pending. " +
+    description = "Keeps the startup greeting and on-screen notifications working when the app rebuilds its display. Builds: 4XVR 2.0.22/20022. " +
         FOUR_XVR_UPSTREAM_CREDIT,
     default = true,
 ) {
