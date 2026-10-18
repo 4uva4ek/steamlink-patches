@@ -2625,6 +2625,126 @@
       ]
     },
     {
+      "name": "OpenXR CPU and GPU BOOST",
+      "description": "Requests the OpenXR BOOST performance hint for CPU and GPU on each session start. The runtime still controls clocks and thermal limits. Unsupported runtimes continue without BOOST. Adds an APK-local API layer; no root required. All repository-supported Steam Link builds; runtime performance benefit is not yet measured.",
+      "category": "App & device identity",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.20",
+              "versionCodes": {
+                "ARM64_V8A": 5001712,
+                "ARMEABI_V7A": 5001712,
+                "X86_64": 5001712,
+                "X86": 5001712
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Verified Steam Link 2.0.20 build 5001712."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.20",
+              "versionCodes": {
+                "ARM64_V8A": 5001812,
+                "ARMEABI_V7A": 5001812,
+                "X86_64": 5001812,
+                "X86": 5001812
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.21",
+              "versionCodes": {
+                "ARM64_V8A": 5001968,
+                "ARMEABI_V7A": 5001968,
+                "X86_64": 5001968,
+                "X86": 5001968
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 5002244,
+                "ARMEABI_V7A": 5002244,
+                "X86_64": 5002244,
+                "X86": 5002244
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Verified Steam Link 2.0.22 build 5002244."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.23",
+              "versionCodes": {
+                "ARM64_V8A": 5002363,
+                "ARMEABI_V7A": 5002363,
+                "X86_64": 5002363,
+                "X86": 5002363
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Popup refresh on resume (4XVR)",
       "description": "Re-checks the 4XVR startup popups after the activity resumes or returns from system settings: hides the All-files-access prompt once external storage access is granted (the stock flow never re-checks the result of its 0x59E2 request) and hides the release-notes window when its saved version already covers the installed build, for exact 4XVR 2.0.22 build 20022. Headset validation pending. Based on @logkim1's 4XVR-GalaxyXR patches: https://github.com/logkim1/4XVR-GalaxyXR.",
       "category": "Startup & permissions",
