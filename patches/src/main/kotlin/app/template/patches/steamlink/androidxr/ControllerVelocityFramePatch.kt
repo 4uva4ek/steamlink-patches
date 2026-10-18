@@ -54,14 +54,14 @@ internal fun controllerVelocityFrameLibrary(angularWorld: Boolean): ByteArray =
         .withAngularVelocityFrame(CONTROLLER_VELOCITY_FRAME_CONFIG_MAGIC, angularWorld)
 
 private const val CONTROLLER_VELOCITY_FRAME_DESCRIPTION =
-    "Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads, so thrown objects leave in the right direction. Stock, they arrive in a controller-attached frame. Adds an OpenXR API layer; no Steam Link code is changed."
+    "Fixes thrown-object directions by rotating controller speeds into the frame SteamVR expects."
 
 @Suppress("unused")
 val controllerVelocityFramePatch = rawResourcePatch(
     name = "Controller velocity frame",
-    description = "$CONTROLLER_VELOCITY_FRAME_DESCRIPTION Steam Link 2.0.23: angular velocity is " +
-        "reported local to the streamed pose. Steam Link 2.0.20 - 2.0.22: angular velocity is " +
-        "reported in the base space. " +
+    description = "$CONTROLLER_VELOCITY_FRAME_DESCRIPTION Builds: 2.0.23, angular velocity is " +
+        "reported local to the streamed pose; 2.0.20 - 2.0.22, it is reported in the base space. " +
+        "Needs: nothing. " +
         STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {

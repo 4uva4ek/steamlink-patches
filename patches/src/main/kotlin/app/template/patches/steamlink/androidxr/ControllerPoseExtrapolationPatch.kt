@@ -38,7 +38,7 @@ internal fun controllerExtrapolationResource(name: String): ByteArray =
 @Suppress("unused")
 val controllerPoseExtrapolationPatch = rawResourcePatch(
     name = "Controller pose extrapolation",
-    description = "Makes Galaxy XR predict controller poses to the moment VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose; no Steam Link code is changed. " +
+    description = "Makes Galaxy XR predict controller poses to the moment the app asks, instead of repeating one sample per frame, and smooths out jitter. Builds: 5001712 to 5002363 (measured on 2.0.23). Needs: nothing. " +
         STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {

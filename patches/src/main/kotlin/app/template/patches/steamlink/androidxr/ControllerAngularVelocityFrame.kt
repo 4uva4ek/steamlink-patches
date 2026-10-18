@@ -22,7 +22,7 @@ internal const val CONTROLLER_VELOCITY_FRAME_CONFIG_MAGIC = "GXRVFRCFG0000001"
  * (@4uva4ek's galaxyxr-modules). Appended to every controller patch description.
  */
 internal const val STEAM_LINK_CONTROLLER_CREDIT =
-    "Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: " +
+    "Details: " +
         "https://github.com/4uva4ek."
 
 private const val ANGULAR_VELOCITY_CONFIG_VERSION = 1

@@ -128,7 +128,8 @@ object Constants {
                     "Build ${build.versionCode} recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, " +
                         "Microphone input preset (Voice Recognition), Unrestricted battery usage, " +
                         "Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, " +
-                        "Blue-noise dithering with the default foveal layer, and Network Optimizations. " +
+                        "Blue-noise dithering with the default foveal layer, Network Optimizations, " +
+                        "OpenXR CPU and GPU BOOST, and Codecs Support. " +
                         "The retired projection experiments are excluded. " +
                         if (build.versionCode == 5002363) "Decoded-base adaptation; headset validation pending." else ""
                 } else {

@@ -34,12 +34,12 @@ private val controllerHalPoseExtensionPatch = bytecodePatch {
 }
 
 private const val CONTROLLER_HAL_POSE_DESCRIPTION =
-    "Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime, removing the runtime's ~35 ms sample lag, and filters jitter out of pose and velocity. The HAL needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without Shizuku tracking stays as it is."
+    "Reads controller poses straight from the headset's HAL, removing ~35 ms of lag and smoothing jitter. HAL access needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without it tracking stays stock."
 
 @Suppress("unused")
 val controllerHalPosePatch = rawResourcePatch(
     name = "Controller tracking from the controller HAL through Shizuku",
-    description = "$CONTROLLER_HAL_POSE_DESCRIPTION Steam Link 2.0.23: angular velocity is reported local to the grip pose. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. " +
+    description = "$CONTROLLER_HAL_POSE_DESCRIPTION Builds: 2.0.23, angular velocity is reported local to the grip pose; 2.0.20 - 2.0.22, it is reported in the base space. " +
         STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
