@@ -1,3 +1,9 @@
+## [1.31.1-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.0...v1.31.1-dev.1) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Refactor Steam Link Experimental to Steam Link ([a23faf3](https://github.com/AngelDark92/xr-porting-hub/commit/a23faf3046f8b723320aaf10a7e4137dc8f56a91))
+
 ## [1.31.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.30.0...v1.31.0) (2026-10-18)
 
 ### ✨ New Features
