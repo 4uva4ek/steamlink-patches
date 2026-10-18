@@ -25,7 +25,7 @@ class NetworkOptimizationsPatchTest {
     @Test
     fun `metadata declares the streaming category and only the exact 2_0_23 target`() {
         assertEquals("Network Optimizations", networkOptimizationsPatch.name)
-        assertEquals(false, networkOptimizationsPatch.default)
+        assertEquals(true, networkOptimizationsPatch.default)
         assertEquals(PatchCategories.STREAMING_AND_NETWORK, networkOptimizationsPatch.category)
         assertTrue(networkOptimizationsPatch.supports("2.0.23", 5002363))
         assertFalse(networkOptimizationsPatch.supports("2.0.22", 5002244))

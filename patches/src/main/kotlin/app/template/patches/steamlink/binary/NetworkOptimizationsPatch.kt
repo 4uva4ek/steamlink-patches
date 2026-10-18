@@ -160,12 +160,14 @@ val networkOptimizationsPatch = rawResourcePatch(
     description = "Keeps streaming smooth after Wi-Fi hiccups: lost packets are re-requested, recent " +
         "video frames are kept, and bigger buffers absorb bursts; headset verification still " +
         "pending. Builds: 2.0.23/5002363 only.",
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_5002363.toTypedArray())
 
     execute {
+        if (packageMetadata.packageName != "com.valvesoftware.steamlinkvr" ||
+            packageMetadata.versionName != "2.0.23" || packageMetadata.versionCode != "5002363") return@execute
         val scene = get("lib/arm64-v8a/libvrlink_scene.so")
         scene.writeBytes(applyNetworkOptimizationsScene(scene.readBytes()))
         val main = get("lib/arm64-v8a/libmain.so")

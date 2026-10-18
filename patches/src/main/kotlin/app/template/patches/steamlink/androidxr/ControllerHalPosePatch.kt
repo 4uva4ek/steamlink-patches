@@ -40,7 +40,7 @@ private const val CONTROLLER_HAL_POSE_DESCRIPTION =
 val controllerHalPosePatch = rawResourcePatch(
     name = "Controller tracking from the controller HAL through Shizuku",
     description = "$CONTROLLER_HAL_POSE_DESCRIPTION Builds: 2.0.23, angular velocity is reported local to the grip pose; 2.0.20 - 2.0.22, it is reported in the base space. " +
-        CONTRIBUTOR_4UVA_4EK,
+        STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
     category(PatchCategories.CONTROLLERS_SHIZUKU)

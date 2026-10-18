@@ -1,4 +1,6 @@
 package app.template.patches.steamlink.androidxr
+
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.security.MessageDigest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -70,15 +72,7 @@ class ControllerVelocityFramePatchTest {
         assertFalse(controllerVelocityFramePatch.default, controllerVelocityFramePatch.name)
         assertTrue(controllerVelocityFramePatch.dependencies.isEmpty(), controllerVelocityFramePatch.name)
         val compatibilities = controllerVelocityFramePatch.compatibility.orEmpty()
-        assertTrue(compatibilities.all { it.name == "Steam Link" }, controllerVelocityFramePatch.name)
-        assertEquals(
-            setOf("2.0.20/5001812", "2.0.21/5001968", "2.0.22/5002244"),
-            compatibilities.flatMap { it.targets }
-                .filter { it.isExperimental }
-                .map { it.version + "/" + it.versionCodes!!.values.toSet().single() }
-                .toSet(),
-            controllerVelocityFramePatch.name,
-        )
+        assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME }, controllerVelocityFramePatch.name)
         assertEquals(
             listOf(
                 "2.0.23" to 5002363, "2.0.20" to 5001712, "2.0.20" to 5001812,

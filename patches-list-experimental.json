@@ -82,9 +82,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -104,9 +104,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -126,9 +126,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -183,9 +183,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -205,9 +205,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -227,9 +227,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -313,9 +313,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -335,9 +335,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -357,9 +357,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -381,7 +381,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -454,9 +454,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -476,9 +476,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -498,9 +498,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -521,14 +521,14 @@
     },
     {
       "name": "Codecs Support",
-      "description": "Exact 2.0.20/5001712: lets the headset decode the H.264 or AV1 video the GalaxyXR driver's Stream codec setting picks; stock HEVC streams are untouched. Needs: the matching driver codec setting.",
+      "description": "Lets the headset decode the H.264 or AV1 video the GalaxyXR driver's Stream codec setting picks; stock HEVC streams are untouched. Builds: 2.0.20/5001712, 2.0.23/5002363. Needs: the matching driver codec setting. Headset validation pending on 2.0.23/5002363.",
       "category": "Streaming & network",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -542,25 +542,15 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Verified Steam Link 2.0.20 build 5001712."
             }
           ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Codecs Support (2.0.23/5002363)",
-      "description": "Optional on exact 2.0.23/5002363: lets the headset decode the H.264 or AV1 video the GalaxyXR driver picks; stock HEVC streams are untouched. Needs: the matching driver codec setting. Headset validation pending.",
-      "category": "Streaming & network",
-      "default": false,
-      "dependencies": [],
-      "compatiblePackages": [
+        },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -574,17 +564,27 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Verified Steam Link 2.0.23 build 5002363."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "enableTelemetry",
+          "title": "Enable telemetry",
+          "description": "Optional USB ADB decoder measurements and codec-byte capture for SteamVR Colour Lab. Off installs no telemetry components.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
-      "name": "Controller angular world to local",
+      "name": "Controller angular world to local (experimental)",
       "description": "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. Needs: the Velocity Frame runtime correction active in the app (it does not enable it itself); not with stock velocities or the old velocity patches. Details: https://github.com/4uva4ek.",
       "category": "Controller",
       "default": false,
@@ -592,10 +592,10 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#1B2838",
+          "apkFileType": null,
+          "appIconColor": null,
           "signatures": null,
           "targets": [
             {
@@ -608,7 +608,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Verified Steam Link 2.0.23 build 5002363."
+              "description": "Angular adapter for corrected base-space velocities; requires active runtime correction."
             }
           ]
         }
@@ -628,7 +628,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -650,7 +650,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -664,7 +664,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.20 build 5001812."
             }
@@ -672,7 +672,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -686,7 +686,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.21 build 5001968."
             }
@@ -694,7 +694,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -708,7 +708,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.22 build 5002244."
             }
@@ -716,7 +716,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -748,7 +748,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -770,7 +770,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -784,7 +784,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -792,7 +792,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -806,7 +806,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -814,7 +814,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -828,7 +828,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -836,7 +836,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -872,7 +872,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -894,7 +894,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -916,7 +916,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -930,7 +930,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.20 build 5001812."
             }
@@ -938,7 +938,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -952,7 +952,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.21 build 5001968."
             }
@@ -960,7 +960,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -974,7 +974,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.22 build 5002244."
             }
@@ -992,7 +992,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1014,7 +1014,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1036,7 +1036,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1050,7 +1050,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1058,7 +1058,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1072,7 +1072,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1080,7 +1080,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1094,7 +1094,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1151,9 +1151,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -1173,9 +1173,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -1195,9 +1195,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -1248,7 +1248,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Verified Steam Link 2.0.23 build 5002363."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         }
@@ -1316,9 +1316,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -1338,9 +1338,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -1360,9 +1360,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -1414,9 +1414,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -1436,9 +1436,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -1458,9 +1458,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -1512,9 +1512,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -1534,9 +1534,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -1556,9 +1556,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -1608,10 +1608,10 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#1B2838",
+          "apkFileType": null,
+          "appIconColor": null,
           "signatures": null,
           "targets": [
             {
@@ -1622,9 +1622,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         }
@@ -1679,9 +1679,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -1701,9 +1701,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -1723,9 +1723,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -1747,7 +1747,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Verified Steam Link 2.0.23 build 5002363."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         }
@@ -1763,10 +1763,10 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#1B2838",
+          "apkFileType": null,
+          "appIconColor": null,
           "signatures": null,
           "targets": [
             {
@@ -1779,16 +1779,16 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Verified Steam Link 2.0.23 build 5002363."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
+          "name": "Steam Link Experimental",
           "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#1B2838",
+          "apkFileType": null,
+          "appIconColor": null,
           "signatures": null,
           "targets": [
             {
@@ -1856,9 +1856,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -1878,9 +1878,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -1900,9 +1900,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -1924,7 +1924,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2029,7 +2029,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
@@ -2051,7 +2051,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
@@ -2073,7 +2073,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
               "description": "Static decoded-base adaptation of the Galaxy XR high-resolution patch for exact Steam Link 2.0.22 build 5002244; headset validation pending."
             }
@@ -2309,9 +2309,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -2331,9 +2331,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -2353,9 +2353,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -2377,7 +2377,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2403,7 +2403,7 @@
       "name": "Network Optimizations",
       "description": "Keeps streaming smooth after Wi-Fi hiccups: lost packets are re-requested, recent video frames are kept, and bigger buffers absorb bursts; headset verification still pending. Builds: 2.0.23/5002363 only.",
       "category": "Streaming & network",
-      "default": false,
+      "default": true,
       "dependencies": [],
       "compatiblePackages": [
         {
@@ -2424,7 +2424,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Verified Steam Link 2.0.23 build 5002363."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         }
@@ -2476,9 +2476,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -2498,9 +2498,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -2520,9 +2520,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -2544,7 +2544,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2606,7 +2606,7 @@
       "name": "OpenXR CPU and GPU BOOST",
       "description": "Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured. Details: https://github.com/4uva4ek/steamlink-patches.",
       "category": "App & device identity",
-      "default": false,
+      "default": true,
       "dependencies": [],
       "compatiblePackages": [
         {
@@ -2647,53 +2647,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
-            }
-          ]
-        },
-        {
-          "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#1B2838",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "2.0.21",
-              "versionCodes": {
-                "ARM64_V8A": 5001968,
-                "ARMEABI_V7A": 5001968,
-                "X86_64": 5001968,
-                "X86": 5001968
-              },
-              "isExperimental": true,
-              "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
-            }
-          ]
-        },
-        {
-          "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#1B2838",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "2.0.22",
-              "versionCodes": {
-                "ARM64_V8A": 5002244,
-                "ARMEABI_V7A": 5002244,
-                "X86_64": 5002244,
-                "X86": 5002244
-              },
-              "isExperimental": true,
-              "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -2715,7 +2671,61 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "OpenXR CPU and GPU BOOST (2.0.21/2.0.22)",
+      "description": "Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured. Details: https://github.com/4uva4ek/steamlink-patches.",
+      "category": "App & device identity",
+      "default": false,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.21",
+              "versionCodes": {
+                "ARM64_V8A": 5001968,
+                "ARMEABI_V7A": 5001968,
+                "X86_64": 5001968,
+                "X86": 5001968
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
+            }
+          ]
+        },
+        {
+          "packageName": "com.valvesoftware.steamlinkvr",
+          "name": "Steam Link",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B2838",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.0.22",
+              "versionCodes": {
+                "ARM64_V8A": 5002244,
+                "ARMEABI_V7A": 5002244,
+                "X86_64": 5002244,
+                "X86": 5002244
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -2898,9 +2908,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -2920,9 +2930,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -2942,9 +2952,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -3002,9 +3012,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3024,9 +3034,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3046,9 +3056,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -3170,9 +3180,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3192,9 +3202,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3214,9 +3224,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -3238,7 +3248,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -3290,9 +3300,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3312,9 +3322,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3334,9 +3344,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         },
@@ -3358,7 +3368,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and Blue-noise dithering with the default foveal layer. Verified Steam Link 2.0.23 build 5002363; the retired projection experiments are excluded. "
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, Network Optimizations, OpenXR CPU and GPU BOOST, and Codecs Support. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -3424,9 +3434,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3446,9 +3456,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3468,9 +3478,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -3524,9 +3534,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3546,9 +3556,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3568,9 +3578,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -3624,9 +3634,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3646,9 +3656,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3668,9 +3678,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }
@@ -3724,9 +3734,9 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.20 build 5001812; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
           ]
         },
@@ -3746,9 +3756,9 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.21 build 5001968; headset validation pending."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.21 build 5001968; headset validation pending."
             }
           ]
         },
@@ -3768,9 +3778,9 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": null,
-              "description": "Experimental Steam Link 2.0.22 build 5002244; headset validation pending."
+              "description": "Verified Steam Link 2.0.22 build 5002244."
             }
           ]
         }

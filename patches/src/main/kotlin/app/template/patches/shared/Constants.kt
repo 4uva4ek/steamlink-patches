@@ -6,21 +6,9 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.SupportedAbi
 
 object Constants {
+    const val EXPERIMENTAL_COMPATIBILITY_NAME = "Steam Link Experimental"
+
     private const val STEAM_LINK_PACKAGE = "com.valvesoftware.steamlinkvr"
-    // Builds whose adaptations are still awaiting headset validation: they carry the
-    // isExperimental mark in every compatibility entry. Builds outside this set are
-    // fully supported (5001712 and 5002363).
-    private val EXPERIMENTAL_STEAM_LINK_BUILDS = setOf(
-        SteamLinkBuild("2.0.20", 5001812),
-        SteamLinkBuild("2.0.21", 5001968),
-        SteamLinkBuild("2.0.22", 5002244),
-    )
-
-    internal fun isExperimentalSteamLinkBuild(version: String, versionCode: String): Boolean =
-        EXPERIMENTAL_STEAM_LINK_BUILDS.any { build ->
-            build.version == version && build.versionCode.toString() == versionCode
-        }
-
     private data class SteamLinkBuild(val version: String, val versionCode: Int)
 
     private val LEGACY_STEAM_LINK_BUILDS = listOf(
@@ -105,13 +93,18 @@ object Constants {
 
     private fun steamLinkBuildCompatibility(
         build: SteamLinkBuild,
-        description: String = if (build in EXPERIMENTAL_STEAM_LINK_BUILDS) {
-            "Experimental Steam Link ${build.version} build ${build.versionCode}; headset validation pending."
+        name: String = "Steam Link",
+        description: String = if (build in listOf(
+                SteamLinkBuild("2.0.20", 5001812),
+                SteamLinkBuild("2.0.21", 5001968),
+                SteamLinkBuild("2.0.23", 5002363),
+            )) {
+            "Native and APK adaptation for exact Steam Link ${build.version} build ${build.versionCode}; headset validation pending."
         } else {
             "Verified Steam Link ${build.version} build ${build.versionCode}."
         },
     ) = Compatibility(
-        name = "Steam Link",
+        name = name,
         packageName = STEAM_LINK_PACKAGE,
         apkFileType = ApkFileType.APK,
         appIconColor = 0x1B2838,
@@ -119,7 +112,6 @@ object Constants {
             AppTarget(
                 version = build.version,
                 versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
-                isExperimental = build in EXPERIMENTAL_STEAM_LINK_BUILDS,
                 description = description,
             ),
         ),
@@ -135,9 +127,11 @@ object Constants {
                 description = if (build in MODERN_TONGUE_BRIDGE_STEAM_LINK_BUILDS) {
                     "Build ${build.versionCode} recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, " +
                         "Microphone input preset (Voice Recognition), Unrestricted battery usage, " +
-                        "Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, and " +
-                        "Blue-noise dithering with the default foveal layer. " +
-                        "Verified Steam Link 2.0.23 build ${build.versionCode}; the retired projection experiments are excluded. "
+                        "Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, " +
+                        "Blue-noise dithering with the default foveal layer, Network Optimizations, " +
+                        "OpenXR CPU and GPU BOOST, and Codecs Support. " +
+                        "The retired projection experiments are excluded. " +
+                        if (build.versionCode == 5002363) "Decoded-base adaptation; headset validation pending." else ""
                 } else {
                     "Build ${build.versionCode} recommends its native-Android-XR-safe set: Galaxy XR " +
                         "high-resolution 3-projection fix, Device identity, Microphone input preset, OLED color " +
@@ -210,15 +204,11 @@ object Constants {
             )
         }
 
-    // Channel marker lists: patches whose compatibility comes from these lists are the
-    // experimental release channel. Per-build isExperimental display flags come from
-    // EXPERIMENTAL_STEAM_LINK_BUILDS through the shared factory; the distinct
-    // "Experimental patches for ..." description below keeps these objects value-equal
-    // only to themselves (no phantom app name involved).
     private fun experimentalCompatibilities(builds: List<SteamLinkBuild>) =
         builds.map { build ->
             steamLinkBuildCompatibility(
                 build = build,
+                name = EXPERIMENTAL_COMPATIBILITY_NAME,
                 description = "Experimental patches for Steam Link ${build.version} build ${build.versionCode}.",
             )
         }

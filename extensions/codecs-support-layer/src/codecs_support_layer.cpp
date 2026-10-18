@@ -25,25 +25,16 @@
 #include <android/log.h>
 #include <link.h>
 #include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <time.h>
 #include <unistd.h>
-#include <media/NdkMediaCodec.h>
 
 #include <algorithm>
 #include <atomic>
-#include <chrono>
 #include <cstdint>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <condition_variable>
-#include <memory>
 #include <map>
 #include <mutex>
 #include <string>
-#include <thread>
 #include <utility>
 #include <vector>
 
@@ -54,7 +45,6 @@
 #include "format_recipe.h"
 #include "av1_geometry.h"
 #include "sha256.h"
-#include "decoder_probe.h"
 
 #define EXPORT extern "C" __attribute__((visibility("default")))
 #define LOG(...) __android_log_print(ANDROID_LOG_INFO, "GXRCodecsSupport", __VA_ARGS__)
@@ -67,276 +57,10 @@ using gxr::PatchAv1SeqHeaders;
 using gxr::Sniffed;
 
 constexpr const char* kLayerName = "XR_APILAYER_local_GalaxyXR_codecs_support";
-constexpr const char* kBuild = "codecs-support-v7-probe-20261018";
+constexpr const char* kBuild = "codecs-support-v6-20261014";
 constexpr const char* kDisableEnv = "GXR_DISABLE_CODECS_SUPPORT";
 constexpr const char* kSceneSoname = "libvrlink_scene.so";
 constexpr size_t kMaxSniffedAu = 4u << 20;
-
-// Separate from the retired buffering experiment: observes original calls,
-// never delays/retries/reorders decoder submission or changes buffer ownership.
-constexpr const char* kProbeRequest = "/sdcard/Android/data/com.valvesoftware.steamlinkvr/files/colourlab-probe.request";
-constexpr const char* kVerifyRequest = "/sdcard/Android/data/com.valvesoftware.steamlinkvr/files/colourlab-verify.request";
-constexpr const char* kProbeCapture = "/sdcard/Android/data/com.valvesoftware.steamlinkvr/files/colourlab-capture.bin";
-
-uint64_t ProbeNow() {
-    timespec ts{};
-    if (clock_gettime(CLOCK_MONOTONIC, &ts)) return 0;
-    return static_cast<uint64_t>(ts.tv_sec) * 1000000000ull + ts.tv_nsec;
-}
-
-// Bounded, no-follow reads. Request file I/O is confined to the worker (<=1 Hz).
-std::string ReadProbeRequest(const char* path) {
-    int fd = open(path, O_RDONLY | O_CLOEXEC | O_NOFOLLOW | O_NONBLOCK);
-    if (fd < 0) return {};
-    struct stat attributes{};
-    time_t now = time(nullptr);
-    if (fstat(fd, &attributes) || !S_ISREG(attributes.st_mode) ||
-        now < attributes.st_mtime || now - attributes.st_mtime > 30) {
-        close(fd);
-        return {};
-    }
-    char text[129];
-    ssize_t count = read(fd, text, sizeof(text));
-    close(fd);
-    return count > 0 && count < static_cast<ssize_t>(sizeof(text)) ?
-        std::string(text, static_cast<size_t>(count)) : std::string{};
-}
-
-struct ProbeCapture {
-    std::string token, nonce;
-    uint64_t stream = 0, time = 0;
-    bool sequenceHeader = false;
-    std::vector<uint8_t> bytes;
-};
-
-class DecoderProbe {
-public:
-    DecoderProbe() {
-        try { worker = std::thread([this] { Run(); }); }
-        catch (...) { /* Optional diagnostics must never prevent app startup. */ }
-    }
-    ~DecoderProbe() {
-        stopping.store(true);
-        wake.notify_all();
-        if (worker.joinable()) worker.join();
-    }
-    bool Enabled() const { return active.load(std::memory_order_relaxed); }
-
-    void VideoCreated(void* codec, const char* mime) {
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!state.AdmitVideo(reinterpret_cast<uintptr_t>(codec), mime)) return;
-        ResetLocked();
-    }
-
-    void VideoRemapped(void* oldCodec, void* liveCodec) {
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!state.ForgetVideo(reinterpret_cast<uintptr_t>(oldCodec))) return;
-        if (liveCodec) state.AdmitVideo(reinterpret_cast<uintptr_t>(liveCodec), "video/remapped");
-        ResetLocked();
-    }
-
-    void Reset(void* codec, bool deleted = false) {
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!state.IsVideo(reinterpret_cast<uintptr_t>(codec))) return;
-        if (deleted) state.ForgetVideo(reinterpret_cast<uintptr_t>(codec));
-        ResetLocked();
-    }
-
-    void ResetLocked() {
-        state.Reset();
-        buffers.clear();
-        captureReady.reset();
-        captureBusy = false;
-    }
-
-    void Input(void* codec, size_t index, uint8_t* data, size_t capacity) {
-        if (!Enabled() || !data) return;
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!state.IsVideo(reinterpret_cast<uintptr_t>(codec))) return;
-        if (buffers.size() >= 64) buffers.clear();
-        try { buffers[std::make_pair(codec, index)] = Buffer{data, capacity}; }
-        catch (...) { buffers.clear(); }
-    }
-
-    std::shared_ptr<ProbeCapture> BeforeQueue(void* codec, size_t index, int64_t offset,
-                                             size_t size, uint32_t flags) {
-        if (!Enabled()) return {};
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!state.IsVideo(reinterpret_cast<uintptr_t>(codec))) return {};
-        auto found = buffers.find(std::make_pair(codec, index));
-        if (found == buffers.end()) return {};
-        Buffer buffer = found->second;
-        buffers.erase(found); // never retain a queued decoder-owned pointer
-        if (captureBusy || pendingNonce.empty() || !size || (flags & (2u | 4u | 8u)) ||
-            !gxr::ProbeBufferRange(buffer.capacity, offset, size)) return {};
-        const uint8_t* bytes = buffer.data + static_cast<size_t>(offset);
-        bool header = gxr::ProbeHasSequenceHeader(bytes, size);
-        // Wait for independently parsable headers without asking the encoder
-        // for a keyframe. A bounded fallback remains honestly inconclusive.
-        if (!header && ProbeNow() - verifyStarted < 15000000000ull) return {};
-        try {
-            auto capture = std::make_shared<ProbeCapture>();
-            capture->token = state.token;
-            capture->nonce = pendingNonce;
-            capture->stream = state.counters.stream;
-            capture->time = ProbeNow();
-            capture->sequenceHeader = header;
-            capture->bytes.assign(bytes, bytes + size); // one bounded opt-in AU copy
-            captureBusy = true;
-            return capture;
-        } catch (...) { return {}; } // observation must never fail a decoder call
-    }
-
-    std::pair<uint64_t, uint64_t> BeginQueue(void* codec) {
-        if (!Enabled()) return {};
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!state.IsVideo(reinterpret_cast<uintptr_t>(codec))) return {};
-        return {state.counters.stream, ProbeNow()};
-    }
-
-    void Queue(void* codec, uint64_t pts, size_t size, uint32_t flags, int32_t status,
-               std::pair<uint64_t, uint64_t> submission, std::shared_ptr<ProbeCapture> capture) {
-        if (!Enabled()) return;
-        std::lock_guard<std::mutex> lock(mutex);
-        if (!submission.second || submission.first != state.counters.stream) {
-            if (capture) captureBusy = false;
-            return;
-        }
-        try { state.Queue(reinterpret_cast<uintptr_t>(codec), pts, size, flags, status, submission.second); }
-        catch (...) { state.Reset(); buffers.clear(); }
-        if (!capture) return;
-        if (!status && capture->token == state.token && capture->stream == state.counters.stream &&
-            capture->nonce == pendingNonce) {
-            captureReady = std::move(capture);
-            wake.notify_all();
-        } else captureBusy = false;
-    }
-
-    void Output(void* codec, const AMediaCodecBufferInfo* info) {
-        if (!Enabled() || !info) return;
-        std::lock_guard<std::mutex> lock(mutex);
-        state.Output(reinterpret_cast<uintptr_t>(codec), static_cast<uint64_t>(info->presentationTimeUs),
-                     info->flags, ProbeNow());
-    }
-
-private:
-    struct Buffer { uint8_t* data; size_t capacity; };
-    std::atomic<bool> active{false}, stopping{false};
-    std::mutex mutex;
-    std::condition_variable wake;
-    gxr::DecoderProbeState state;
-    std::map<std::pair<void*, size_t>, Buffer> buffers;
-    std::string pendingNonce, lastNonce;
-    uint64_t verifyStarted = 0;
-    bool captureBusy = false;
-    std::shared_ptr<ProbeCapture> captureReady;
-    std::thread worker;
-
-    void Poll() {
-        std::string token, nonce, verifyToken;
-        if (!gxr::ProbeRequest(ReadProbeRequest(kProbeRequest), token)) token.clear();
-        bool verify = !token.empty() && gxr::ProbeRequest(ReadProbeRequest(kVerifyRequest), verifyToken, &nonce) &&
-                      verifyToken == token;
-        std::lock_guard<std::mutex> lock(mutex);
-        if (state.Session(token)) {
-            buffers.clear();
-            pendingNonce.clear();
-            lastNonce.clear();
-            captureReady.reset();
-            captureBusy = false;
-        }
-        active.store(!token.empty(), std::memory_order_relaxed);
-        if (verify && nonce != lastNonce) {
-            pendingNonce = nonce;
-            lastNonce = nonce;
-            verifyStarted = ProbeNow();
-        }
-        if (token.empty()) return;
-        const auto& c = state.counters;
-        __android_log_print(ANDROID_LOG_INFO, "GXRDecoderProbe",
-            "event=stats token=%s stream=%llu monotonic_ns=%llu discontinuities=%llu "
-            "accepted_input_bytes=%llu accepted_input_frames=%llu output_frames=%llu "
-            "queue_to_output_count=%llu queue_to_output_sum_ns=%llu queue_to_output_max_ns=%llu "
-            "queue_successes=%llu queue_failures=%llu ambiguous_pts=%llu unmatched_outputs=%llu pending_evictions=%llu scope=decoder_input",
-            token.c_str(), static_cast<unsigned long long>(c.stream), static_cast<unsigned long long>(ProbeNow()),
-            static_cast<unsigned long long>(c.discontinuities), static_cast<unsigned long long>(c.accepted_input_bytes),
-            static_cast<unsigned long long>(c.accepted_input_frames), static_cast<unsigned long long>(c.output_frames),
-            static_cast<unsigned long long>(c.queue_to_output_count), static_cast<unsigned long long>(c.queue_to_output_sum_ns),
-            static_cast<unsigned long long>(c.queue_to_output_max_ns), static_cast<unsigned long long>(c.queue_successes),
-            static_cast<unsigned long long>(c.queue_failures), static_cast<unsigned long long>(c.ambiguous_pts),
-            static_cast<unsigned long long>(c.unmatched_outputs), static_cast<unsigned long long>(c.pending_evictions));
-    }
-
-    void WriteCapture(const std::shared_ptr<ProbeCapture>& capture) {
-        // Hash and file writes run off MediaThread, after the original queue accepted.
-        uint8_t digest[32]; char hash[65];
-        gxr::Sha256::Digest(capture->bytes.data(), capture->bytes.size(), digest);
-        gxr::Sha256::Hex(digest, hash);
-        std::string temporary = std::string(kProbeCapture) + ".tmp";
-        int fd = open(temporary.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NOFOLLOW | O_NONBLOCK, 0600);
-        bool ok = fd >= 0;
-        size_t done = 0;
-        while (ok && done < capture->bytes.size()) {
-            ssize_t count = write(fd, capture->bytes.data() + done, capture->bytes.size() - done);
-            if (count <= 0) ok = false;
-            else done += static_cast<size_t>(count);
-        }
-        if (fd >= 0 && close(fd)) ok = false;
-        std::lock_guard<std::mutex> lock(mutex);
-        bool current = capture->token == state.token && capture->stream == state.counters.stream &&
-                       capture->nonce == pendingNonce && active.load();
-        if (ok && current) ok = rename(temporary.c_str(), kProbeCapture) == 0;
-        else ok = false;
-        if (ok) {
-            __android_log_print(ANDROID_LOG_INFO, "GXRDecoderProbe",
-                "event=capture token=%s nonce=%s stream=%llu monotonic_ns=%llu size=%zu sha256=%s path=%s "
-                "scope=decoder_input stage=before_codec_rewrite accepted=1 sequence_header=%d",
-                capture->token.c_str(), capture->nonce.c_str(), static_cast<unsigned long long>(capture->stream),
-                static_cast<unsigned long long>(capture->time), capture->bytes.size(), hash, kProbeCapture,
-                static_cast<int>(capture->sequenceHeader));
-            pendingNonce.clear();
-        } else {
-            unlink(temporary.c_str());
-            if (current) __android_log_print(ANDROID_LOG_INFO, "GXRDecoderProbe",
-                "event=capture_error token=%s nonce=%s reason=write_failed", capture->token.c_str(), capture->nonce.c_str());
-            if (current) pendingNonce.clear();
-        }
-        captureBusy = false;
-    }
-
-    void Run() {
-        uint64_t lastPoll = 0;
-        while (!stopping.load()) {
-            uint64_t now = ProbeNow();
-            if (!lastPoll || now - lastPoll >= 1000000000ull) {
-                lastPoll = now;
-                try { Poll(); }
-                catch (...) {
-                    std::lock_guard<std::mutex> lock(mutex);
-                    state.Reset();
-                    buffers.clear();
-                    active.store(false);
-                }
-            }
-            std::shared_ptr<ProbeCapture> capture;
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                if (!captureReady) wake.wait_for(lock, std::chrono::seconds(1));
-                capture.swap(captureReady);
-            }
-            if (capture) {
-                try { WriteCapture(capture); }
-                catch (...) {
-                    std::lock_guard<std::mutex> lock(mutex);
-                    captureBusy = false;
-                    pendingNonce.clear();
-                }
-            }
-        }
-    }
-};
-
-DecoderProbe& Probe() { static DecoderProbe probe; return probe; }
 
 // ---------------------------------------------------------------------------
 // Pinned scene-library layout (extracted from the exact signed bases).
@@ -577,7 +301,6 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
     o_formatDelete(fmt);
     if (ok) {
         g_handleMap[oldCodec] = live;
-        Probe().VideoRemapped(oldCodec, live);
         LOG("switched decoder to %s; re-queued first AU (%zu bytes)", mime, size);
         return true;
     }
@@ -598,7 +321,6 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
                 if (o_configure(reborn, fmt2, g_savedWindow, g_savedCrypto, g_savedFlags) == 0 &&
                     o_start(reborn) == 0 && QueueAu(reborn, auCopy, timeUs, flags, origMime)) {
                     g_handleMap[oldCodec] = reborn;
-                    Probe().VideoRemapped(oldCodec, reborn);
                     restored = true;
                     LOG("stock %s decoder rebuilt; stream continues on the fallback path", origMime);
                 } else {
@@ -609,10 +331,7 @@ bool TrySwap(void* oldCodec, const uint8_t* au, size_t size, uint64_t timeUs,
             o_formatDelete(fmt2);
         }
     }
-    if (!restored) {
-        Probe().VideoRemapped(oldCodec, nullptr);
-        LOG("stock decoder rebuild failed; access unit dropped");
-    }
+    if (!restored) LOG("stock decoder rebuild failed; access unit dropped");
     return true;  // the retired handle is gone: never fall through to it
 }
 
@@ -620,7 +339,6 @@ void* WrapCreateDecoder(const char* mime) {
     std::lock_guard<std::recursive_mutex> lock(g_mutex);
     void* handle = o_createDecoder(mime);
     if (handle) {
-        Probe().VideoCreated(handle, mime);
         g_armed = true;
         g_sniffDone = false;
         g_pendingCodec = handle;
@@ -669,18 +387,8 @@ int32_t WrapConfigure(void* codec, const void* format, void* window, void* crypt
 }
 
 int32_t WrapCbStart(void* codec) { return o_start(RealHandle(codec)); }
-int32_t WrapCbFlush(void* codec) {
-    void* live = RealHandle(codec);
-    int32_t status = o_flush(live);
-    Probe().Reset(live);
-    return status;
-}
-int32_t WrapCbStop(void* codec) {
-    void* live = RealHandle(codec);
-    int32_t status = o_stop(live);
-    Probe().Reset(live);
-    return status;
-}
+int32_t WrapCbFlush(void* codec) { return o_flush(RealHandle(codec)); }
+int32_t WrapCbStop(void* codec) { return o_stop(RealHandle(codec)); }
 
 void WrapFormatDelete(void* format) {
     std::lock_guard<std::recursive_mutex> lock(g_mutex);
@@ -690,10 +398,7 @@ void WrapFormatDelete(void* format) {
 }
 
 int64_t WrapDequeueOutput(void* codec, void* info, int64_t timeoutUs) {
-    void* live = RealHandle(codec);
-    int64_t index = o_dequeueOutput(live, info, timeoutUs);
-    if (index >= 0) Probe().Output(live, static_cast<const AMediaCodecBufferInfo*>(info));
-    return index;
+    return o_dequeueOutput(RealHandle(codec), info, timeoutUs);
 }
 
 int32_t WrapReleaseOutput(void* codec, size_t idx, bool render) {
@@ -706,9 +411,7 @@ int64_t WrapDequeueInput(void* codec, int64_t timeoutUs) {
 
 uint8_t* WrapGetInput(void* codec, size_t idx, size_t* outSize) {
     std::lock_guard<std::recursive_mutex> lock(g_mutex);
-    void* live = RealHandle(codec);
-    uint8_t* ptr = o_getInput(live, idx, outSize);
-    if (outSize) Probe().Input(live, idx, ptr, *outSize);
+    uint8_t* ptr = o_getInput(RealHandle(codec), idx, outSize);
     if (g_armed && !g_sniffDone && codec == g_armedCodec && ptr) {
         g_inputPtrs[codec] = std::make_pair(idx, ptr);
     }
@@ -731,8 +434,6 @@ int32_t WrapQueueInput(void* codec, size_t idx, int64_t offset, size_t size, uin
             if (sniffed == Sniffed::H264 || sniffed == Sniffed::AV1) {
                 const char* mime = sniffed == Sniffed::H264 ? "video/avc" : "video/av01";
                 if (TrySwap(codec, au, size, timeUs, flags, mime)) {
-                    // Swap owns/re-writes/re-queues its AU internally: omit it
-                    // rather than label its original bytes as an accepted AU.
                     g_armed = false;
                     g_sniffDone = true;
                     g_inputPtrs.clear();
@@ -746,7 +447,6 @@ int32_t WrapQueueInput(void* codec, size_t idx, int64_t offset, size_t size, uin
             }
         }
     }
-    auto capture = Probe().BeforeQueue(live, idx, offset, size, flags);
     if (live != codec && g_av1GeoDone && offset == 0 && size > 0) {
         size_t cap = 0;
         uint8_t* dst = o_getInput(live, idx, &cap);
@@ -755,15 +455,11 @@ int32_t WrapQueueInput(void* codec, size_t idx, int64_t offset, size_t size, uin
             if (patched) LOG("geo: patched %d sequence header(s) this AU", patched);
         }
     }
-    auto submission = Probe().BeginQueue(live);
-    int32_t status = o_queueInput(live, idx, offset, size, timeUs, flags);
-    Probe().Queue(live, timeUs, size, flags, status, submission, std::move(capture));
-    return status;
+    return o_queueInput(live, idx, offset, size, timeUs, flags);
 }
 
 int32_t WrapDelete(void* codec) {
     std::lock_guard<std::recursive_mutex> lock(g_mutex);
-    Probe().Reset(RealHandle(codec), true);
     auto it = g_handleMap.find(codec);
     if (it != g_handleMap.end()) {
         void* live = it->second;
@@ -894,7 +590,6 @@ void TryPatch() {
     mprotect(reinterpret_cast<void*>(mapStart), mapEnd - mapStart, PROT_READ);
     g_patchState.store(1);
     g_patchBusy.store(false);
-    Probe(); // start opt-in request polling only after exact-base admission
     LOG("interception installed on %s (%zu slots) build=%s", profile->build, installed, kBuild);
 }
 

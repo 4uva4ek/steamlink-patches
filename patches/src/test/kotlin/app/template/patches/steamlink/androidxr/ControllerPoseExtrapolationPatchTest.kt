@@ -1,4 +1,6 @@
 package app.template.patches.steamlink.androidxr
+
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.security.MessageDigest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -54,14 +56,7 @@ class ControllerPoseExtrapolationPatchTest {
         assertTrue(controllerPoseExtrapolationPatch.dependencies.isEmpty())
 
         val compatibilities = controllerPoseExtrapolationPatch.compatibility.orEmpty()
-        assertTrue(compatibilities.all { it.name == "Steam Link" })
-        assertEquals(
-            setOf("2.0.20/5001812", "2.0.21/5001968", "2.0.22/5002244"),
-            compatibilities.flatMap { it.targets }
-                .filter { it.isExperimental }
-                .map { it.version + "/" + it.versionCodes!!.values.toSet().single() }
-                .toSet(),
-        )
+        assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
         assertEquals(
             listOf("2.0.20" to 5001712, "2.0.20" to 5001812, "2.0.21" to 5001968, "2.0.22" to 5002244,
                 "2.0.23" to 5002363),

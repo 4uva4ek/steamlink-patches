@@ -4,16 +4,19 @@ import app.template.patches.shared.PatchCategories
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.rawResourcePatch
+import app.morphe.patcher.patch.booleanOption
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5001712
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.StandardOpenOption
 import java.security.MessageDigest
 
 internal const val CODECS_SUPPORT_LIBRARY = "libgxr_codecs_support.so"
 internal const val CODECS_SUPPORT_MANIFEST = "XR_APILAYER_local_GalaxyXR_codecs_support.json"
 internal const val CODECS_SUPPORT_LIBRARY_SHA256 =
-    "723ff06e4375563d192444acd7a0c6da367a1bcd58d8d5a93ace0e38eb94340c"
+    "ac30d452d0ac86de5f97f66d8582f5343d2e53ed326a2039bf56b5dccfda3a08"
 internal const val CODECS_SUPPORT_MANIFEST_SHA256 =
     "801f2a6cf8155486879339a7eb7b83b1554a537f517ba50b6406a5a98a96fec5"
 
@@ -82,6 +85,7 @@ internal fun installCodecsSupportResources(
     versionCode: String,
     helperBytes: ByteArray? = null,
     manifestBytes: ByteArray? = null,
+    enableTelemetry: Boolean = false,
 ): Boolean {
     // Dependencies bypass Morphe compatibility. Excluded pairs must not even read files.
     if (!isCodecsSupportSteamLinkBuild(versionName, versionCode)) return false
@@ -93,20 +97,68 @@ internal fun installCodecsSupportResources(
     val manifest = manifestBytes ?: projectionModeResource(CODECS_SUPPORT_MANIFEST)
     validateCodecsSupportPayload(helper, manifest)
 
-    val files = listOf(
+    val files = mutableListOf(
         File(sceneFile.parentFile, CODECS_SUPPORT_LIBRARY) to helper,
         File(apkRoot, "assets/openxr/1/api_layers/implicit.d/$CODECS_SUPPORT_MANIFEST") to manifest,
     )
+    val receipt = File(apkRoot, "assets/gxr-telemetry/codec-option-ownership.tsv")
+    fun telemetryTarget(name: String): File = when {
+        name.endsWith(".so") -> File(sceneFile.parentFile, name)
+        name == TELEMETRY_MANIFEST -> File(apkRoot, "assets/openxr/1/api_layers/implicit.d/$name")
+        else -> File(apkRoot, "assets/gxr-telemetry/NOTICE.txt")
+    }
+    val owned = linkedMapOf<String, String>()
+    if (receipt.exists()) {
+        if (!receipt.isFile || Files.isSymbolicLink(receipt.toPath())) throw PatchException("Invalid telemetry ownership receipt")
+        val rows = receipt.readLines()
+        if (rows.firstOrNull() != "codecs-telemetry-v1") throw PatchException("Unknown telemetry ownership receipt")
+        rows.drop(1).forEach { row ->
+            val parts = row.split('\t')
+            if (parts.size != 2 || parts[0] !in TELEMETRY_PAYLOAD_SHA256 ||
+                parts[1] != TELEMETRY_PAYLOAD_SHA256[parts[0]] || owned.put(parts[0], parts[1]) != null) {
+                throw PatchException("Invalid telemetry ownership entry")
+            }
+        }
+        if (TELEMETRY_LIBRARY !in owned || TELEMETRY_MANIFEST !in owned) throw PatchException("Incomplete telemetry ownership receipt")
+        owned.forEach { (name, hash) ->
+            val target = telemetryTarget(name)
+            if (!target.isFile || Files.isSymbolicLink(target.toPath()) || codecsSha256(target.readBytes()) != hash) {
+                throw PatchException("Owned telemetry resource changed: $name")
+            }
+        }
+    }
+    val removals = mutableListOf<Pair<File, ByteArray>>()
+    if (enableTelemetry) {
+        val optional = prepareTelemetryResources(apkRoot, versionName, versionCode)
+        if (!receipt.exists()) {
+            if (telemetryTarget(TELEMETRY_LIBRARY).exists() || telemetryTarget(TELEMETRY_MANIFEST).exists()) {
+                throw PatchException("Existing telemetry has no Codecs Support ownership receipt")
+            }
+            optional.forEach { (target, _) ->
+                if (!target.exists()) {
+                    val name = if (target.name == "NOTICE.txt") "NOTICE.txt" else target.name
+                    owned[name] = TELEMETRY_PAYLOAD_SHA256.getValue(name)
+                }
+            }
+        }
+        files += optional
+        val receiptText = "codecs-telemetry-v1\n" + owned.entries.joinToString("") { "${it.key}\t${it.value}\n" }
+        files += receipt to receiptText.toByteArray(Charsets.UTF_8)
+    } else if (receipt.exists()) {
+        removals += owned.keys.map { name -> telemetryTarget(name).let { it to it.readBytes() } }
+        removals += receipt to receipt.readBytes()
+    }
     files.forEach { (target, expected) ->
         if (target.exists() && (!target.isFile || !target.readBytes().contentEquals(expected))) {
             throw PatchException("Codecs Support found a stale or modified resource: ${target.path}")
         }
     }
     val missing = files.filterNot { (target, _) -> target.exists() }
-    if (missing.isEmpty()) return true
+    if (missing.isEmpty() && removals.isEmpty()) return true
 
     val staged = mutableListOf<Pair<File, File>>()
     val created = mutableListOf<File>()
+    val removed = mutableListOf<Pair<File, ByteArray>>()
     try {
         missing.forEach { (target, bytes) ->
             if (!target.parentFile.isDirectory && !target.parentFile.mkdirs()) {
@@ -121,7 +173,17 @@ internal fun installCodecsSupportResources(
             Files.move(temporary.toPath(), target.toPath())
             created += target
         }
+        removals.forEach { (target, bytes) ->
+            if (!target.isFile || !target.readBytes().contentEquals(bytes)) throw PatchException("Telemetry resource changed during option transition")
+            Files.delete(target.toPath())
+            removed += target to bytes
+        }
     } catch (failure: Exception) {
+        removed.asReversed().forEach { (target, bytes) ->
+            try { Files.write(target.toPath(), bytes, StandardOpenOption.CREATE_NEW) } catch (rollback: Exception) {
+                failure.addSuppressed(rollback)
+            }
+        }
         created.asReversed().forEach { target ->
             try { Files.deleteIfExists(target.toPath()) } catch (rollback: Exception) {
                 failure.addSuppressed(rollback)
@@ -134,50 +196,35 @@ internal fun installCodecsSupportResources(
     return true
 }
 
-// Morphe exposes one global `default` flag per patch object, so recommendation scope is expressed
-// with one object per scope over this single shared guarded body: the recommended `Codecs Support`
-// covers exact 2.0.20/5001712, while `Codecs Support (2.0.23/5002363)` stays optional so the
-// native build is never auto-selected the codecs layer.
-private fun createCodecsSupportPatch(
-    name: String,
-    description: String,
-    default: Boolean,
-    compatibilities: List<Compatibility>,
-) = rawResourcePatch(
-    name = name,
-    description = description,
-    default = default,
+@Suppress("unused")
+val xrCodecsSupportPatch = rawResourcePatch(
+    name = "Codecs Support",
+    description = "Lets the headset decode the H.264 or AV1 video the GalaxyXR driver's Stream codec setting picks; stock HEVC streams are untouched. " +
+        "Builds: 2.0.20/5001712, 2.0.23/5002363. Needs: the matching driver codec setting. Headset validation pending on 2.0.23/5002363.",
+    default = true,
 ) {
+    val enableTelemetry by booleanOption(
+        key = "enableTelemetry",
+        default = false,
+        title = "Enable telemetry",
+        description = "Optional USB ADB decoder measurements and codec-byte capture for SteamVR Colour Lab. Off installs no telemetry components.",
+    )
     category(PatchCategories.STREAMING_AND_NETWORK)
-    compatibleWith(*compatibilities.map { exact ->
+    compatibleWith(*(COMPATIBILITIES_STEAM_LINK_5001712 + COMPATIBILITIES_STEAM_LINK_5002363).map { exact ->
         Compatibility(
-            name = "Steam Link",
+            name = EXPERIMENTAL_COMPATIBILITY_NAME,
             packageName = requireNotNull(exact.packageName),
-            targets = exact.targets.map { it.copy(isExperimental = true) },
+            targets = exact.targets,
         )
     }.toTypedArray())
     execute {
-        if (!isCodecsSupportSteamLinkBuild(packageMetadata.versionName, packageMetadata.versionCode)) {
+        if (packageMetadata.packageName != "com.valvesoftware.steamlinkvr" ||
+            !isCodecsSupportSteamLinkBuild(packageMetadata.versionName, packageMetadata.versionCode)) {
             return@execute
         }
         val sceneFile = get("lib/arm64-v8a/libvrlink_scene.so")
         val apkRoot = sceneFile.parentFile!!.parentFile!!.parentFile!!
-        installCodecsSupportResources(apkRoot, packageMetadata.versionName, packageMetadata.versionCode)
+        installCodecsSupportResources(apkRoot, packageMetadata.versionName, packageMetadata.versionCode,
+            enableTelemetry = enableTelemetry == true)
     }
 }
-
-@Suppress("unused")
-val xrCodecsSupportPatch = createCodecsSupportPatch(
-    name = "Codecs Support",
-    description = "Exact 2.0.20/5001712: lets the headset decode the H.264 or AV1 video the GalaxyXR driver's Stream codec setting picks; stock HEVC streams are untouched. Needs: the matching driver codec setting.",
-    default = true,
-    compatibilities = COMPATIBILITIES_STEAM_LINK_5001712,
-)
-
-@Suppress("unused")
-val xrCodecsSupportNativeXrPatch = createCodecsSupportPatch(
-    name = "Codecs Support (2.0.23/5002363)",
-    description = "Optional on exact 2.0.23/5002363: lets the headset decode the H.264 or AV1 video the GalaxyXR driver picks; stock HEVC streams are untouched. Needs: the matching driver codec setting. Headset validation pending.",
-    default = false,
-    compatibilities = COMPATIBILITIES_STEAM_LINK_5002363,
-)

@@ -29,7 +29,7 @@ private val controllerGripHapticsExtensionPatch = bytecodePatch {
 val controllerGripHapticsPatch = rawResourcePatch(
     name = "Controller grip haptics through Shizuku",
     description = "Sends controller vibration to the grip motor instead of the trigger Galaxy XR uses by default. Builds: 5001712 to 5002363. Needs: Shizuku running with its permission granted to Steam Link; without it vibration stays stock. " +
-        CONTRIBUTOR_4UVA_4EK,
+        STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
     category(PatchCategories.CONTROLLERS_SHIZUKU)

@@ -16,9 +16,8 @@ class ControllerAngularLocalPatchTest {
         assertEquals(setOf("com.valvesoftware.steamlinkvr"),
             patch.compatibility!!.map {it.packageName}.toSet())
         val compatibility = patch.compatibility!!.first()
-        assertEquals("Steam Link",compatibility.name)
+        assertEquals("Steam Link Experimental",compatibility.name)
         val target = compatibility.targets.single()
-        assertFalse(target.isExperimental)
         assertEquals("2.0.23",target.version)
         assertEquals(setOf(5002363),target.versionCodes!!.values.toSet())
         assertTrue(isControllerAngularLocalBuild("2.0.23","5002363"))

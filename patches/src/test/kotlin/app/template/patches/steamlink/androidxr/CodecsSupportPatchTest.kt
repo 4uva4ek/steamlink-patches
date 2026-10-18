@@ -1,6 +1,7 @@
 package app.template.patches.steamlink.androidxr
 
 import app.morphe.patcher.patch.PatchException
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
 import org.junit.Assume.assumeTrue
@@ -13,23 +14,20 @@ import kotlin.test.assertTrue
 
 class CodecsSupportPatchTest {
     @Test
-    fun `per-scope defaults stay exact and experimental-only`() {
+    fun `merged codec patch is recommended on both exact experimental targets`() {
         assertTrue(xrCodecsSupportPatch.default)
-        assertFalse(xrCodecsSupportNativeXrPatch.default)
+        assertEquals("Codecs Support", xrCodecsSupportPatch.name)
+        assertEquals(false, xrCodecsSupportPatch.options["enableTelemetry"].default)
         assertTrue(xrCodecsSupportPatch.dependencies.isEmpty())
-        assertTrue(xrCodecsSupportNativeXrPatch.dependencies.isEmpty())
         assertTrue(xrCodecsSupportPatch.compatibility.orEmpty()
-            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
-        assertTrue(xrCodecsSupportNativeXrPatch.compatibility.orEmpty()
-            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
-        val legacyTargets = xrCodecsSupportPatch.compatibility.orEmpty().flatMap { it.targets }
-        assertEquals(setOf("2.0.20"), legacyTargets.map { it.version }.toSet())
-        assertEquals(setOf(5001712),
-            legacyTargets.flatMap { it.versionCodes.orEmpty().values }.toSet())
-        val nativeTargets = xrCodecsSupportNativeXrPatch.compatibility.orEmpty().flatMap { it.targets }
-        assertEquals(setOf("2.0.23"), nativeTargets.map { it.version }.toSet())
-        assertEquals(setOf(5002363),
-            nativeTargets.flatMap { it.versionCodes.orEmpty().values }.toSet())
+            .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+        val targets = xrCodecsSupportPatch.compatibility.orEmpty().flatMap { compatibility ->
+            assertEquals("com.valvesoftware.steamlinkvr", compatibility.packageName)
+            compatibility.targets.flatMap { target ->
+                target.versionCodes.orEmpty().values.map { target.version to it }
+            }
+        }.toSet()
+        assertEquals(setOf("2.0.20" to 5001712, "2.0.23" to 5002363), targets)
         assertTrue(isCodecsSupportSteamLinkBuild("2.0.20", "5001712"))
         assertTrue(isCodecsSupportSteamLinkBuild("2.0.23", "5002363"))
         listOf("2.0.20" to "5001812", "2.0.21" to "5001968", "2.0.22" to "5002244",
@@ -119,6 +117,63 @@ class CodecsSupportPatchTest {
             validateCodecsSupportPayload(helper, alteredManifest)
         }
     }
+
+    @Test
+    fun `default codec installation contains no telemetry on either exact base`() {
+        listOf("2.0.20" to "5001712", "2.0.23" to "5002363").forEach { (version, code) ->
+            withFixtureRoot(version, code) { root ->
+                assertTrue(installCodecsSupportResources(root, version, code))
+                assertFalse(File(sceneFile(root).parentFile, TELEMETRY_LIBRARY).exists())
+                assertFalse(File(sceneFile(root).parentFile, "libshadowhook.so").exists())
+                assertFalse(File(layerDirectory(root), TELEMETRY_MANIFEST).exists())
+                assertFalse(File(root, "assets/gxr-telemetry").exists())
+                assertFalse(projectionModeResource(CODECS_SUPPORT_LIBRARY).toString(Charsets.ISO_8859_1).contains("GXRDecoderProbe"))
+            }
+        }
+    }
+
+    @Test
+    fun `telemetry toggle installs reapplies and removes only owned optional components`() {
+        listOf("2.0.20" to "5001712", "2.0.23" to "5002363").forEach { (version, code) ->
+            withFixtureRoot(version, code) { root ->
+                val original = sceneFile(root).readBytes()
+                val shared = File(sceneFile(root).parentFile, "libshadowhook.so")
+                shared.writeBytes(telemetryResource("libshadowhook.so"))
+                val neighbour = File(root, "assets/gxr-telemetry/user-note.txt")
+                neighbour.parentFile.mkdirs()
+                neighbour.writeText("preserve me")
+                assertTrue(installCodecsSupportResources(root, version, code, enableTelemetry = true))
+                val telemetry = File(sceneFile(root).parentFile, TELEMETRY_LIBRARY)
+                val manifest = File(layerDirectory(root), TELEMETRY_MANIFEST)
+                assertTrue(telemetry.isFile)
+                assertTrue(manifest.isFile)
+                val time = telemetry.lastModified()
+                assertTrue(installCodecsSupportResources(root, version, code, enableTelemetry = true))
+                assertEquals(time, telemetry.lastModified())
+                assertTrue(installCodecsSupportResources(root, version, code, enableTelemetry = false))
+                assertFalse(telemetry.exists())
+                assertFalse(manifest.exists())
+                assertFalse(File(sceneFile(root).parentFile, "libshadowhook_nothing.so").exists())
+                assertFalse(File(root, "assets/gxr-telemetry/codec-option-ownership.tsv").exists())
+                assertTrue(shared.isFile)
+                assertEquals("preserve me", neighbour.readText())
+                assertContentEquals(original, sceneFile(root).readBytes())
+                assertTrue(File(sceneFile(root).parentFile, CODECS_SUPPORT_LIBRARY).isFile)
+            }
+        }
+    }
+
+    @Test
+    fun `changed optional component blocks off transition without partial deletion`() =
+        withFixtureRoot("2.0.20", "5001712") { root ->
+            installCodecsSupportResources(root, "2.0.20", "5001712", enableTelemetry = true)
+            val helper = File(sceneFile(root).parentFile, TELEMETRY_LIBRARY)
+            val original = helper.readBytes()
+            helper.writeBytes(original.copyOf().apply { this[lastIndex] = (last().toInt() xor 1).toByte() })
+            assertFailsWith<PatchException> { installCodecsSupportResources(root, "2.0.20", "5001712") }
+            assertTrue(File(layerDirectory(root), TELEMETRY_MANIFEST).isFile)
+            assertTrue(File(root, "assets/gxr-telemetry/codec-option-ownership.tsv").isFile)
+        }
 
     @Test
     fun `tampered payload fails atomically before any installation`() = withFixtureRoot("2.0.20", "5001712") { root ->

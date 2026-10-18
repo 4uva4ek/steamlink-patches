@@ -1,9 +1,11 @@
 package app.template.patches.steamlink.androidxr
 
+import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.rawResourcePatch
-import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import app.template.patches.shared.PatchCategories
 import java.security.MessageDigest
 
@@ -38,16 +40,24 @@ internal fun controllerAngularLocalResource(name: String): ByteArray =
 
 @Suppress("unused")
 val controllerAngularLocalPatch = rawResourcePatch(
-    name = "Controller angular world to local",
+    name = "Controller angular world to local (experimental)",
     description = "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. " +
         "Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. " +
         "Needs: the Velocity Frame runtime correction active in the app (it does not enable it itself); " +
         "not with stock velocities or the old velocity patches. " +
-        CONTRIBUTOR_4UVA_4EK,
+        STEAM_LINK_CONTROLLER_CREDIT,
     default = false,
 ) {
     category(PatchCategories.CONTROLLER)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5002363.toTypedArray())
+    compatibleWith(Compatibility(
+        name = EXPERIMENTAL_COMPATIBILITY_NAME,
+        packageName = "com.valvesoftware.steamlinkvr",
+        targets = listOf(AppTarget(
+            version = "2.0.23",
+            versionCodes = SupportedAbi.entries.associateWith { 5002363 },
+            description = "Angular adapter for corrected base-space velocities; requires active runtime correction.",
+        )),
+    ))
     execute {
         if (!isControllerAngularLocalTarget(packageMetadata.packageName, packageMetadata.versionName, packageMetadata.versionCode)) return@execute
         validateControllerAngularLocalScene(get("lib/arm64-v8a/libvrlink_scene.so").readBytes())

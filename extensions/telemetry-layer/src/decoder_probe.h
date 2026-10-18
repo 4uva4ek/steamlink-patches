@@ -12,6 +12,17 @@
 
 namespace gxr {
 
+// Observe exactly one actual decoder API invocation. Diagnostics must never
+// suppress, duplicate, retry, modify, or replace the underlying call/result.
+template<class Snapshot, class Invoke, class Commit>
+auto ProbeObservedCall(Snapshot snapshot, Invoke invoke, Commit commit) -> decltype(invoke()) {
+    decltype(snapshot()) observation{};
+    try { observation = snapshot(); } catch (...) {}
+    auto status = invoke();
+    try { commit(status, std::move(observation)); } catch (...) {}
+    return status;
+}
+
 constexpr size_t kProbeMaxCapture = 16u << 20;
 constexpr size_t kProbeMaxPending = 128;
 

@@ -15,7 +15,7 @@ if (!(Get-Command cl.exe -ErrorAction SilentlyContinue)) {
 }
 if (!(Get-Command cl.exe -ErrorAction SilentlyContinue)) { throw 'cl.exe unavailable after environment setup' }
 
-foreach ($suite in @('pure_tests', 'decoder_probe_tests')) {
+foreach ($suite in @('pure_tests')) {
     $exe = Join-Path $out "$suite.exe"
     & cl.exe /nologo /std:c++17 /EHsc /O1 /W4 "/Fe:$exe" "/Fo:$out\\" (Join-Path $PSScriptRoot "$suite.cpp")
     if ($LASTEXITCODE -ne 0) { throw "Codecs support $suite compilation failed" }

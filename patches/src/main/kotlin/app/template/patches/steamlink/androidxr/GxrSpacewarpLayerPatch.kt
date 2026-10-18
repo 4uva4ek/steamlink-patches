@@ -5,6 +5,7 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5001712
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import app.template.patches.shared.PatchCategories
 import java.io.File
 import java.nio.file.Files
@@ -239,8 +240,20 @@ val gxrSpacewarpLayerPatch = rawResourcePatch(
 ) {
     category(PatchCategories.STREAMING_AND_NETWORK)
     compatibleWith(
-        *COMPATIBILITIES_STEAM_LINK_5002363.toTypedArray(),
-        *COMPATIBILITIES_STEAM_LINK_5001712.toTypedArray(),
+        *COMPATIBILITIES_STEAM_LINK_5002363.map { exact ->
+            Compatibility(
+                name = EXPERIMENTAL_COMPATIBILITY_NAME,
+                packageName = requireNotNull(exact.packageName),
+                targets = exact.targets,
+            )
+        }.toTypedArray(),
+        *COMPATIBILITIES_STEAM_LINK_5001712.map { exact ->
+            Compatibility(
+                name = EXPERIMENTAL_COMPATIBILITY_NAME,
+                packageName = requireNotNull(exact.packageName),
+                targets = exact.targets,
+            )
+        }.toTypedArray(),
     )
     execute {
         // Morphe executes dependencies recursively without rechecking compatibility.

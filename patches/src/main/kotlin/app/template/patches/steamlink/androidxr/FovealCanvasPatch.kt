@@ -5,6 +5,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5001812
+import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
 import java.security.MessageDigest
@@ -125,7 +126,13 @@ val xrFovealCanvasPatch = rawResourcePatch(
     default = false,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
-    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.toTypedArray())
+    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5001812.map { exact ->
+        Compatibility(
+            name = EXPERIMENTAL_COMPATIBILITY_NAME,
+            packageName = requireNotNull(exact.packageName),
+            targets = exact.targets,
+        )
+    }.toTypedArray())
     execute {
         if (!isFovealCanvasSteamLinkBuild(packageMetadata.versionName, packageMetadata.versionCode)) {
             return@execute
