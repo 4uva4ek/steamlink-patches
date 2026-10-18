@@ -161,6 +161,13 @@ package+name, so merged names collapse to one tile.
 may already import the replacement, and Kotlin fails the whole `compileKotlin` run with
 `Conflicting import: imported name '<X>' is ambiguous`. Prefer deleting the unused import line;
 never patch a second copy in.
+- One Manager app tile groups by packageName (then by name): a compat reusing the real app's `name`
+against a CLONE package (`<package>.<suffix>` renamed-install variant) still renders the clone as
+its own app the user does not recognize. Patches target the canonical package only — no
+clone-package compat entries or guard-set members unless the app registry lists that package as a
+supported app; shrink the execute guard with the compat set so it fails closed.
+- Iterate patch-source syntax cheaply with `:patches:compileKotlin` (fails in 1-2s on errors)
+before paying for the full `:patches:test` cycle; run the full cycle only at task end.
 
 ## Bytecode editing
 
@@ -228,6 +235,17 @@ A custom icon name or an adaptive XML in `mipmap-anydpi` without `-v26` can reso
 show a blank tile. Expose the artwork under the canonical `ic_launcher` / `ic_launcher_round` names
 (adaptive XML in `res/mipmap-anydpi-v26/` plus density PNGs) and point the manifest
 `android:icon`/`android:roundIcon` at them — see the 4XVR `Galaxy XR launcher icon` patch.
+
+## Categories and compatibility naming
+
+Morphe Manager groups patches into app tiles by compatibility NAME. Never name a
+Compatibility object per experimentation state (the historical "Steam Link Experimental"
+group was a phantom tile created that way); experimental status lives on the target:
+`AppTarget(isExperimental = true)`, and `PatchListGenerator`'s stable filter reads that
+per-target flag (`STABLE -> !target.isExperimental`). Reusing a normal list for an
+experimental patch re-flags its targets via `targets.map { it.copy(isExperimental = true) }`.
+Package-alias compat entries (an extra `pkg` name like a `.x_23` renamed clone) create an
+extra app tile the same way — declare only real packages unless the alias is itself supported.
 
 ## Constants
 Use the exact `(versionName, versionCode)` model and primary `AppTarget` constructor documented in

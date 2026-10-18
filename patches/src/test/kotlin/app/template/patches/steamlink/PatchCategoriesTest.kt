@@ -73,6 +73,7 @@ class PatchCategoriesTest {
                 xrInputRoutingConfigPatch, xrLauncherBootstrapPatch,
                 xrStartupPermissionsPatch, xrManifestCapabilityPackPatch,
                 deviceIdentityPatch,
+                controllerAngularLocalPatch,
                 xrCodecsSupportPatch,
                 networkOptimizationsPatch, blueNoisePatch,
             ),

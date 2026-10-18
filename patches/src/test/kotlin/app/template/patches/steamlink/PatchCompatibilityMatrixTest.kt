@@ -3,6 +3,7 @@ package app.template.patches.steamlink
 import app.morphe.patcher.patch.Patch
 import app.template.patches.steamlink.androidxr.appearOnTopPatch
 import app.template.patches.steamlink.androidxr.androidXrUiExtensionPatch
+import app.template.patches.steamlink.androidxr.controllerAngularLocalPatch
 import app.template.patches.steamlink.androidxr.gxrFacebridgePatch
 import app.template.patches.steamlink.androidxr.unrestrictedBatteryUsagePatch
 import app.template.patches.steamlink.androidxr.xrCodecsSupportNativeXrPatch
@@ -107,7 +108,7 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun modern_recommended_set_contains_only_the_requested_eight_patches() {
+    fun modern_recommended_set_contains_only_the_requested_nine_patches() {
         assertEquals(
             setOf(
                 xrGalaxyXrHighResolutionPatch,
@@ -118,6 +119,7 @@ class PatchCompatibilityMatrixTest {
                 unrestrictedBatteryUsagePatch,
                 hmdOnlyPatch,
                 oledCalibrationPatch,
+                controllerAngularLocalPatch,
             ),
             nativeRecommendedPatches,
         )
@@ -151,7 +153,7 @@ class PatchCompatibilityMatrixTest {
     }
 
     @Test
-    fun new_native_base_exposes_ten_individual_patches_and_no_legacy_mutations() {
+    fun new_native_base_exposes_eleven_individual_patches_and_no_legacy_mutations() {
         val expected = setOf(
             xrGalaxyXrHighResolutionPatch,
             gxrFacebridgePatch,
@@ -163,6 +165,7 @@ class PatchCompatibilityMatrixTest {
             hmdOnlyPatch,
             oledCalibrationPatch,
             deviceIdentityNativeXrPatch,
+            controllerAngularLocalPatch,
         )
         assertEquals(expected, allIndividualPatches.filter { it.supports("2.0.23", 5002363) }.toSet())
         listOf("2.0.22" to 5002322, "2.0.22" to 5002363, "2.0.23" to 5002322, "2.0.23" to 5002364)
@@ -345,6 +348,7 @@ class PatchCompatibilityMatrixTest {
             xrManifestCapabilityPackPatch,
             xrLauncherBootstrapPatch,
             xrInputRoutingConfigPatch,
+            controllerAngularLocalPatch,
         )
 
         val allTopLevelPatches = allIndividualPatches
@@ -370,7 +374,7 @@ class PatchCompatibilityMatrixTest {
         )
 
         // Codecs Support is recommended only on the exact 2.0.20/5001712 base; the other legacy
-        // bases keep the 18-patch set and the native build keeps its 8-patch set.
+        // bases keep the 18-patch set and the native build keeps its 9-patch set.
         val legacyRecommendedPatches5001712 = legacyRecommendedPatches + xrCodecsSupportPatch
 
         val nativeRecommendedPatches = setOf(
@@ -382,6 +386,7 @@ class PatchCompatibilityMatrixTest {
             unrestrictedBatteryUsagePatch,
             hmdOnlyPatch,
             oledCalibrationPatch,
+            controllerAngularLocalPatch,
         )
     }
 }

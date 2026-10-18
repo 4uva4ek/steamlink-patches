@@ -8,12 +8,12 @@ import java.io.File
 import java.util.zip.ZipFile
 
 class ControllerAngularLocalPatchTest {
-    @Test fun metadataIsExactExperimentalOptIn() {
+    @Test fun metadataIsExactExperimentalDefault() {
         val patch = controllerAngularLocalPatch
-        assertFalse(patch.default)
+        assertTrue(patch.default)
         assertTrue(patch.dependencies.isEmpty())
         assertEquals("Controller", patch.category)
-        assertEquals(setOf("com.valvesoftware.steamlinkvr","com.valvesoftware.steamlinkvr.x_23"),
+        assertEquals(setOf("com.valvesoftware.steamlinkvr"),
             patch.compatibility!!.map {it.packageName}.toSet())
         val compatibility = patch.compatibility!!.first()
         assertEquals("Steam Link",compatibility.name)
@@ -26,7 +26,7 @@ class ControllerAngularLocalPatchTest {
         assertFalse(isControllerAngularLocalBuild("2.0.23","5002364"))
         assertFalse(isControllerAngularLocalBuild("2.0.22","5002363"))
         assertTrue(isControllerAngularLocalTarget("com.valvesoftware.steamlinkvr", "2.0.23", "5002363"))
-        assertTrue(isControllerAngularLocalTarget("com.valvesoftware.steamlinkvr.x_23", "2.0.23", "5002363"))
+        assertFalse(isControllerAngularLocalTarget("com.valvesoftware.steamlinkvr.x_23", "2.0.23", "5002363"))
         assertFalse(isControllerAngularLocalTarget("cn.vr4p.oculus4xvrplayerov", "2.0.23", "5002363"))
     }
     @Test fun mandatoryPayloadAndManifestArePresent() {

@@ -1,10 +1,9 @@
 package app.template.patches.steamlink.androidxr
 
-import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.rawResourcePatch
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
 import app.template.patches.shared.PatchCategories
 import java.security.MessageDigest
 
@@ -12,7 +11,7 @@ internal const val CONTROLLER_ANGULAR_LOCAL_LIBRARY = "libgxr_controller_angular
 internal const val CONTROLLER_ANGULAR_LOCAL_MANIFEST = "XR_APILAYER_local_GalaxyXR_controller_angular_local.json"
 internal fun isControllerAngularLocalBuild(version: String, code: String) = version == "2.0.23" && code == "5002363"
 internal fun isControllerAngularLocalTarget(packageName: String, version: String, code: String) =
-    packageName in setOf("com.valvesoftware.steamlinkvr", "com.valvesoftware.steamlinkvr.x_23") &&
+    packageName == "com.valvesoftware.steamlinkvr" &&
         isControllerAngularLocalBuild(version, code)
 
 // These are legacy providers of local/raw velocity, incompatible with corrected base-space input.
@@ -41,21 +40,17 @@ internal fun controllerAngularLocalResource(name: String): ByteArray =
 val controllerAngularLocalPatch = rawResourcePatch(
     name = "Controller angular world to local",
     description = "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. " +
-        "Needs: the Velocity Frame correction active; not with stock velocities or the old velocity patches. " +
-        "Exact 2.0.23/5002363 only; headset validation pending. " +
+        "Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. " +
+        "Needs: the Velocity Frame runtime correction active in the app (the patch does not enable it itself); " +
+        "not with stock velocities or the old velocity patches. " +
         STEAM_LINK_CONTROLLER_CREDIT,
-    default = false,
+    default = true,
 ) {
     category(PatchCategories.CONTROLLER)
-    compatibleWith(*listOf("com.valvesoftware.steamlinkvr", "com.valvesoftware.steamlinkvr.x_23").map { packageName -> Compatibility(
+    compatibleWith(*COMPATIBILITIES_STEAM_LINK_5002363.map { exact -> Compatibility(
         name = "Steam Link",
-        packageName = packageName,
-        targets = listOf(AppTarget(
-            version = "2.0.23",
-            versionCodes = SupportedAbi.entries.associateWith { 5002363 },
-            isExperimental = true,
-            description = "Angular adapter for corrected base-space velocities; requires active runtime correction.",
-        )),
+        packageName = requireNotNull(exact.packageName),
+        targets = exact.targets.map { it.copy(isExperimental = true) },
     ) }.toTypedArray())
     execute {
         if (!isControllerAngularLocalTarget(packageMetadata.packageName, packageMetadata.versionName, packageMetadata.versionCode)) return@execute

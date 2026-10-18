@@ -1,8 +1,9 @@
 # Steam Link 2.0.23 angular adapter
 
 Standalone Morphe patch: **Controller angular world to local**.
-Category **Controller**, default off, no recommended-set dependency. Exact
-2.0.23/5002363 only, for the original package and the inspected `.x_23` clone.
+Category **Controller**, default on (effective only on the supported exact base).
+Exact
+2.0.23/5002363 only, for the original package.
 
 Requires the Galaxy XR OpenXR Velocity Frame runtime correction **actually active**
 in this app (native status `CORRECTED`). A checked module alone does not prove this.

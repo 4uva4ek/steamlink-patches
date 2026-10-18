@@ -381,7 +381,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -585,9 +585,9 @@
     },
     {
       "name": "Controller angular world to local",
-      "description": "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Needs: the Velocity Frame correction active; not with stock velocities or the old velocity patches. Exact 2.0.23/5002363 only; headset validation pending. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek.",
+      "description": "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. Needs: the Velocity Frame runtime correction active in the app (the patch does not enable it itself); not with stock velocities or the old velocity patches. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek.",
       "category": "Controller",
-      "default": false,
+      "default": true,
       "dependencies": [],
       "compatiblePackages": [
         {
@@ -608,29 +608,7 @@
               },
               "isExperimental": true,
               "minSdk": null,
-              "description": "Angular adapter for corrected base-space velocities; requires active runtime correction."
-            }
-          ]
-        },
-        {
-          "packageName": "com.valvesoftware.steamlinkvr.x_23",
-          "name": "Steam Link",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "2.0.23",
-              "versionCodes": {
-                "ARM64_V8A": 5002363,
-                "ARMEABI_V7A": 5002363,
-                "X86_64": 5002363,
-                "X86": 5002363
-              },
-              "isExperimental": true,
-              "minSdk": null,
-              "description": "Angular adapter for corrected base-space velocities; requires active runtime correction."
+              "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
           ]
         }
@@ -1946,7 +1924,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2399,7 +2377,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2566,7 +2544,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -2737,7 +2715,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -3260,7 +3238,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
@@ -3380,7 +3358,7 @@
               },
               "isExperimental": false,
               "minSdk": null,
-              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
+              "description": "Build 5002363 recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, Microphone input preset (Voice Recognition), Unrestricted battery usage, Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, Blue-noise dithering with the default foveal layer, and Network Optimizations; the experimental Controller angular world to local adapter is included and needs the Velocity Frame runtime correction active in the app. The retired projection experiments are excluded. Decoded-base adaptation; headset validation pending."
             }
           ]
         }
