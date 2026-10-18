@@ -1,3 +1,9 @@
+## [1.31.1-dev.3](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.2...v1.31.1-dev.3) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Update patch descriptions and remove experimental patches ([f45d3d9](https://github.com/AngelDark92/xr-porting-hub/commit/f45d3d9cdd73b73770c89dd0e987fd4133124934))
+
 ## [1.31.1-dev.2](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.1...v1.31.1-dev.2) (2026-10-18)
 
 ### 🐛 Bug Fixes
