@@ -1,7 +1,6 @@
 package app.template.patches.steamlink.androidxr
 
 import app.morphe.patcher.patch.PatchException
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
@@ -27,7 +26,7 @@ class GxrSpacewarpLayerPatchTest {
         assertFalse(gxrSpacewarpLayerPatch.default)
         assertTrue(gxrSpacewarpLayerPatch.dependencies.isEmpty())
         assertTrue(gxrSpacewarpLayerPatch.compatibility.orEmpty()
-            .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
         val nativeTargets = gxrSpacewarpLayerPatch.compatibility.orEmpty().flatMap { it.targets }
         assertEquals(setOf("2.0.20", "2.0.23"), nativeTargets.map { it.version }.toSet())
         assertEquals(setOf(5001712, 5002363),

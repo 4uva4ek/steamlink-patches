@@ -6,8 +6,6 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.SupportedAbi
 
 object Constants {
-    const val EXPERIMENTAL_COMPATIBILITY_NAME = "Steam Link Experimental"
-
     private const val STEAM_LINK_PACKAGE = "com.valvesoftware.steamlinkvr"
     private data class SteamLinkBuild(val version: String, val versionCode: Int)
 
@@ -93,7 +91,7 @@ object Constants {
 
     private fun steamLinkBuildCompatibility(
         build: SteamLinkBuild,
-        name: String = "Steam Link",
+        isExperimental: Boolean = false,
         description: String = if (build in listOf(
                 SteamLinkBuild("2.0.20", 5001812),
                 SteamLinkBuild("2.0.21", 5001968),
@@ -104,7 +102,7 @@ object Constants {
             "Verified Steam Link ${build.version} build ${build.versionCode}."
         },
     ) = Compatibility(
-        name = name,
+        name = "Steam Link",
         packageName = STEAM_LINK_PACKAGE,
         apkFileType = ApkFileType.APK,
         appIconColor = 0x1B2838,
@@ -112,6 +110,7 @@ object Constants {
             AppTarget(
                 version = build.version,
                 versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
+                isExperimental = isExperimental,
                 description = description,
             ),
         ),
@@ -207,7 +206,7 @@ object Constants {
         builds.map { build ->
             steamLinkBuildCompatibility(
                 build = build,
-                name = EXPERIMENTAL_COMPATIBILITY_NAME,
+                isExperimental = true,
                 description = "Experimental patches for Steam Link ${build.version} build ${build.versionCode}.",
             )
         }

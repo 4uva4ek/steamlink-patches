@@ -22,6 +22,11 @@ the goal and every path. Children inherit the parent's tools and model (no per-c
 pin) and cannot call `clarify` — keep the `ambiguous. ask:` terminal line. A child's summary is a
 self-report: the parent re-reads the cited lines and runs the checks itself.
 
+Children cannot call `skill_manage` — they record lessons by patching repo
+`.agents/skills/<skill>/SKILL.md` files directly, even when the contract lists other files. Expect
+such edits after a run; re-read each changed skill file, fact-check it against the repo (test names,
+counters, commands), then refine and keep it or revert it.
+
 ## Numeric style
 
 Write numeric quantities and ordinals as digits (`1`, `2`, `3`, `1st`, `2nd`), not spelled-out number words. Preserve exact quotes, identifiers, commands, and established names unchanged. Apply this to delegated prompts, subagent output, and the main-thread summary.
@@ -120,8 +125,11 @@ Skip investigator. Hand exact path:line to `cavecrew-builder` directly.
    pinned strings, list mirror surfaces (generated catalogs, readme docs).
 2. Write per-batch scratch job files: role contract + allowed file list + locked phrases
    + receipt shape; then one delegate message with one child per directory batch.
-3. Reviewer child over the full diff, then the main thread runs the regen pipeline and
-   the remnant sweep itself.
+3. Main thread runs the regen pipeline FIRST (regeneration is deterministic), THEN the reviewer
+   child audits the frozen final state including the regenerated mirrors — reviewing before the
+   regen audits a moving tree and misses the mirror surfaces.
+4. Remnant sweep expecting zero old-phrase matches outside history mirrors (`CHANGELOG.md`,
+   `diagnostics/`); the main thread runs it itself.
 Never edit a file a running child still holds — main-thread and child edits to the same
 file race and lose edits; hold later waves until the children finish.
 

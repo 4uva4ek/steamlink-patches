@@ -1,7 +1,6 @@
 package app.template.patches.steamlink.androidxr
 
 import app.morphe.patcher.patch.PatchException
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
 import org.junit.Assume.assumeTrue
@@ -20,9 +19,9 @@ class CodecsSupportPatchTest {
         assertTrue(xrCodecsSupportPatch.dependencies.isEmpty())
         assertTrue(xrCodecsSupportNativeXrPatch.dependencies.isEmpty())
         assertTrue(xrCodecsSupportPatch.compatibility.orEmpty()
-            .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
         assertTrue(xrCodecsSupportNativeXrPatch.compatibility.orEmpty()
-            .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
         val legacyTargets = xrCodecsSupportPatch.compatibility.orEmpty().flatMap { it.targets }
         assertEquals(setOf("2.0.20"), legacyTargets.map { it.version }.toSet())
         assertEquals(setOf(5001712),

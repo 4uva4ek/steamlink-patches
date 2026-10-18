@@ -1,6 +1,4 @@
 package app.template.patches.steamlink.androidxr
-
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile
 import java.security.MessageDigest
@@ -109,7 +107,7 @@ class ControllerHalPosePatchTest {
         assertTrue(shizukuBridgeManifestPatch in controllerHalPosePatch.dependencies, controllerHalPosePatch.name)
         val compatibilities = controllerHalPosePatch.compatibility.orEmpty()
         assertTrue(
-            compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME },
+            compatibilities.all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } },
             controllerHalPosePatch.name,
         )
         assertEquals(

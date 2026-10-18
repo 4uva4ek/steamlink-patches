@@ -528,7 +528,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -542,7 +542,7 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Verified Steam Link 2.0.20 build 5001712."
             }
@@ -560,7 +560,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -574,7 +574,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
@@ -592,7 +592,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -606,7 +606,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Angular adapter for corrected base-space velocities; requires active runtime correction."
             }
@@ -614,7 +614,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr.x_23",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -628,7 +628,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Angular adapter for corrected base-space velocities; requires active runtime correction."
             }
@@ -650,7 +650,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -664,7 +664,7 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.20 build 5001712."
             }
@@ -672,7 +672,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -686,7 +686,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.20 build 5001812."
             }
@@ -694,7 +694,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -708,7 +708,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.21 build 5001968."
             }
@@ -716,7 +716,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -730,7 +730,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.22 build 5002244."
             }
@@ -738,7 +738,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -752,7 +752,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.23 build 5002363."
             }
@@ -770,7 +770,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -784,7 +784,7 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.20/5001712; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -792,7 +792,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -806,7 +806,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -814,7 +814,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -828,7 +828,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -836,7 +836,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -850,7 +850,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -858,7 +858,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -872,7 +872,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller pose extrapolation layer for exact Steam Link 2.0.23/5002363; measured on a Galaxy XR headset."
             }
@@ -894,7 +894,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -908,7 +908,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.23 build 5002363."
             }
@@ -916,7 +916,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -930,7 +930,7 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.20 build 5001712."
             }
@@ -938,7 +938,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -952,7 +952,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.20 build 5001812."
             }
@@ -960,7 +960,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -974,7 +974,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.21 build 5001968."
             }
@@ -982,7 +982,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": "APK",
           "appIconColor": "#1B2838",
@@ -996,7 +996,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Experimental patches for Steam Link 2.0.22 build 5002244."
             }
@@ -1014,7 +1014,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1028,7 +1028,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.23/5002363; measured on a Galaxy XR headset."
             }
@@ -1036,7 +1036,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1050,7 +1050,7 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.20/5001712; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1058,7 +1058,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1072,7 +1072,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.20/5001812; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1080,7 +1080,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1094,7 +1094,7 @@
                 "X86_64": 5001968,
                 "X86": 5001968
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.21/5001968; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1102,7 +1102,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1116,7 +1116,7 @@
                 "X86_64": 5002244,
                 "X86": 5002244
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Controller velocity frame layer for exact Steam Link 2.0.22/5002244; measured on 2.0.23/5002363 only, not run on this base."
             }
@@ -1630,7 +1630,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1644,7 +1644,7 @@
                 "X86_64": 5001812,
                 "X86": 5001812
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Native and APK adaptation for exact Steam Link 2.0.20 build 5001812; headset validation pending."
             }
@@ -1785,7 +1785,7 @@
       "compatiblePackages": [
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1799,7 +1799,7 @@
                 "X86_64": 5002363,
                 "X86": 5002363
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Native and APK adaptation for exact Steam Link 2.0.23 build 5002363; headset validation pending."
             }
@@ -1807,7 +1807,7 @@
         },
         {
           "packageName": "com.valvesoftware.steamlinkvr",
-          "name": "Steam Link Experimental",
+          "name": "Steam Link",
           "description": null,
           "apkFileType": null,
           "appIconColor": null,
@@ -1821,7 +1821,7 @@
                 "X86_64": 5001712,
                 "X86": 5001712
               },
-              "isExperimental": false,
+              "isExperimental": true,
               "minSdk": null,
               "description": "Verified Steam Link 2.0.20 build 5001712."
             }

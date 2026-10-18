@@ -7,7 +7,6 @@ package util
 
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.loadPatchesFromJar
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import java.io.File
@@ -35,9 +34,8 @@ internal fun targetsForReleaseChannel(
 ) = compatibility.targets.filter { target ->
     // Patch release channel and APK-version support are independent. Projection experiments
     // stay in the experimental bundle even though Steam Link 2.0.22 itself is a stable target.
-    val experimentalPatch = compatibility.name == EXPERIMENTAL_COMPATIBILITY_NAME
     when (releaseChannel) {
-        ReleaseChannel.STABLE -> !experimentalPatch && !target.isExperimental
+        ReleaseChannel.STABLE -> !target.isExperimental
         // Pre-release bundles are a superset: retain stable patches and add experimental ones.
         ReleaseChannel.EXPERIMENTAL -> true
         ReleaseChannel.ALL -> true

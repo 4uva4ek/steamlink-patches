@@ -1,7 +1,6 @@
 package app.template.patches.steamlink.androidxr
 
 import app.morphe.patcher.patch.PatchException
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
 import org.junit.Assume.assumeTrue
@@ -18,7 +17,7 @@ class FovealCanvasPatchTest {
         assertFalse(xrFovealCanvasPatch.default)
         assertTrue(xrFovealCanvasPatch.dependencies.isEmpty())
         assertTrue(xrFovealCanvasPatch.compatibility.orEmpty()
-            .all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+            .all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
         val targets = xrFovealCanvasPatch.compatibility.orEmpty().flatMap { it.targets }
         assertEquals(setOf("2.0.20"), targets.map { it.version }.toSet())
         assertEquals(setOf(5001812), targets.flatMap { it.versionCodes.orEmpty().values }.toSet())

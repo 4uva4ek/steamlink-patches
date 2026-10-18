@@ -5,7 +5,6 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.rawResourcePatch
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import app.template.patches.shared.PatchCategories
 
 internal const val CONTROLLER_VELOCITY_FRAME_LIBRARY = "libgxr_controller_velocity_frame.so"
@@ -68,11 +67,12 @@ val controllerVelocityFramePatch = rawResourcePatch(
     category(PatchCategories.CONTROLLER)
     compatibleWith(*CONTROLLER_VELOCITY_FRAME_BUILDS.map { build ->
         Compatibility(
-            name = EXPERIMENTAL_COMPATIBILITY_NAME,
+            name = "Steam Link",
             packageName = "com.valvesoftware.steamlinkvr",
             targets = listOf(AppTarget(
                 version = build.version,
                 versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
+                isExperimental = true,
                 description = "Controller velocity frame layer for exact Steam Link " +
                     "${build.version}/${build.versionCode}; " +
                     if (build.measured) "measured on a Galaxy XR headset."

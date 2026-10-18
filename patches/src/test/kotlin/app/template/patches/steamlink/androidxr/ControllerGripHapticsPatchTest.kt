@@ -1,6 +1,4 @@
 package app.template.patches.steamlink.androidxr
-
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile
 import java.security.MessageDigest
@@ -84,7 +82,7 @@ class ControllerGripHapticsPatchTest {
         assertEquals("Controller grip haptics through Shizuku", controllerGripHapticsPatch.name)
 
         val compatibilities = controllerGripHapticsPatch.compatibility.orEmpty()
-        assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })
+        assertTrue(compatibilities.all { it.name == "Steam Link" && it.targets.all { t -> t.isExperimental } })
         assertEquals(
             setOf(5001712, 5001812, 5001968, 5002244, 5002363),
             compatibilities.flatMap { it.targets }.flatMap { it.versionCodes!!.values }.toSet(),

@@ -6,7 +6,6 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5001712
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import java.io.File
 import java.nio.file.Files
 import java.security.MessageDigest
@@ -152,9 +151,9 @@ private fun createCodecsSupportPatch(
     category(PatchCategories.STREAMING_AND_NETWORK)
     compatibleWith(*compatibilities.map { exact ->
         Compatibility(
-            name = EXPERIMENTAL_COMPATIBILITY_NAME,
+            name = "Steam Link",
             packageName = requireNotNull(exact.packageName),
-            targets = exact.targets,
+            targets = exact.targets.map { it.copy(isExperimental = true) },
         )
     }.toTypedArray())
     execute {

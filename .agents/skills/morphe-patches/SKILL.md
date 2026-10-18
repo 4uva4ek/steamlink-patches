@@ -113,7 +113,10 @@ Rewriting a description therefore needs a matching test update (or keep the phra
 `patches-list-all.json` (ALL), and stamps `patches-list.json` (mirror of `patches-list-stable.json`,
 byte-identical) with the selected `-PreleaseChannel` (release prep uses `stable`). A bare run
 without `-PreleaseChannel` stamps `patches-list.json` as channel `all` (49 patches) — wrong shape;
-run `-PreleaseChannel=stable` locally.
+run `-PreleaseChannel=stable` locally. Never `git stash` to 'compare states' on a tree holding
+regenerated tracked catalogs: a later `stash pop` then conflicts with freshly regenerated files
+and parks the source edits in the stash. Mid-run recovery order: `git checkout -- <generated files>`,
+`git stash pop`, re-run the regen (it is deterministic and cheap).
 `:patches:generatePatchesList` no longer depends on `test` (CI and the release build never
 run tests), so the local `:patches:test` run at the end of the task is the only thing that
 catches a broken assertion.
@@ -138,6 +141,26 @@ scratch-file job (role contract + allowed file list + locked phrases + receipt s
 run the reviewer over the diff, then regenerate: `:patches:generatePatchesList`, the
 readme generator, `:patches:test`, and a remnant sweep expecting zero old-phrase matches
 outside `CHANGELOG.md` and `diagnostics/` (history is never rewritten).
+
+### Compatibility name surgery (channel routing)
+
+- A `Compatibility`'s `name` is load-bearing: the generator routes channels by it and tests pin it.
+Before renaming, merging or deleting a named compatibility, `git grep` BOTH the symbol (const) AND
+its literal string across `patches/src` and `.github/scripts` — some tests pin the symbol
+(`it.name == <const>`), some pin the literal (`assertEquals("<name>", ...)`). A symbol-only sweep
+misses the literal pin and the failure only surfaces at `:patches:test`.
+- Mark experimental per target, not per app name: `AppTarget(isExperimental = true)` and let the
+stable-channel filter read the flag. When a compat site reuses targets from a NON-experimental list,
+flag the copies — `targets = exact.targets.map { it.copy(isExperimental = true) }`. Renaming the
+wrapper alone keeps the unflagged targets, and under the flag-based filter they leak into the
+`stable` catalog.
+- After a name merge, prove channel semantics unchanged: the stable catalog's patch-name set must
+equal HEAD's (`git show HEAD:patches-list-stable.json`), and Morphe Manager groups tiles by
+package+name, so merged names collapse to one tile.
+- Swapping a dead-const import for a replacement class: grep the file's import block first. The file
+may already import the replacement, and Kotlin fails the whole `compileKotlin` run with
+`Conflicting import: imported name '<X>' is ambiguous`. Prefer deleting the unused import line;
+never patch a second copy in.
 
 ## Bytecode editing
 

@@ -5,7 +5,6 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.rawResourcePatch
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import app.template.patches.shared.PatchCategories
 import java.security.MessageDigest
 
@@ -49,11 +48,12 @@ val controllerAngularLocalPatch = rawResourcePatch(
 ) {
     category(PatchCategories.CONTROLLER)
     compatibleWith(*listOf("com.valvesoftware.steamlinkvr", "com.valvesoftware.steamlinkvr.x_23").map { packageName -> Compatibility(
-        name = EXPERIMENTAL_COMPATIBILITY_NAME,
+        name = "Steam Link",
         packageName = packageName,
         targets = listOf(AppTarget(
             version = "2.0.23",
             versionCodes = SupportedAbi.entries.associateWith { 5002363 },
+            isExperimental = true,
             description = "Angular adapter for corrected base-space velocities; requires active runtime correction.",
         )),
     ) }.toTypedArray())

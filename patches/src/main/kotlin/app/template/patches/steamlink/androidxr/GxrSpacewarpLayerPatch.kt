@@ -5,7 +5,6 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5002363
 import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK_5001712
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
 import app.template.patches.shared.PatchCategories
 import java.io.File
 import java.nio.file.Files
@@ -242,16 +241,16 @@ val gxrSpacewarpLayerPatch = rawResourcePatch(
     compatibleWith(
         *COMPATIBILITIES_STEAM_LINK_5002363.map { exact ->
             Compatibility(
-                name = EXPERIMENTAL_COMPATIBILITY_NAME,
+                name = "Steam Link",
                 packageName = requireNotNull(exact.packageName),
-                targets = exact.targets,
+                targets = exact.targets.map { it.copy(isExperimental = true) },
             )
         }.toTypedArray(),
         *COMPATIBILITIES_STEAM_LINK_5001712.map { exact ->
             Compatibility(
-                name = EXPERIMENTAL_COMPATIBILITY_NAME,
+                name = "Steam Link",
                 packageName = requireNotNull(exact.packageName),
-                targets = exact.targets,
+                targets = exact.targets.map { it.copy(isExperimental = true) },
             )
         }.toTypedArray(),
     )
