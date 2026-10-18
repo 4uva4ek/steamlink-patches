@@ -41,9 +41,9 @@ val controllerAngularLocalPatch = rawResourcePatch(
     name = "Controller angular world to local",
     description = "Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. " +
         "Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. " +
-        "Needs: the Velocity Frame runtime correction active in the app (the patch does not enable it itself); " +
+        "Needs: the Velocity Frame runtime correction active in the app (it does not enable it itself); " +
         "not with stock velocities or the old velocity patches. " +
-        STEAM_LINK_CONTROLLER_CREDIT,
+        CONTRIBUTOR_4UVA_4EK,
     default = true,
 ) {
     category(PatchCategories.CONTROLLER)

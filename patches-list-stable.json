@@ -1140,7 +1140,7 @@
     },
     {
       "name": "Galaxy XR SteamVR driver (galaxyxr)",
-      "description": "Sets Galaxy XR headset and controller names in SteamVR, replacing the Meta Quest Pro spoof. Builds: 5001712 to 5002363. Needs: Galaxy XR VRLink Setup on the PC, or controllers show no model.",
+      "description": "Sets Galaxy XR headset and controller names in SteamVR, replacing the Meta Quest Pro spoof. Builds: 5001712 to 5002363. Needs: Galaxy XR VRLink Setup on the PC, or controllers show no model. Details: https://github.com/4uva4ek/steamlink-patches.",
       "category": "App & device identity",
       "default": false,
       "dependencies": [
@@ -1934,7 +1934,7 @@
     },
     {
       "name": "OpenXR CPU and GPU BOOST",
-      "description": "Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured.",
+      "description": "Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured. Details: https://github.com/4uva4ek/steamlink-patches.",
       "category": "App & device identity",
       "default": false,
       "dependencies": [],

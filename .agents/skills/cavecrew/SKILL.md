@@ -123,8 +123,11 @@ Skip investigator. Hand exact path:line to `cavecrew-builder` directly.
 **Repo-wide text pass** (descriptions/labels across many files):
 1. Main thread: build the inventory from the generated aggregate, sweep the test tree for
    pinned strings, list mirror surfaces (generated catalogs, readme docs).
-2. Write per-batch scratch job files: role contract + allowed file list + locked phrases
-   + receipt shape; then one delegate message with one child per directory batch.
+2. Write per-batch scratch job files: role contract + allowed file list + locked phrases,
+   EXACT final texts (the main thread drafts the wording — it holds the semantics; children
+   applying verbatim hit the target in 1 pass, children rewording from style rules overrun
+   and need a correcting wave), + receipt shape; then one delegate message with one child
+   per directory batch.
 3. Main thread runs the regen pipeline FIRST (regeneration is deterministic), THEN the reviewer
    child audits the frozen final state including the regenerated mirrors — reviewing before the
    regen audits a moving tree and misses the mirror surfaces.
@@ -132,6 +135,10 @@ Skip investigator. Hand exact path:line to `cavecrew-builder` directly.
    `diagnostics/`); the main thread runs it itself.
 Never edit a file a running child still holds — main-thread and child edits to the same
 file race and lose edits; hold later waves until the children finish.
+In a repo other sessions write to: re-check `git log --oneline -1` and `git status --porcelain`
+before every wave. A HEAD advance with a shrinking modified-file set means another session
+committed or released your earlier waves — absorb on top, never revert. First-column `M `
+(staged) means another session has a commit in flight — leave the index alone.
 
 ## What NOT to do
 

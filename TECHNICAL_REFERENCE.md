@@ -65,7 +65,7 @@ No desktop IP, pairing token, APK hash, or native telemetry enrollment is requir
 This section is generated from the patch catalog during releases.
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.31.1-dev.2](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.31.1-dev.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
+> **[v1.31.1-dev.2](https://github.com/AngelDark92/xr-porting-hub/releases/tag/v1.31.1-dev.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;49 patches total
 <details open>
 <summary>📦 4XVR&nbsp;&nbsp;•&nbsp;&nbsp;16 patches</summary>
 <br>
@@ -168,8 +168,8 @@ This section is generated from the patch catalog during releases.
 | [Change package name](#change-package-name) | Renames the app so the patched Steam Link can install next to the original. Builds: 5001712 to 5002244. | 5001712, 5001812, 5001968, 5002244 | • Package name |
 | [Device identity](#device-identity) | Sets the headset name SteamVR sees, with Meta Quest Pro as the recommended profile. Builds: 5001712 to 5002244. | 5001712, 5001812, 5001968, 5002244 | • Headset identity |
 | [Device identity (2.0.23/5002363)](#device-identity-2-0-23-5002363) | Sets the headset name SteamVR sees; optional, so it stays out of the recommended set. Builds: exact 2.0.23/5002363. | 5002363 | • Headset identity |
-| [Galaxy XR SteamVR driver (galaxyxr)](#galaxy-xr-steamvr-driver-galaxyxr) | Sets Galaxy XR headset and controller names in SteamVR, replacing the Meta Quest Pro spoof. Builds: 5001712 to 5002363. Needs: Galaxy XR VRLink Setup on the PC, or controllers show no model. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Grip offset position (cm, x,y,z)<br>• Grip offset rotation (deg, x,y,z) |
-| [OpenXR CPU and GPU BOOST](#openxr-cpu-and-gpu-boost) | Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Galaxy XR SteamVR driver (galaxyxr)](#galaxy-xr-steamvr-driver-galaxyxr) | Sets Galaxy XR headset and controller names in SteamVR, replacing the Meta Quest Pro spoof. Builds: 5001712 to 5002363. Needs: Galaxy XR VRLink Setup on the PC, or controllers show no model. Details: https://github.com/4uva4ek/steamlink-patches. | 5001712, 5001812, 5001968, 5002244, 5002363 | • Grip offset position (cm, x,y,z)<br>• Grip offset rotation (deg, x,y,z) |
+| [OpenXR CPU and GPU BOOST](#openxr-cpu-and-gpu-boost) | Asks OpenXR for the CPU and GPU BOOST hint at each session start; the headset still controls clocks and thermals, and unsupported ones continue without BOOST. No root needed; performance gain not yet measured. Details: https://github.com/4uva4ek/steamlink-patches. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### Advanced XR compatibility
 
@@ -187,16 +187,16 @@ This section is generated from the patch catalog during releases.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Controller angular world to local](#controller-angular-world-to-local) | Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. Needs: the Velocity Frame runtime correction active in the app (the patch does not enable it itself); not with stock velocities or the old velocity patches. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5002363 |  |
-| [Controller pose extrapolation](#controller-pose-extrapolation) | Makes Galaxy XR predict controller poses to the moment VRLink asks, instead of repeating one sample per display frame, and filters jitter out of the streamed pose; no Steam Link code is changed. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [Controller velocity frame](#controller-velocity-frame) | Rotates the controller velocities the Galaxy XR runtime reports into the frames SteamVR reads, so thrown objects leave in the right direction. Stock, they arrive in a controller-attached frame. Adds an OpenXR API layer; no Steam Link code is changed. Steam Link 2.0.23: angular velocity is reported local to the streamed pose. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Controller angular world to local](#controller-angular-world-to-local) | Adapts Galaxy XR's angular velocity to Steam Link 2.0.23's controller axes. Builds: exact 2.0.23/5002363. Experimental there: headset validation pending. Needs: the Velocity Frame runtime correction active in the app (it does not enable it itself); not with stock velocities or the old velocity patches. Details: https://github.com/4uva4ek. | 5002363 |  |
+| [Controller pose extrapolation](#controller-pose-extrapolation) | Makes Galaxy XR predict controller poses to the moment the app asks, instead of repeating one sample per frame, and smooths out jitter. Builds: 5001712 to 5002363 (measured on 2.0.23). Needs: nothing. Details: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Controller velocity frame](#controller-velocity-frame) | Fixes thrown-object directions by rotating controller speeds into the frame SteamVR expects. Builds: 2.0.23, angular velocity is reported local to the streamed pose; 2.0.20 - 2.0.22, it is reported in the base space. Needs: nothing. Details: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### Controllers (Shizuku)
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | 🔢&nbsp;Builds | ⚙️&nbsp;Options |
 |----------|----------------|----------------|-----------|
-| [Controller grip haptics through Shizuku](#controller-grip-haptics-through-shizuku) | Routes controller vibration to the grip vibrator instead of the trigger Galaxy XR uses by default. Needs: Shizuku running with its permission granted to Steam Link; without it vibration stays stock. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
-| [Controller tracking from the controller HAL through Shizuku](#controller-tracking-from-the-controller-hal-through-shizuku) | Takes controller poses straight from the Galaxy XR controller HAL instead of the OpenXR runtime, removing the runtime's ~35 ms sample lag, and filters jitter out of pose and velocity. The HAL needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without Shizuku tracking stays as it is. Steam Link 2.0.23: angular velocity is reported local to the grip pose. Steam Link 2.0.20 - 2.0.22: angular velocity is reported in the base space. Controller tracking and haptics based on @4uva4ek's Galaxy XR modules: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Controller grip haptics through Shizuku](#controller-grip-haptics-through-shizuku) | Sends controller vibration to the grip motor instead of the trigger Galaxy XR uses by default. Builds: 5001712 to 5002363. Needs: Shizuku running with its permission granted to Steam Link; without it vibration stays stock. Details: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
+| [Controller tracking from the controller HAL through Shizuku](#controller-tracking-from-the-controller-hal-through-shizuku) | Reads controller poses straight from the headset's HAL, removing ~35 ms of lag and smoothing jitter. HAL access needs shell rights, so this needs Shizuku running with its permission granted to Steam Link; without it tracking stays stock. Builds: 2.0.23, angular velocity is reported local to the grip pose; 2.0.20 - 2.0.22, it is reported in the base space. Details: https://github.com/4uva4ek. | 5001712, 5001812, 5001968, 5002244, 5002363 |  |
 
 #### Streaming & network
 

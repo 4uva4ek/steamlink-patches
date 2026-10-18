@@ -100,6 +100,10 @@ the tracked `patches-list*.json` catalogs. Tests pin some wording:
   `local to the grip pose`, `local to the streamed pose`, `in the base space`.
 - `GxrSpacewarpLayerPatchTest` asserts `2.0.23/5002363`, `2.0.20/5001712` and `stand` in the description; `FourXvrBundleTest` asserts the premium patch `name` contains `experimental` (rename no patch whose name or text a test pins).
 - Sweeps beat lists: grep `patches/src/test` for `.description`/`patchSource.contains`/name assertions before a text pass and treat every hit as locked verbatim; keep build-id pins (`2.0.23/5002363`) inside the rewritten text.
+- Generated docs keep hand-written paragraphs around the generated block (`TECHNICAL_REFERENCE.md`
+  section intros): the regen does not rewrite their patch-count numbers, so they drift eras behind
+  the truth. After any patch-set, defaults or category change, grep those paragraphs for count
+  phrases ("N patches", "N-patch recommended set") and align them in the same wave.
 - The 4XVR tests cover the new app instead of wording: `FourXvrNativeGuardTest` pins
   `libvr4p-oculus.so` and `libovrplatformloader.so` size/SHA-256 plus the refresh-profile
   and stub edit bytes and fails closed on wrong-size, wrong-hash or unpinned layouts;
@@ -137,8 +141,10 @@ For a repo-wide text pass (all descriptions plus option texts): build the invent
 the root `patches` key of `patches-list-all.json` (a recursive walk over-picks
 `compatiblePackages` rows because they carry `name` fields too), map patch names to source
 files by grepping `name = "`, then hand one directory batch per parallel child a
-scratch-file job (role contract + allowed file list + locked phrases + receipt shape),
-run the reviewer over the diff, then regenerate: `:patches:generatePatchesList`, the
+scratch-file job (role contract + allowed file list + locked phrases + EXACT final texts
+— the main thread drafts the wording because it holds the semantics; verbatim application
+clears such a batch in 1 pass, style-spec delegation overruns budgets and needs a
+correcting wave), run the reviewer over the diff, then regenerate: `:patches:generatePatchesList`,
 readme generator, `:patches:test`, and a remnant sweep expecting zero old-phrase matches
 outside `CHANGELOG.md` and `diagnostics/` (history is never rewritten).
 
@@ -247,6 +253,14 @@ experimental patch re-flags its targets via `targets.map { it.copy(isExperimenta
 Package-alias compat entries (an extra `pkg` name like a `.x_23` renamed clone) create an
 extra app tile the same way — declare only real packages unless the alias is itself supported.
 
+`default = true` is the auto-apply switch: Morphe Manager preselects default patches per
+detected build, so pair it with the exact-pair execute guard and it applies only on that
+build (an inert no-op elsewhere). Auto-apply stays channel-aware: a default-on patch whose
+targets carry `isExperimental = true` never enters the stable catalog. The recommended-set
+pins gain the patch in the same change — `PatchCompatibilityMatrixTest`'s explicit sets and
+its companion lists (`allIndividualPatches`), plus `PatchCategoriesTest`'s default set; keep
+test-function count names ("eight", "ten") in phase with the real counts.
+
 ## Constants
 Use the exact `(versionName, versionCode)` model and primary `AppTarget` constructor documented in
 the repository-root `AGENTS.md`. Never replace the existing compatibility list when adding a base.
@@ -258,6 +272,11 @@ the repository-root `AGENTS.md`. Never replace the existing compatibility list w
 - `BinaryPatchHelper.vaddrToFileOffset(...)` — virtual address → file offset in ELF
 
 ## Build commands
+
+Run Gradle through the `terminal` tool's bash (`JAVA_HOME='F:/Runtimes/Java21' ./gradlew.bat ...`),
+not from the Python `execute_code` kernel: it spawns subprocesses without a shell, so the relative
+`./gradlew.bat` dies with `'. is not recognized` and the bash-exported env does not resolve there.
+Foreground terminal cap is 600 s; longer commands get promoted to a tracked background process.
 
 ### Required output location
 
@@ -360,7 +379,12 @@ Another task's uncommitted refactor can break `:patches:test` compilation (for e
 
 ### Attribution credit lines in patch descriptions
 
-Credit text lives in one `internal const val <APP>_CREDIT` per app (4XVR: `FOUR_XVR_UPSTREAM_CREDIT` in `FourXvrDexKit.kt`; Steam Link: `STEAM_LINK_CONTROLLER_CREDIT` in `steamlink/androidxr/ControllerAngularVelocityFrame.kt`) and is appended as `"... " + CREDIT` to the description of every patch the credit covers; option descriptions never get it. Keep appended text free of phrases tests pin as sentinels (for example `not run on this base`), then run `:patches:generatePatchesList`, `python -B .github/scripts/generate_patches_readme.py <owner/repo> <branch> patches-list-all.json TECHNICAL_REFERENCE.md`, and `:patches:test`.
+Credit text lives in one `internal const val <APP>_CREDIT` per app (4XVR: `FOUR_XVR_UPSTREAM_CREDIT` in `FourXvrDexKit.kt`; Steam Link: `CONTRIBUTOR_4UVA_4EK` in `steamlink/androidxr/ControllerAngularVelocityFrame.kt`) and is appended as `"... " + CREDIT` to the description of every patch the credit covers; option descriptions never get it. Keep appended text free of phrases tests pin as sentinels (for example `not run on this base`), then run `:patches:generatePatchesList`, `python -B .github/scripts/generate_patches_readme.py <owner/repo> <branch> patches-list-all.json TECHNICAL_REFERENCE.md`, and `:patches:test`.
+
+Before adding any `Details:`/link sentence to a description, check what the append already adds:
+a patch covered by `<APP>_CREDIT` already carries the credit/link line, and a second link
+sentence reads to the user as a duplicated credit. Standalone link lines belong only on patches
+whose description appends no credit const.
 
 ```powershell
 .\gradlew.bat :patches:test            # local gate, run at the end of every task
