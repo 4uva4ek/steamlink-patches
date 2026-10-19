@@ -1,3 +1,11 @@
+## [1.32.0](https://github.com/4uva4ek/xr-porting-hub/compare/v1.31.1...v1.32.0) (2026-10-19)
+
+### ✨ New Features
+
+* add experimental controller pose time patch ([4353ee0](https://github.com/4uva4ek/xr-porting-hub/commit/4353ee074fd688d78a106352233dff16c636ce68))
+* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([2720a5f](https://github.com/4uva4ek/xr-porting-hub/commit/2720a5fe7418822d73600ab6e50fde8beb944e0e))
+* make controller velocity frame a stable default and retire the angular adapter ([c950e14](https://github.com/4uva4ek/xr-porting-hub/commit/c950e149791400434da858c3345b22de6472974c))
+
 ## [1.31.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.0...v1.31.1) (2026-10-18)
 
 ### 🐛 Bug Fixes
