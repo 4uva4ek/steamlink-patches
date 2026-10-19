@@ -19,6 +19,7 @@ Developer guidance (@4uva4ek, author of these controller fixes):
 
 - **Symptom first.** Controllers trailing or jittering, thrown objects going sideways, vibration in the trigger instead of the grip. If stock tracking feels fine, apply nothing.
 - **One layer at a time.** Non-root: add the pair, test, then add the Shizuku pair only if Shizuku is installed and granted. Root: add Haptics MAIN + Velocity Frame, test, then add one pose layer.
+- **Experimental, exact 5001712 and 5002363:** **Controller pose time** dates each controller pose at the time the runtime sampled it, minus a compensation (option, 0 to 30 ms, default 5). It is the APK form of the root **Steam Link Pose Time** module and needs no root. Not with Controller pose extrapolation or the Shizuku HAL pose patch.
 - **No angular adapter.** The former *Controller angular world to local* adapter for 2.0.23 is retired: **Controller velocity frame** already reports the angular velocity in the local axes Steam Link 2.0.23 reads.
 - **Root modules install disabled.** Enable and restore per module instructions; the Action button reports state, it does not toggle. APK patches live in the installed APK — repatch to change them.
 
