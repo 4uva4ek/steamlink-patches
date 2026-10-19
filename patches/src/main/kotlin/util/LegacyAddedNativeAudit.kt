@@ -1,7 +1,6 @@
 package util
 
 import app.morphe.patcher.patch.PatchException
-import app.template.patches.steamlink.androidxr.patchControllerPoseCadence
 import app.template.patches.steamlink.binary.*
 import java.io.File
 import java.nio.ByteBuffer
@@ -18,7 +17,6 @@ object LegacyAddedNativeAudit {
         val names: IntArray, val gates: List<IntArray>, val permission: Int, val microphone: Int,
         val hook: Int, val stores: IntArray, val cave: Int,
         val mapFile: Long, val mapVa: Long, val mapSize: Long, val alignment: Long,
-        val cadence: List<IntArray>,
     )
 
     private val bases = listOf(
@@ -28,27 +26,18 @@ object LegacyAddedNativeAudit {
             listOf(intArrayOf(0xffc5c, 0xffc64), intArrayOf(0x10dc70), intArrayOf(0x1166c4, 0x1166cc, 0x116780)),
             0x142c84, 0xf4484, 0x101648,
             intArrayOf(0x101674, 0x101690, 0x101770, 0x101774, 0x101780),
-            0x21dad0, 0x21d000, 0xc65000, 0xae4, 0x1000,
-            listOf(
-                intArrayOf(0xf6324, 0xf6314, 0xf636c, 0xf6380, 0xf63a8, 0xf638c),
-                intArrayOf(0xf6424, 0xf6414, 0xf646c, 0xf6480, 0xf64a8, 0xf648c),
-                intArrayOf(0xf64ec, 0xf64dc, 0xf6534, 0xf6544, 0xf6570, 0xf6578))),
+            0x21dad0, 0x21d000, 0xc65000, 0xae4, 0x1000),
         Base("2.0.21", "5001968", 2234048,
             "596b5680aa6c217daf5c151de517b1ad61b3999c6fd864ff59a718136ca40192",
             intArrayOf(0x9334f, 0x9b7ab),
             listOf(intArrayOf(0xfbc04, 0xfbc0c), intArrayOf(0x109bf0), intArrayOf(0x112644, 0x11264c, 0x112700)),
             0x13ec7c, 0xefdb4, 0xfd5f0,
             intArrayOf(0xfd6ac, 0xfd658, 0xfd6e0, 0xfd6e4, 0xfd6e8),
-            0x220e88, 0x220000, 0xc70000, 0xe9c, 0x4000,
-            listOf(
-                intArrayOf(0xf2180, 0xf2170, 0xf21c8, 0xf21dc, 0xf2204, 0xf21e8),
-                intArrayOf(0xf2284, 0xf2274, 0xf22cc, 0xf22e0, 0xf2308, 0xf22ec),
-                intArrayOf(0xf234c, 0xf233c, 0xf2394, 0xf23a4, 0xf23d0, 0xf23d8))),
+            0x220e88, 0x220000, 0xc70000, 0xe9c, 0x4000),
     )
     private val presets = linkedMapOf("voice-communication" to 7, "voice-recognition" to 6,
         "unprocessed" to 9, "voice-performance" to 10)
     private val delays = listOf(0L, 1L, 60L, 100L, 1000L, 4000L)
-    private val modes = listOf("stock-4x", "half-2x", "display-1x")
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -69,7 +58,7 @@ object LegacyAddedNativeAudit {
             audit(base, stock)
             check(file.readBytes().contentEquals(stock)) { "Read-only audit changed source file" }
             println("PASS ${base.version}/${base.code}: names + 3 gate groups + permission; 4 microphone presets/16 transitions; " +
-                "6 HMD offsets/36 transitions; 3 cadence modes/9 transitions; 24 native orders with cadence before/after; " +
+                "6 HMD offsets/36 transitions; 24 native orders; " +
                 "exact byte diffs, idempotence, wrong pairs, corrupt-site rejection, input immutability")
         }
         println("Scope: 2 real hash-pinned decoded scene libraries; production native helpers only. No Morphe APK, Android linker, headset, or SteamVR proof.")
@@ -81,7 +70,6 @@ object LegacyAddedNativeAudit {
         fun permission(x: ByteArray) = patchPermissionPrompt(x, b.version, b.code)
         fun mic(x: ByteArray, preset: String) = patchNativeMicrophonePreset(x, preset, b.version, b.code)
         fun hmd(x: ByteArray, delay: Long) = patchVisualDelay(x, delay, b.version, b.code)
-        fun cadence(x: ByteArray, mode: String) = patchControllerPoseCadence(x, mode, b.version, b.code)
         fun gates(x: ByteArray): ByteArray = gateFunctions.fold(names(x)) { bytes, fn -> fn(bytes, b.version, b.code) }
 
         checkExact(stock, names(stock), expectedNames(stock, b), "permission names")
@@ -127,24 +115,12 @@ object LegacyAddedNativeAudit {
         listOf(-1L, 4001L).forEach { invalid -> fails(stock) { hmd(it, invalid) } }
         check(patchVisualDelay(stock, 60).contentEquals(stock)) { "New HMD base inferred by size" }
 
-        for (mode in modes) {
-            val actual = cadence(stock, mode)
-            checkExact(stock, actual, expectedCadence(stock, b, mode), "cadence $mode", mode == "stock-4x")
-            check(cadence(actual, mode).contentEquals(actual))
-            for (next in modes) check(cadence(actual, next).contentEquals(expectedCadence(stock, b, next))) {
-                "Cadence transition $mode->$next"
-            }
-        }
-        b.cadence.flattenInts().forEach { site -> badSite(stock, site) { cadence(it, "half-2x") } }
-        check(patchControllerPoseCadence(stock, "half-2x").contentEquals(stock)) { "New cadence base inferred by size" }
-
         for ((wrongVersion, wrongCode) in listOf("9.9.9" to b.code, b.version to "0")) {
             check(patchNativePermissionNames(stock, wrongVersion, wrongCode).contentEquals(stock))
             gateFunctions.forEach { check(it(stock, wrongVersion, wrongCode).contentEquals(stock)) }
             check(patchPermissionPrompt(stock, wrongVersion, wrongCode).contentEquals(stock))
             check(patchNativeMicrophonePreset(stock, "voice-recognition", wrongVersion, wrongCode).contentEquals(stock))
             check(patchVisualDelay(stock, 60, wrongVersion, wrongCode).contentEquals(stock))
-            check(patchControllerPoseCadence(stock, "half-2x", wrongVersion, wrongCode).contentEquals(stock))
         }
         val truncated = stock.copyOf(stock.size - 1)
         fails(truncated, ::names)
@@ -152,7 +128,6 @@ object LegacyAddedNativeAudit {
         fails(truncated, ::permission)
         fails(truncated) { mic(it, "voice-recognition") }
         fails(truncated) { hmd(it, 60) }
-        fails(truncated) { cadence(it, "half-2x") }
 
         // A same-size library with a modified, non-owned instruction in any guarded
         // function must fail before each independently selected native mutation.
@@ -167,24 +142,21 @@ object LegacyAddedNativeAudit {
             badSite(stock, site, ::permission)
             badSite(stock, site) { mic(it, "voice-recognition") }
             badSite(stock, site) { hmd(it, 60) }
-            badSite(stock, site) { cadence(it, "half-2x") }
         }
 
         val operations: List<(ByteArray) -> ByteArray> = listOf(::gates, ::permission,
             { mic(it, "voice-recognition") }, { hmd(it, 60) })
-        val expected = expectedCadence(expectedHmd(expectedPermission.copyOf().apply {
+        val expected = expectedHmd(expectedPermission.copyOf().apply {
             expectedNames(this, b).copyInto(this)
             b.gates.forEach { sites -> sites.forEach { putWord(it, 0xd503201f.toInt()) } }
             putWord(b.microphone, 0x528000c1)
-        }, b, 60), b, "half-2x")
+        }, b, 60)
         val orders = permutations(listOf(0, 1, 2, 3))
         check(orders.size == 24)
         for (order in orders) {
-            val lastCadence = cadence(order.fold(stock) { bytes, i -> operations[i](bytes) }, "half-2x")
-            val firstCadence = order.fold(cadence(stock, "half-2x")) { bytes, i -> operations[i](bytes) }
-            checkExact(stock, lastCadence, expected, "combined $order")
-            check(firstCadence.contentEquals(expected)) { "Cadence order dependence $order" }
-            check(order.reversed().fold(lastCadence) { bytes, i -> operations[i](bytes) }.contentEquals(expected)) {
+            val combined = order.fold(stock) { bytes, i -> operations[i](bytes) }
+            checkExact(stock, combined, expected, "combined $order")
+            check(order.reversed().fold(combined) { bytes, i -> operations[i](bytes) }.contentEquals(expected)) {
                 "Combined reapplication $order"
             }
         }
@@ -214,21 +186,6 @@ object LegacyAddedNativeAudit {
         b.stores.forEachIndexed { i, offset -> putWord(offset, zeros[i].toInt()) }
     }
 
-    private fun expectedCadence(input: ByteArray, b: Base, mode: String) = input.copyOf().apply {
-        b.cadence.forEachIndexed { row, sites ->
-            val values = when (mode) {
-                "stock-4x" -> longArrayOf(0x528000a2, 0x910023e1, 0x5280004b, 0x5280006c,
-                    0xb9002fed, if (row == 2) 0xb9003fea else 0xb9003fe9)
-                "half-2x" -> longArrayOf(0x52800062, 0x9100a3e1, 0x5280000b, 0x5280004c,
-                    if (row == 2) 0xb9002fe9 else 0xb9002fea, 0xb9003fed)
-                "display-1x" -> longArrayOf(0x52800042, 0x9100e3e1, 0x5280004b, 0x5280000c,
-                    0xb9002fed, if (row == 2) 0xb9003fe9 else 0xb9003fea)
-                else -> error("Unexpected audit mode")
-            }
-            sites.forEachIndexed { index, offset -> putWord(offset, values[index].toInt()) }
-        }
-    }
-
     private fun checkExact(input: ByteArray, actual: ByteArray, expected: ByteArray, label: String, allowNoChange: Boolean = false) {
         check(actual.size == input.size && actual.contentEquals(expected)) {
             val first = actual.indices.firstOrNull { it >= expected.size || actual[it] != expected[it] }
@@ -247,7 +204,6 @@ object LegacyAddedNativeAudit {
     }
     private fun permutations(items: List<Int>): List<List<Int>> = if (items.isEmpty()) listOf(emptyList()) else
         items.flatMap { first -> permutations(items - first).map { listOf(first) + it } }
-    private fun List<IntArray>.flattenInts() = flatMap { it.toList() }
     private fun ByteArray.putWord(offset: Int, value: Int) { ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).putInt(offset, value) }
     private fun ByteArray.putLong(offset: Int, value: Long) { ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).putLong(offset, value) }
     private fun hash(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }

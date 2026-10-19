@@ -6,6 +6,25 @@ Scope: `D:\Angelo\Desktop\SteamLink-GalaxyXR-Windows-Toolkit-FULL`, including it
 
 Cleanup is part of completing an experiment or finalizing/applying a patch. Record the outcome, exact base, evidence and runtime limits; remove disposable outputs and superseded local copies; verify retained inputs and tool references. Keep a dated failed/retired record so a failed experiment is not recommended again. Parent and repository `AGENTS.md` enforce this rule.
 
+## External build relocation, 2026-10-08
+
+- Moved all 6 inventoried build/cache folders to `../builds/steamlink-patches/`:
+  **40,428 files / 14,416,180,455 bytes**, preserving sizes/timestamps and verifying
+  15 fixture APK/bundle SHA-256 hashes. Relocation deleted 0 artifact bytes; it
+  removes about 14.4 GB from the project tree without reclaiming disk space.
+- Gradle uses `gradle/root` and `gradle/patches`; retained mixed inputs/evidence use
+  `build/`. Wrappers, native/local audit scripts, release assets/attestation,
+  current build commands and project guidance now use the external layout.
+- [Mapping, checks and regeneration](diagnostics/build-layout/README.md) and
+  [migration receipt](diagnostics/build-layout/2026-10-08-migration.json) record
+  retained exceptions, cache rebuilding, historical-path translation and the
+  Morphe 1.3.4 plugin-resolution blocker. Older sections below describe original
+  paths and measurements; use the relocation map to locate those retained files.
+- Final task-owned validation checkout/source ZIP/validator dependency cleanup
+  was rejected before execution by automatic approval review (`blocked by policy`).
+  **623 files / 43,779,112 bytes** remain in external `validation/`; that attempt
+  removed 0 bytes. [Deferred allowlist](diagnostics/build-layout/validation-cleanup.json).
+
 ## Patch categories, 2026-10-03
 
 - Added 7 categories to all 29 public patches, preserving the 5 exact supported
@@ -79,7 +98,7 @@ Cleanup is part of completing an experiment or finalizing/applying a patch. Reco
 - **Verification:** 106/106 JUnit via `diagnostics/steamlink-5002363/Compile-CachedAudit.ps1` (cached-Kotlin compile + JUnit; normal Gradle remains blocked resolving `app.morphe.patches:1.3.3`).
 - **Catalogs regenerated locally** (the CI `generatePatchesList` task is unreachable while the plugin is blocked): the current source was compiled, packaged to `patches/build/libs/patches-1.18.0-dev.10-catalog-local.mpp` (manifest `Version: 1.18.0-dev.10`, same attributes as the last shipped MPP), and `util.PatchListGeneratorKt` was run with channel `experimental` from `patches/`. All 4 `patches-list*.json` went from 26 to 24 entries (the 2 dropped-build bundles removed); every `compatiblePackages` target is now one of the 3 kept builds. `TECHNICAL_REFERENCE.md`'s generated section was refreshed with the official `.github/scripts/generate_patches_readme.py AngelDark92/steamlink-patches dev patches-list-all.json TECHNICAL_REFERENCE.md`, and its hand-written compatibility prose, plus `.github/copilot-instructions.md`, now list only the 3 kept builds.
 - **Removed:** 6 superseded compiler-output dirs under `build/audit-5002363/` (`compiled/`, `compiled-final/`, `compiled-v2/`, `compiled-3213058d…`, `compiled-785c2d5b…`, `compiled-795f9363…`, ~22 MB). Kept the current compile dir (`compiled-1dbb14…`) and the local MPP (only MPP matching the current source; the 3 older local experiment MPPs were already retained per prior records).
-- **Intentionally retained dropped-build references:** Morphe patch names (`GXR face bridge (version 5002318 and below)`, `GXR tongue bridge (version 5002322 and above)`, `Startup permission requests (before 5002322)`, `Startup splash and XR launch mode (before 5002322)`); fail-closed test guards asserting dropped builds stay unsupported/unchanged; the retired-resource absence guards (`libgxr_surface_video_5002322_*.so`); the real-device evidence fixture `patches/src/test/resources/steamlink/identity/installed-5002322-hmd-config.json`; dated records in `CHANGELOG.md`, `WORKSPACE_CLEANUP.md`, `diagnostics/`, `XR_RESOLUTION_EXPERIMENT_LOGS/`, `extensions/decoder-input-buffering/` (retired-experiment reproducibility source) and `LEGACY_VS_MORPHE_PATCHES.md`.
+- **Intentionally retained dropped-build references:** Morphe patch names that mention dropped builds (`Startup permission requests (before 5002322)`, `Startup splash and XR launch mode (before 5002322)`; the `GXR face bridge`/`GXR tongue bridge` pair merged into `GXR face and tongue bridge` on 2026-10-12); fail-closed test guards asserting dropped builds stay unsupported/unchanged; the retired-resource absence guards (`libgxr_surface_video_5002322_*.so`); the real-device evidence fixture `patches/src/test/resources/steamlink/identity/installed-5002322-hmd-config.json`; dated records in `CHANGELOG.md`, `WORKSPACE_CLEANUP.md`, `diagnostics/`, `XR_RESOLUTION_EXPERIMENT_LOGS/`, `extensions/decoder-input-buffering/` (retired-experiment reproducibility source) and `LEGACY_VS_MORPHE_PATCHES.md`.
 - **Open for user decision:** `PATCH_CATALOG.md` still contains per-build guarded-layout tables and bundle descriptions for the dropped builds (engineering reference, mixed current/historical content).
 
 ## Samsung automatic USB retirement, 2026-09-19
@@ -420,4 +439,11 @@ Results: all 59 targets absent; 0 missing or altered retained files (with archiv
 - Preserve original/decoded APK inputs, canonical sources/resources, current MPP,
   compact receipts and shared tooling. Regenerate via the cached audit compiler and
   the isolated `git archive`/JUnit procedure documented in the CI receipt. Remove
-  only these exact owned outputs after fresh safety checks when policy permits.
+  Remove only these exact owned outputs after fresh safety checks when policy permits.
+
+  ### 2026-10-11 — Uber link rescan disable experiment
+
+  - Created the separate default-off experimental patch for exact **2.0.23/5002363** (NOPs the two post-startup `ScanForLinkChanges` call sites in `lib/arm64-v8a/libvrlink_scene.so`, `0x174c74` and `0x16fdf8`), with its Kotlin test/standalone audit and Build/Cleanup runners. Existing bundles, stable catalog content and older adaptations remain unchanged.
+  - Published `patches-1.28.0-dev.3-uber-link-rescan-disable-local.mpp` (SHA-256 `606bff82587cae1deb3b50b1f6ef46e08621aa3da3ae2bcd8259cbd692acc2f8`) to `../builds/steamlink-patches/gradle/patches/libs/` after 5 genuine-APK Morphe cases (local JUnit: 167 executed / 0 skipped / 0 failures; isolated no-fixture copy: 153 executed / 14 `BLOCKED` skips / 0 failures) and the catalog regression passed. Receipt: `diagnostics/steamlink-hitches/uber-link-rescan-disable-validation.json`; [experiment record](diagnostics/steamlink-hitches/EXPERIMENT-2026-10-11-uber-link-rescan-disable.md).
+  - Retain the audited run `build/uber-link-rescan-disable/archive-20261011-111527-b6631178` plus compact receipts. The superseded first run `archive-20261011-111355-52ecc2b4` (harness aborted on Morphe stderr logging before any publish; fixed in `Invoke-CheckedJava`) is the only new cleanup candidate; scoped cleanup via `Cleanup-UberRescanDisableExperiment.ps1`. No APK installation, ADB, device or host-setting change occurred.
+- Headset trial on the exact 2.0.23/5002363 patched APK (USB debug + SteamVR active): hitches unchanged. **Retired 2026-10-11:** patch/test/audit sources removed; `compileOnly(libs.apksig)` reverted with them; catalogs regenerated from current source (entry dropped, stable catalog unchanged); the published `.mpp`, this record and the validation receipt are retained as historical evidence. Do not re-derive (see AGENTS.md retired section).

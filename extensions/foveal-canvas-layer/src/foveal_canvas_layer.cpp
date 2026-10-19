@@ -468,7 +468,10 @@ XrResult XRAPI_PTR get(XrInstance instance,const char* name,PFN_xrVoidFunction* 
     else ROUTE("xrReleaseSwapchainImage",release);
     else ROUTE("xrEndFrame",endFrame);
     else ROUTE("xrDestroyInstance",destroyInstance);
-    else return g.get(instance,name,function);
+    // ApiLayerInterface::LoadApiLayers queries xrInitializeLoaderKHR through this
+    // entry before any instance chain exists; g.get is only set by create(). Never
+    // branch through an unassigned chain.
+    else return g.get ? g.get(instance,name,function) : XR_ERROR_FUNCTION_UNSUPPORTED;
 #undef ROUTE
     return XR_SUCCESS;
 }

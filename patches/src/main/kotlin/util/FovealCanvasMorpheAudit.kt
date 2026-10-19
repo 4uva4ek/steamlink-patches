@@ -6,7 +6,14 @@ import app.morphe.patcher.apk.ApkUtils.applyTo
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.rawResourcePatch
 import app.template.patches.steamlink.androidxr.*
-import app.template.patches.steamlink.galaxyXrRecommended5001812Patch
+import app.template.patches.steamlink.binary.androidXrNativePermissionNamesPatch
+import app.template.patches.steamlink.binary.forceHmdInitializationGatesPatch
+import app.template.patches.steamlink.binary.forceLobbyPermissionStateGatePatch
+import app.template.patches.steamlink.binary.forceStreamXrGatesPatch
+import app.template.patches.steamlink.binary.hmdOnlyPatch
+import app.template.patches.steamlink.binary.microphoneInputPresetPatch
+import app.template.patches.steamlink.binary.oledCalibrationPatch
+import app.template.patches.steamlink.identity.deviceIdentityPatch
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -18,6 +25,27 @@ import java.util.zip.ZipFile
  * no Android linking, GLES execution, installation or headset proof.
  */
 object FovealCanvasMorpheAudit {
+    // The same 17 individual Steam Link patches formerly selected via the recommended-set wrapper.
+    private val legacyRecommendedPatches: List<Patch<*>> = listOf(
+        androidXrNativePermissionNamesPatch,
+        forceHmdInitializationGatesPatch,
+        forceLobbyPermissionStateGatePatch,
+        forceStreamXrGatesPatch,
+        gxrFacebridgePatch,
+        xrGalaxyXrHighResolutionPatch,
+        microphoneInputPresetPatch,
+        oledCalibrationPatch,
+        unrestrictedBatteryUsagePatch,
+        hmdOnlyPatch,
+        xrCoreRuntimePatch,
+        xrDeviceConfigBaselinePatch,
+        xrInputRoutingConfigPatch,
+        xrLauncherBootstrapPatch,
+        xrStartupPermissionsPatch,
+        xrManifestCapabilityPackPatch,
+        deviceIdentityPatch,
+    )
+
     private const val SCENE = "lib/arm64-v8a/libvrlink_scene.so"
     private const val LAYER_DIRECTORY = "assets/openxr/1/api_layers/implicit.d/"
     private const val ORIGINAL_APK_SIZE = 40_427_387L
@@ -70,9 +98,9 @@ object FovealCanvasMorpheAudit {
                 "alone" -> selection += xrFovealCanvasPatch
                 "trigger-first" -> { selection += xrGalaxyXrHighResolutionPatch; selection += xrFovealCanvasPatch }
                 "canvas-first" -> { selection += xrFovealCanvasPatch; selection += xrGalaxyXrHighResolutionPatch }
-                "recommended" -> { selection += galaxyXrRecommended5001812Patch; selection += xrFovealCanvasPatch }
+                "recommended" -> { selection += legacyRecommendedPatches; selection += xrFovealCanvasPatch }
                 "legacy-without-trigger" -> {
-                    selection += galaxyXrRecommended5001812Patch.dependencies.filterNot { it === xrGalaxyXrHighResolutionPatch }
+                    selection += legacyRecommendedPatches.filterNot { it === xrGalaxyXrHighResolutionPatch }
                     selection += xrFovealCanvasPatch
                 }
             }

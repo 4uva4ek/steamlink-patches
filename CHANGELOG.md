@@ -1,8 +1,315 @@
-## [1.28.0](https://github.com/4uva4ek/xr-porting-hub/compare/v1.27.0...v1.28.0) (2026-10-14)
+## [1.31.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.0...v1.31.1) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Add telemetry support and tests for Steam Link Android XR ([31b7092](https://github.com/AngelDark92/xr-porting-hub/commit/31b7092643c592185427437cbac765d1044204f5))
+* Refactor Steam Link build compatibility and experimental flags ([cdeba3a](https://github.com/AngelDark92/xr-porting-hub/commit/cdeba3af23a4c94906d56b511cb1bc860087926c))
+* Refactor Steam Link Experimental to Steam Link ([a23faf3](https://github.com/AngelDark92/xr-porting-hub/commit/a23faf3046f8b723320aaf10a7e4137dc8f56a91))
+* Update patch descriptions and remove experimental patches ([f45d3d9](https://github.com/AngelDark92/xr-porting-hub/commit/f45d3d9cdd73b73770c89dd0e987fd4133124934))
+* update patches for Galaxy XR high-resolution 3-projection and Controller angular world to local adapter ([d30c129](https://github.com/AngelDark92/xr-porting-hub/commit/d30c129071bc567ff10e73c2a0f18547236b841a))
+
+## [1.31.1-dev.5](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.4...v1.31.1-dev.5) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Add telemetry support and tests for Steam Link Android XR ([31b7092](https://github.com/AngelDark92/xr-porting-hub/commit/31b7092643c592185427437cbac765d1044204f5))
+
+## [1.31.1-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.3...v1.31.1-dev.4) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Refactor Steam Link build compatibility and experimental flags ([cdeba3a](https://github.com/AngelDark92/xr-porting-hub/commit/cdeba3af23a4c94906d56b511cb1bc860087926c))
+
+## [1.31.1-dev.3](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.2...v1.31.1-dev.3) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Update patch descriptions and remove experimental patches ([f45d3d9](https://github.com/AngelDark92/xr-porting-hub/commit/f45d3d9cdd73b73770c89dd0e987fd4133124934))
+
+## [1.31.1-dev.2](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.1-dev.1...v1.31.1-dev.2) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* update patches for Galaxy XR high-resolution 3-projection and Controller angular world to local adapter ([d30c129](https://github.com/AngelDark92/xr-porting-hub/commit/d30c129071bc567ff10e73c2a0f18547236b841a))
+
+## [1.31.1-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.31.0...v1.31.1-dev.1) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* Refactor Steam Link Experimental to Steam Link ([a23faf3](https://github.com/AngelDark92/xr-porting-hub/commit/a23faf3046f8b723320aaf10a7e4137dc8f56a91))
+
+## [1.31.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.30.0...v1.31.0) (2026-10-18)
 
 ### ✨ New Features
 
-* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([2720a5f](https://github.com/4uva4ek/xr-porting-hub/commit/2720a5fe7418822d73600ab6e50fde8beb944e0e))
+* upadted patch descriptions for clarity and consistency across multiple patches, including updates to category names and improved explanations. ([be8fe64](https://github.com/AngelDark92/xr-porting-hub/commit/be8fe6495f632e34b02a4ba9ba30eb912e9c6497))
+
+## [1.31.0-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.30.0...v1.31.0-dev.1) (2026-10-18)
+
+### ✨ New Features
+
+* upadted patch descriptions for clarity and consistency across multiple patches, including updates to category names and improved explanations. ([be8fe64](https://github.com/AngelDark92/xr-porting-hub/commit/be8fe6495f632e34b02a4ba9ba30eb912e9c6497))
+
+## [1.30.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.29.0...v1.30.0) (2026-10-18)
+
+### 🐛 Bug Fixes
+
+* **ci:** authenticate optional unit test dependency resolution ([4e9dc0c](https://github.com/AngelDark92/xr-porting-hub/commit/4e9dc0c4a63f5a1aea87fdfdb092bf4b3e189ff2))
+
+### ✨ New Features
+
+* **steamlink:** add optional OpenXR CPU and GPU BOOST ([02b931c](https://github.com/AngelDark92/xr-porting-hub/commit/02b931c44d9be3141d2064bbaa7b45e1f4d42c13))
+
+## [1.29.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.1...v1.29.0) (2026-10-17)
+
+### ✨ New Features
+
+* add blue-noise dithering patch with default enabled ([11c3ae2](https://github.com/AngelDark92/xr-porting-hub/commit/11c3ae2c03723d0bdd7469567a35f91e90afdb2a))
+* Add unit tests and GxrSpacewarpLayerPatch functionality, merged dithering patches ([c3e5a6c](https://github.com/AngelDark92/xr-porting-hub/commit/c3e5a6c2e91b26a7ad826eae4d56e56161bb8079))
+
+## [1.29.0-dev.2](https://github.com/AngelDark92/xr-porting-hub/compare/v1.29.0-dev.1...v1.29.0-dev.2) (2026-10-17)
+
+### ✨ New Features
+
+* add blue-noise dithering patch with default enabled ([11c3ae2](https://github.com/AngelDark92/xr-porting-hub/commit/11c3ae2c03723d0bdd7469567a35f91e90afdb2a))
+
+## [1.29.0-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.1...v1.29.0-dev.1) (2026-10-17)
+
+### ✨ New Features
+
+* Add unit tests and GxrSpacewarpLayerPatch functionality, merged dithering patches ([c3e5a6c](https://github.com/AngelDark92/xr-porting-hub/commit/c3e5a6c2e91b26a7ad826eae4d56e56161bb8079))
+
+## [1.28.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0...v1.28.1) (2026-10-16)
+
+### 🐛 Bug Fixes
+
+* recommend Codecs Support on 2.0.20/5001712 ([6042535](https://github.com/AngelDark92/xr-porting-hub/commit/60425356ab125ca38d9b5593bec3c5bf22f1fcba))
+
+## [1.28.1-dev.1](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0...v1.28.1-dev.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* recommend Codecs Support on 2.0.20/5001712 ([6042535](https://github.com/AngelDark92/xr-porting-hub/commit/60425356ab125ca38d9b5593bec3c5bf22f1fcba))
+
+## [1.28.0](https://github.com/AngelDark92/xr-porting-hub/compare/v1.27.0...v1.28.0) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Add Galaxy XR launcher icon patch for 4XVR to enhance app tile visibility ([2cd4603](https://github.com/AngelDark92/xr-porting-hub/commit/2cd460390a4966289085d08e933d77ba8f4512cc))
+* Codecs support update ([67f5a36](https://github.com/AngelDark92/xr-porting-hub/commit/67f5a3667281ff75ad4c99c84842ef9c19458ae6))
+* codecs support v5 ([a008e34](https://github.com/AngelDark92/xr-porting-hub/commit/a008e342233fa1f65cfb7266d049734fab144d6b))
+* codecs support v6 (AV1 AU walk past sized TD OBU) ([2eaa85c](https://github.com/AngelDark92/xr-porting-hub/commit/2eaa85c31a11ed9c5a1fde1ac87588e3c278fb3d))
+* decode Packages validation responses ([14b3deb](https://github.com/AngelDark92/xr-porting-hub/commit/14b3debf66f49c02f62c1e1fdb03a237f1d3a879))
+* Enhance AV1 codec diagnostics and update support library version ([82975b0](https://github.com/AngelDark92/xr-porting-hub/commit/82975b0f50cd11c9c876ab3bfc189fea33560310))
+* Enhance HdrPipelinePatches to improve MediaCodec surface reload handling ([47eeea7](https://github.com/AngelDark92/xr-porting-hub/commit/47eeea7bbac74a34accd7556970e825ee4bbd110))
+* enhance network optimization patch with tolerance for prior edits in scene and main transforms ([0f3e1b8](https://github.com/AngelDark92/xr-porting-hub/commit/0f3e1b89983c15115cc42be05e812714ed9a943c))
+* Keep 4XVR HDR surface routing verifiable so video playback runs ([01c1d3e](https://github.com/AngelDark92/xr-porting-hub/commit/01c1d3edfa2b287cb9a4caa5a58fa510596b8c43))
+* pin full-facebridge compat to its build list, exact legacy bases in the merged bridge description, clarify the native-closure test ([5572593](https://github.com/AngelDark92/xr-porting-hub/commit/55725931d924f01438c8daf93ec3e87a993cddbc))
+* Refactor patch descriptions for clarity and conciseness across multiple files ([540ebc1](https://github.com/AngelDark92/xr-porting-hub/commit/540ebc171be2153820269f1bda8c25dc0bcf811a))
+* remove recommended sets and update related documentation and tests ([f1175ad](https://github.com/AngelDark92/xr-porting-hub/commit/f1175ade35f63b4a0d30286abedc5c7aad3bcfa0))
+* repair external build attestation ([87a016f](https://github.com/AngelDark92/xr-porting-hub/commit/87a016f12115bbc20ef8ffd4461a46c6392d1b37))
+* restore controller HAL pose horizon before added prediction ([cd38db4](https://github.com/AngelDark92/xr-porting-hub/commit/cd38db426b2380bc9743b6dcf53b15dc27d2fd2e))
+* scope the Device identity recommendation to the legacy bases ([4076f91](https://github.com/AngelDark92/xr-porting-hub/commit/4076f91bbe45393253f7ceac8d3a07536287bf1a))
+* Update codecs support library version and enhance codec filtering logic ([92c7414](https://github.com/AngelDark92/xr-porting-hub/commit/92c7414137e3bf2dfa32f73306fd2651cbb759fc))
+* update Network Optimizations patch test to correctly validate prior microphone edits ([e3c07a0](https://github.com/AngelDark92/xr-porting-hub/commit/e3c07a0bcfd217e014ac46f34316f0f819247966))
+
+### ✨ New Features
+
+* Add 4XVR Galaxy XR recommended update and first on-device feedback fix ([8d0bb6e](https://github.com/AngelDark92/xr-porting-hub/commit/8d0bb6e9d31a2a073f5098fdbeb4ecaa32d8a7fb))
+* add analysis and patch plan for 4XVR 2.0.22 vs Galaxy XR reference mod and steamlink new uberudp patch ([74a0ff8](https://github.com/AngelDark92/xr-porting-hub/commit/74a0ff8eb6289658af03ff5cb54a1a49fa28017e))
+* Add diagnostics and verification scripts for Steam Link GalaxyXR patches ([03c7dd5](https://github.com/AngelDark92/xr-porting-hub/commit/03c7dd576d56f8ee0d8c2eb10257606da551bbe2))
+* add experimental patch to disable Uber link rescan for Steam Link 2.0.23 ([e3c2cbe](https://github.com/AngelDark92/xr-porting-hub/commit/e3c2cbe3911deceed561562e0b6aee0426d071f2))
+* add opt-in Steam Link 2.0.23 angular frame adapter ([5572286](https://github.com/AngelDark92/xr-porting-hub/commit/5572286a7dc1d1c49b66f6a8fe057ba3cb79cc81))
+* Add parity audit and fixes for 4XVR 2.0.22, including audio bridge and subtitle enhancements ([7700be8](https://github.com/AngelDark92/xr-porting-hub/commit/7700be88318f609ab18ee9bea3551728d68cf5db))
+* Add SubtitleStyleListener and Cue classes, HdrBridge, and native libraries for 4XVR ([bd02cd5](https://github.com/AngelDark92/xr-porting-hub/commit/bd02cd545f19ff7b4b0e114133071442e4531b4a))
+* delete the Steam Link recommended-set wrappers ([6b789c0](https://github.com/AngelDark92/xr-porting-hub/commit/6b789c078897fc7c906319539d90737e21d4f43e))
+* Enhance 4XVR compatibility with Android XR input features and popup management ([84339e6](https://github.com/AngelDark92/xr-porting-hub/commit/84339e63a1af3a79c6afdb75f9e8294aceeae8d9))
+* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([24e658a](https://github.com/AngelDark92/xr-porting-hub/commit/24e658a83326112b419bf5267de56160037d5c58))
+* Implement premium fallback patch for 4XVR 2.0.22 ([9a8a050](https://github.com/AngelDark92/xr-porting-hub/commit/9a8a05010e4b8f26012d2e1a8bb79fe41e5f9a80))
+* network optimizations for 2.0.23 and allow other codecs patch both still experimental ([76da903](https://github.com/AngelDark92/xr-porting-hub/commit/76da90316a54c7eab7b889f4e1e400871f5e2860))
+* recommended defaults on individual patches (Steam Link) ([111e6eb](https://github.com/AngelDark92/xr-porting-hub/commit/111e6ebd21f933f8395e59580681baa539937939))
+* Refactor and clean up patches for controller velocity and cadence ([bc96f66](https://github.com/AngelDark92/xr-porting-hub/commit/bc96f6643b539e8e9b7b4dac741faaab04ecf2ef))
+
+## [1.28.0-dev.30](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.29...v1.28.0-dev.30) (2026-10-14)
+
+### ✨ New Features
+
+* Galaxy XR SteamVR driver identity (galaxyxr) for all supported builds ([24e658a](https://github.com/AngelDark92/xr-porting-hub/commit/24e658a83326112b419bf5267de56160037d5c58))
+
+## [1.28.0-dev.29](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.28...v1.28.0-dev.29) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* codecs support v6 (AV1 AU walk past sized TD OBU) ([2eaa85c](https://github.com/AngelDark92/xr-porting-hub/commit/2eaa85c31a11ed9c5a1fde1ac87588e3c278fb3d))
+
+## [1.28.0-dev.28](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.27...v1.28.0-dev.28) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* codecs support v5 ([a008e34](https://github.com/AngelDark92/xr-porting-hub/commit/a008e342233fa1f65cfb7266d049734fab144d6b))
+
+## [1.28.0-dev.27](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.26...v1.28.0-dev.27) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Update codecs support library version and enhance codec filtering logic ([92c7414](https://github.com/AngelDark92/xr-porting-hub/commit/92c7414137e3bf2dfa32f73306fd2651cbb759fc))
+
+## [1.28.0-dev.26](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.25...v1.28.0-dev.26) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Enhance AV1 codec diagnostics and update support library version ([82975b0](https://github.com/AngelDark92/xr-porting-hub/commit/82975b0f50cd11c9c876ab3bfc189fea33560310))
+
+## [1.28.0-dev.25](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.24...v1.28.0-dev.25) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* Codecs support update ([67f5a36](https://github.com/AngelDark92/xr-porting-hub/commit/67f5a3667281ff75ad4c99c84842ef9c19458ae6))
+
+## [1.28.0-dev.24](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.23...v1.28.0-dev.24) (2026-10-13)
+
+### 🐛 Bug Fixes
+
+* update Network Optimizations patch test to correctly validate prior microphone edits ([e3c07a0](https://github.com/AngelDark92/xr-porting-hub/commit/e3c07a0bcfd217e014ac46f34316f0f819247966))
+
+## [1.28.0-dev.23](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.22...v1.28.0-dev.23) (2026-10-13)
+
+### 🐛 Bug Fixes
+
+* enhance network optimization patch with tolerance for prior edits in scene and main transforms ([0f3e1b8](https://github.com/AngelDark92/xr-porting-hub/commit/0f3e1b89983c15115cc42be05e812714ed9a943c))
+
+## [1.28.0-dev.22](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.21...v1.28.0-dev.22) (2026-10-13)
+
+### ✨ New Features
+
+* network optimizations for 2.0.23 and allow other codecs patch both still experimental ([76da903](https://github.com/AngelDark92/xr-porting-hub/commit/76da90316a54c7eab7b889f4e1e400871f5e2860))
+
+## [1.28.0-dev.21](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.20...v1.28.0-dev.21) (2026-10-12)
+
+### ✨ New Features
+
+* Add parity audit and fixes for 4XVR 2.0.22, including audio bridge and subtitle enhancements ([7700be8](https://github.com/AngelDark92/xr-porting-hub/commit/7700be88318f609ab18ee9bea3551728d68cf5db))
+
+## [1.28.0-dev.20](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.19...v1.28.0-dev.20) (2026-10-12)
+
+### ✨ New Features
+
+* Implement premium fallback patch for 4XVR 2.0.22 ([9a8a050](https://github.com/AngelDark92/xr-porting-hub/commit/9a8a05010e4b8f26012d2e1a8bb79fe41e5f9a80))
+
+## [1.28.0-dev.19](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.18...v1.28.0-dev.19) (2026-10-12)
+
+### ✨ New Features
+
+* Enhance 4XVR compatibility with Android XR input features and popup management ([84339e6](https://github.com/AngelDark92/xr-porting-hub/commit/84339e63a1af3a79c6afdb75f9e8294aceeae8d9))
+
+## [1.28.0-dev.18](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.17...v1.28.0-dev.18) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* remove recommended sets and update related documentation and tests ([f1175ad](https://github.com/AngelDark92/xr-porting-hub/commit/f1175ade35f63b4a0d30286abedc5c7aad3bcfa0))
+
+## [1.28.0-dev.17](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.16...v1.28.0-dev.17) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* scope the Device identity recommendation to the legacy bases ([4076f91](https://github.com/AngelDark92/xr-porting-hub/commit/4076f91bbe45393253f7ceac8d3a07536287bf1a))
+
+## [1.28.0-dev.16](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.15...v1.28.0-dev.16) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* pin full-facebridge compat to its build list, exact legacy bases in the merged bridge description, clarify the native-closure test ([5572593](https://github.com/AngelDark92/xr-porting-hub/commit/55725931d924f01438c8daf93ec3e87a993cddbc))
+
+## [1.28.0-dev.15](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.14...v1.28.0-dev.15) (2026-10-12)
+
+### ✨ New Features
+
+* Refactor and clean up patches for controller velocity and cadence ([bc96f66](https://github.com/AngelDark92/xr-porting-hub/commit/bc96f6643b539e8e9b7b4dac741faaab04ecf2ef))
+
+## [1.28.0-dev.14](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.13...v1.28.0-dev.14) (2026-10-12)
+
+### ✨ New Features
+
+* delete the Steam Link recommended-set wrappers ([6b789c0](https://github.com/AngelDark92/xr-porting-hub/commit/6b789c078897fc7c906319539d90737e21d4f43e))
+
+## [1.28.0-dev.13](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.12...v1.28.0-dev.13) (2026-10-12)
+
+### ✨ New Features
+
+* recommended defaults on individual patches (Steam Link) ([111e6eb](https://github.com/AngelDark92/xr-porting-hub/commit/111e6ebd21f933f8395e59580681baa539937939))
+
+## [1.28.0-dev.12](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.11...v1.28.0-dev.12) (2026-10-12)
+
+### ✨ New Features
+
+* add opt-in Steam Link 2.0.23 angular frame adapter ([5572286](https://github.com/AngelDark92/xr-porting-hub/commit/5572286a7dc1d1c49b66f6a8fe057ba3cb79cc81))
+
+## [1.28.0-dev.11](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.10...v1.28.0-dev.11) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Keep 4XVR HDR surface routing verifiable so video playback runs ([01c1d3e](https://github.com/AngelDark92/xr-porting-hub/commit/01c1d3edfa2b287cb9a4caa5a58fa510596b8c43))
+
+## [1.28.0-dev.10](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.9...v1.28.0-dev.10) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Add Galaxy XR launcher icon patch for 4XVR to enhance app tile visibility ([2cd4603](https://github.com/AngelDark92/xr-porting-hub/commit/2cd460390a4966289085d08e933d77ba8f4512cc))
+
+## [1.28.0-dev.9](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.8...v1.28.0-dev.9) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Enhance HdrPipelinePatches to improve MediaCodec surface reload handling ([47eeea7](https://github.com/AngelDark92/xr-porting-hub/commit/47eeea7bbac74a34accd7556970e825ee4bbd110))
+
+## [1.28.0-dev.8](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.7...v1.28.0-dev.8) (2026-10-11)
+
+### ✨ New Features
+
+* Add 4XVR Galaxy XR recommended update and first on-device feedback fix ([8d0bb6e](https://github.com/AngelDark92/xr-porting-hub/commit/8d0bb6e9d31a2a073f5098fdbeb4ecaa32d8a7fb))
+
+## [1.28.0-dev.7](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.6...v1.28.0-dev.7) (2026-10-11)
+
+### ✨ New Features
+
+* Add SubtitleStyleListener and Cue classes, HdrBridge, and native libraries for 4XVR ([bd02cd5](https://github.com/AngelDark92/xr-porting-hub/commit/bd02cd545f19ff7b4b0e114133071442e4531b4a))
+
+## [1.28.0-dev.6](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.5...v1.28.0-dev.6) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* Refactor patch descriptions for clarity and conciseness across multiple files ([540ebc1](https://github.com/AngelDark92/xr-porting-hub/commit/540ebc171be2153820269f1bda8c25dc0bcf811a))
+
+## [1.28.0-dev.5](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.4...v1.28.0-dev.5) (2026-10-11)
+
+### ✨ New Features
+
+* add analysis and patch plan for 4XVR 2.0.22 vs Galaxy XR reference mod and steamlink new uberudp patch ([74a0ff8](https://github.com/AngelDark92/xr-porting-hub/commit/74a0ff8eb6289658af03ff5cb54a1a49fa28017e))
+* add experimental patch to disable Uber link rescan for Steam Link 2.0.23 ([e3c2cbe](https://github.com/AngelDark92/xr-porting-hub/commit/e3c2cbe3911deceed561562e0b6aee0426d071f2))
+
+## [1.28.0-dev.4](https://github.com/AngelDark92/xr-porting-hub/compare/v1.28.0-dev.3...v1.28.0-dev.4) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* restore controller HAL pose horizon before added prediction ([cd38db4](https://github.com/AngelDark92/xr-porting-hub/commit/cd38db426b2380bc9743b6dcf53b15dc27d2fd2e))
+
+## [1.28.0-dev.3](https://github.com/AngelDark92/steamlink-patches/compare/v1.28.0-dev.2...v1.28.0-dev.3) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* decode Packages validation responses ([14b3deb](https://github.com/AngelDark92/steamlink-patches/commit/14b3debf66f49c02f62c1e1fdb03a237f1d3a879))
+
+## [1.28.0-dev.2](https://github.com/AngelDark92/steamlink-patches/compare/v1.28.0-dev.1...v1.28.0-dev.2) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* repair external build attestation ([87a016f](https://github.com/AngelDark92/steamlink-patches/commit/87a016f12115bbc20ef8ffd4461a46c6392d1b37))
+
+## [1.28.0-dev.1](https://github.com/AngelDark92/steamlink-patches/compare/v1.27.0...v1.28.0-dev.1) (2026-10-08)
+
+### ✨ New Features
+
+* Add diagnostics and verification scripts for Steam Link GalaxyXR patches ([03c7dd5](https://github.com/AngelDark92/steamlink-patches/commit/03c7dd576d56f8ee0d8c2eb10257606da551bbe2))
 
 ## [1.27.0](https://github.com/AngelDark92/steamlink-patches/compare/v1.26.0...v1.27.0) (2026-10-07)
 

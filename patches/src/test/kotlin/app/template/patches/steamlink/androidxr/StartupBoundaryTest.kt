@@ -28,7 +28,7 @@ class StartupBoundaryTest {
                 target.versionCodes.orEmpty().values.map { target.version to it.toString() }
             }.toSet()
             assertEquals(supported, targets, patch.name)
-            assertFalse(patch.default, patch.name)
+            assertTrue(patch.default, patch.name)
         }
     }
 

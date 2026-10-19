@@ -1,9 +1,9 @@
 # Controller velocity frame layer (2026-10-04)
 
-Source of `libgxr_controller_velocity_frame.so`, installed by the opt-in patches
-**Controller velocity frame (experimental)** for exact Steam Link 2.0.23/5002363 and
-**Controller velocity frame, 2.0.20 - 2.0.22 (experimental)** for the legacy bases. The two
-differ only in the angular velocity frame they write into the library's config block.
+Source of `libgxr_controller_velocity_frame.so`, installed by the default-on patch
+**Controller velocity frame** for exact Steam Link 2.0.23/5002363 and the legacy bases
+(2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244). The angular velocity frame it
+writes into the library's config block differs between 2.0.23 and the legacy bases.
 
 ## What it changes
 
@@ -82,12 +82,12 @@ extrapolation layer; the committed payload is the CMake build below.
 $sdk = "$env:LOCALAPPDATA\Android\Sdk"
 $cmake = "$sdk\cmake\3.22.1\bin"
 $ndk = "$sdk\ndk\28.2.13676358"
-& "$cmake\cmake.exe" -S extensions/controller-velocity-frame-layer -B <short build dir> -G Ninja `
+& "$cmake\cmake.exe" -S extensions/controller-velocity-frame-layer -B ../builds/steamlink-patches/extensions/controller-velocity-frame-layer/build-android -G Ninja `
     "-DCMAKE_MAKE_PROGRAM=$cmake\ninja.exe" `
     "-DCMAKE_TOOLCHAIN_FILE=$ndk\build\cmake\android.toolchain.cmake" `
     -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-29 -DANDROID_STL=c++_static `
     -DCMAKE_BUILD_TYPE=Release
-& "$cmake\cmake.exe" --build <short build dir> --target gxr_controller_velocity_frame
+& "$cmake\cmake.exe" --build ../builds/steamlink-patches/extensions/controller-velocity-frame-layer/build-android --target gxr_controller_velocity_frame
 ```
 
 Use a short build directory: the fetched OpenXR-SDK tree exceeds the Windows path limit

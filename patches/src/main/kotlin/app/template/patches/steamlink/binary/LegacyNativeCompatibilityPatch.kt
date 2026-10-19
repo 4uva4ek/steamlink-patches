@@ -301,8 +301,10 @@ internal fun patchStreamXrGates(
 @Suppress("unused")
 val androidXrNativePermissionNamesPatch = rawResourcePatch(
     name = "Android XR native permission names",
-    description = "Replaces native Oculus face/eye permission checks with the Android XR permission names used by Galaxy XR on exact Steam Link 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244 layouts.",
-    default = false,
+    description = "Swaps the app's built-in face and eye permission names to the ones " +
+        "Android XR needs. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, " +
+        "2.0.22/5002244.",
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -322,8 +324,10 @@ val androidXrNativePermissionNamesPatch = rawResourcePatch(
 @Suppress("unused")
 val forceHmdInitializationGatesPatch = rawResourcePatch(
     name = "Force HMD initialization gates",
-    description = "Bypasses the 2 verified capability gates in QSVLDeviceHmd::Init for exact Steam Link 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244 layouts.",
-    default = false,
+    description = "Removes 2 headset startup checks so tracking starts even when the app's " +
+        "own checks would stop it. Builds: 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, " +
+        "2.0.22/5002244.",
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -341,8 +345,9 @@ val forceHmdInitializationGatesPatch = rawResourcePatch(
 @Suppress("unused")
 val forceLobbyPermissionStateGatePatch = rawResourcePatch(
     name = "Force lobby permission-state gate",
-    description = "Bypasses the verified permission-state gate in XrSceneLobby for exact Steam Link 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244 layouts.",
-    default = false,
+    description = "Skips a lobby permission check so the room screen loads normally. Builds: " +
+        "2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244.",
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())
@@ -360,8 +365,9 @@ val forceLobbyPermissionStateGatePatch = rawResourcePatch(
 @Suppress("unused")
 val forceStreamXrGatesPatch = rawResourcePatch(
     name = "Force stream XR gates",
-    description = "Bypasses the 3 verified XR gates in exact Steam Link 2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, and 2.0.22/5002244 layouts.",
-    default = false,
+    description = "Removes 3 XR checks on the streaming path so video can start. Builds: " +
+        "2.0.20/5001712, 2.0.20/5001812, 2.0.21/5001968, 2.0.22/5002244.",
+    default = true,
 ) {
     category(PatchCategories.ADVANCED_XR_COMPATIBILITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK_LEGACY.toTypedArray())

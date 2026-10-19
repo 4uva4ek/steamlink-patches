@@ -1,9 +1,8 @@
 # Shizuku bridge (2026-10-04)
 
 Source of `extensions/shizuku-bridge.mpe`, added by every patch that needs
-[Shizuku](https://github.com/RikkaApps/Shizuku): **Controller grip haptics through Shizuku
-(experimental)** and **Controller tracking from the controller HAL through Shizuku
-(experimental)** with its 2.0.20 - 2.0.22 variant. It is not a patch of its own.
+[Shizuku](https://github.com/RikkaApps/Shizuku): **Controller grip haptics through Shizuku** and
+**Controller tracking from the controller HAL through Shizuku**. It is not a patch of its own.
 
 ## Why it is shared
 

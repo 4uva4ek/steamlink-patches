@@ -125,15 +125,17 @@ object Constants {
             steamLinkBuildCompatibility(
                 build = build,
                 description = if (build in MODERN_TONGUE_BRIDGE_STEAM_LINK_BUILDS) {
-                    "Build ${build.versionCode} recommends Galaxy XR high-resolution 3-projection fix, GXR tongue bridge, " +
+                    "Build ${build.versionCode} recommends Galaxy XR high-resolution 3-projection fix, GXR face and tongue bridge, " +
                         "Microphone input preset (Voice Recognition), Unrestricted battery usage, " +
-                        "Visual Delay Fix (60 ms), and OLED color calibration with the Final balanced tested profile. " +
+                        "Visual Delay Fix (60 ms), OLED color calibration with the Final balanced tested profile, " +
+                        "Blue-noise dithering with the default foveal layer, Network Optimizations, " +
+                        "OpenXR CPU and GPU BOOST, Codecs Support, and Controller velocity frame. " +
                         "The retired projection experiments are excluded. " +
                         if (build.versionCode == 5002363) "Decoded-base adaptation; headset validation pending." else ""
                 } else {
                     "Build ${build.versionCode} recommends its native-Android-XR-safe set: Galaxy XR " +
                         "high-resolution 3-projection fix, Device identity, Microphone input preset, OLED color " +
-                        "calibration, GXR face bridge, Visual Delay Fix, and Unrestricted battery usage. " +
+                        "calibration, GXR face and tongue bridge, Visual Delay Fix, and Unrestricted battery usage. " +
                         "Appear on top remains an optional legacy fallback."
                 },
             )
@@ -152,8 +154,10 @@ object Constants {
             }
         }
 
+    // Derived from the same build list the guards use (isFullFacebridgeSteamLinkBuild), so
+    // compatibility and mutation guards cannot diverge when bases are added.
     val COMPATIBILITIES_STEAM_LINK_FULL_FACEBRIDGE =
-        COMPATIBILITIES_STEAM_LINK_BEFORE_LATEST
+        FULL_FACEBRIDGE_STEAM_LINK_BUILDS.map(::steamLinkBuildCompatibility)
 
     val COMPATIBILITIES_STEAM_LINK_MODERN_TONGUE_BRIDGE =
         MODERN_TONGUE_BRIDGE_STEAM_LINK_BUILDS.map(::steamLinkBuildCompatibility)
@@ -216,4 +220,36 @@ object Constants {
 
     val COMPATIBILITIES_STEAM_LINK_NATIVE_XR_EXPERIMENTAL = experimentalCompatibilities(NATIVE_XR_STEAM_LINK_BUILDS)
 
+    // ---------------------------------------------------------------------
+    // 4XVR (cn.vr4p.oculus4xvrplayerov) — exact single-build Galaxy XR adaptation.
+    // ---------------------------------------------------------------------
+
+    private const val FOUR_XVR_PACKAGE = "cn.vr4p.oculus4xvrplayerov"
+    private data class FourXvrBuild(val version: String, val versionCode: Int)
+
+    private val FOUR_XVR_BUILDS = listOf(
+        FourXvrBuild("2.0.22", 20022),
+    )
+
+    fun isFourXvr20022Build(version: String, versionCode: String): Boolean =
+        FOUR_XVR_BUILDS.any {
+            it.version == version && it.versionCode.toString() == versionCode
+        }
+
+    private fun fourXvrBuildCompatibility(build: FourXvrBuild) = Compatibility(
+        name = "4XVR",
+        packageName = FOUR_XVR_PACKAGE,
+        apkFileType = ApkFileType.APK,
+        appIconColor = 0x6C4BB6,
+        targets = listOf(
+            AppTarget(
+                version = build.version,
+                versionCodes = SupportedAbi.entries.associateWith { build.versionCode },
+                description = "4XVR Galaxy XR adaptation for exact build ${build.versionCode}; " +
+                    "decoded-base design, headset validation pending.",
+            ),
+        ),
+    )
+
+    val COMPATIBILITIES_FOUR_XVR = FOUR_XVR_BUILDS.map(::fourXvrBuildCompatibility)
 }

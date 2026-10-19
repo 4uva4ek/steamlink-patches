@@ -9,4 +9,14 @@
 
 # This manifest is validated by a byte-exact SHA-256 pin on every platform.
 /patches/src/main/resources/steamlink/androidxr/XR_APILAYER_local_GalaxyXR_foveal_canvas.json text eol=lf
+/patches/src/main/resources/steamlink/androidxr/XR_APILAYER_local_GalaxyXR_codecs_support.json text eol=lf
+/patches/src/main/resources/steamlink/androidxr/telemetry/*.json text eol=lf
+/patches/src/main/resources/steamlink/androidxr/telemetry/*.tsv text eol=lf
+/patches/src/main/resources/steamlink/androidxr/telemetry/NOTICE.txt text eol=lf
+
+# 4XVR text payloads are validated by byte-exact SHA-256 pins on every platform.
+/patches/src/main/resources/fourxvr/icon/ic_launcher.xml      text eol=lf
+/patches/src/main/resources/fourxvr/icon/ic_launcher_round.xml text eol=lf
+/patches/src/main/resources/fourxvr/licenses/NOTICE.txt       text eol=lf
+/patches/src/main/resources/fourxvr/compat/XR_APILAYER_4XVR_viewconfig_fix.json text eol=lf
 

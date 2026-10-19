@@ -16,6 +16,15 @@ import java.nio.ByteOrder
 //   +20 angularWorld uint32, 0 = local to the pose, 1 = base space
 internal const val CONTROLLER_HAL_POSE_CONFIG_MAGIC = "GXRHALCFG0000001"
 internal const val CONTROLLER_VELOCITY_FRAME_CONFIG_MAGIC = "GXRVFRCFG0000001"
+
+/**
+ * Credit for the Galaxy XR controller tracking/haptics work the controller patches build on
+ * (@4uva4ek's galaxyxr-modules). Appended to every controller patch description.
+ */
+internal const val STEAM_LINK_CONTROLLER_CREDIT =
+    "Details: " +
+        "https://github.com/4uva4ek."
+
 private const val ANGULAR_VELOCITY_CONFIG_VERSION = 1
 private const val ANGULAR_VELOCITY_CONFIG_SIZE = 32
 

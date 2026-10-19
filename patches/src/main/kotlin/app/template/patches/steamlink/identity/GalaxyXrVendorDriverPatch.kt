@@ -229,34 +229,33 @@ internal fun patchControllerConfigForVendorDriver(
 @Suppress("unused")
 val galaxyXrVendorDriverPatch = rawResourcePatch(
     name = "Galaxy XR SteamVR driver (galaxyxr)",
-    description = "Reports the headset and controllers to SteamVR through the resource-only " +
-        "`galaxyxr` driver installed by Galaxy XR VRLink Setup on the PC: Galaxy XR identity, " +
-        "{galaxyxr} icons, input profiles and controller models, and the calibrated grip offset. " +
-        "Replaces the Meta Quest Pro spoof; the PC driver must be installed or the controllers show no model. " +
-        "Controllers keep the oculus_touch type because vrlink accepts no other.",
+    description = "Sets Galaxy XR headset and controller names in SteamVR, replacing the Meta Quest Pro spoof. " +
+        "Builds: 5001712 to 5002363. Needs: Galaxy XR VRLink Setup on the PC, or controllers show no model." +
+        " Details: https://github.com/4uva4ek/steamlink-patches.",
     default = false,
 ) {
     category(PatchCategories.APP_AND_DEVICE_IDENTITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
-    // Runs after Device identity so its Quest Pro payload (legacy bundles) or Galaxy upserts
-    // (native builds) are already in place and get rewritten to the galaxyxr identity.
-    dependsOn(deviceIdentityPatch)
+    // Runs after both Device identity variants so their Quest Pro payload (legacy bundles) or
+    // Galaxy upserts (native builds) are already in place and get rewritten to the galaxyxr
+    // identity. Their execute bodies are build-aware, so running both on any base is a no-op
+    // beyond the identity they would write anyway.
+    dependsOn(deviceIdentityPatch, deviceIdentityNativeXrPatch)
 
     val offsetPositionCm by stringOption(
         key = "offsetPositionCm",
         default = DEFAULT_OFFSET_POSITION_CM,
         title = "Grip offset position (cm, x,y,z)",
-        description = "Offset of the SteamVR controller origin from the OpenXR grip pose in centimetres: " +
-            "x right, y up along the handle, z backward (negative = forward). Default calibrated on Galaxy XR " +
-            "controllers against the system model. Stock Quest Touch value is -0.7,-3.416,-9.607.",
+        description = "Offsets the controller position from your grip point, in cm: x right, y up, z backward " +
+            "(negative = forward). Default is calibrated on Galaxy XR. Stock Quest Touch value is -0.7,-3.416,-9.607.",
         required = true,
     )
     val offsetRotationDeg by stringOption(
         key = "offsetRotationDeg",
         default = DEFAULT_OFFSET_ROTATION_DEG,
         title = "Grip offset rotation (deg, x,y,z)",
-        description = "Rotation of the SteamVR controller origin relative to the grip pose in degrees " +
-            "(x pitch, y yaw, z roll). Stock Quest Touch value is -20.6,0,0.",
+        description = "Rotates the controller model around your grip point, in degrees: x pitch, y yaw, z roll. " +
+            "Stock Quest Touch value is -20.6,0,0.",
         required = true,
     )
 

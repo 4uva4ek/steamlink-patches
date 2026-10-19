@@ -73,6 +73,10 @@ XrResult XRAPI_PTR runtimeEndFrame(XrSession,const XrFrameEndInfo* info) {
     for (unsigned eye=0;eye<2;++eye) lastViews[eye]=lastProjection.views[eye];
     return frameResult;
 }
+XrResult XRAPI_PTR runtimeGetInstanceProcAddr(XrInstance,const char* name,PFN_xrVoidFunction* function) {
+    assert(std::string(name)=="xrInitializeLoaderKHR");
+    *function=reinterpret_cast<PFN_xrVoidFunction>(runtimeEndFrame); return XR_SUCCESS;
+}
 void reset() {
     assert(sessions.empty() && sources.empty() && textures.empty() && framebuffers.empty());
     runtime.clear(); glStates.clear(); attachments.clear(); events.clear(); blits.clear();
@@ -199,6 +203,14 @@ void glClear(GLbitfield mask) { assert(mask==GL_COLOR_BUFFER_BIT); ++test::clear
 
 int main() {
     using namespace test;
+    // Implicit-layer protocol: the loader asks for xrInitializeLoaderKHR through the
+    // layer's getInstanceProcAddr before any instance chain exists. A null next chain
+    // must answer with an error instead of branching through null.
+    reset();
+    PFN_xrVoidFunction fn=handle<PFN_xrVoidFunction>(0xabc);
+    assert(get(XR_NULL_HANDLE,"xrInitializeLoaderKHR",&fn)==XR_ERROR_FUNCTION_UNSUPPORTED);
+    g.get=runtimeGetInstanceProcAddr;
+    assert(get(XR_NULL_HANDLE,"xrInitializeLoaderKHR",&fn)==XR_SUCCESS && fn==reinterpret_cast<PFN_xrVoidFunction>(runtimeEndFrame));
     for (bool quad:{false,true}) {
         Fixture f(quad); f.discover(); f.produce();
         assert(blits.size()==2);

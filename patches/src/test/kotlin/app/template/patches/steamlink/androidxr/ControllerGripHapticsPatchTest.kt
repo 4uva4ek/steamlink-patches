@@ -81,7 +81,7 @@ class ControllerGripHapticsPatchTest {
     @Test
     fun `patch is opt-in and covers the legacy and native bases`() {
         assertFalse(controllerGripHapticsPatch.default)
-        assertEquals("Controller grip haptics through Shizuku (experimental)", controllerGripHapticsPatch.name)
+        assertEquals("Controller grip haptics through Shizuku", controllerGripHapticsPatch.name)
 
         val compatibilities = controllerGripHapticsPatch.compatibility.orEmpty()
         assertTrue(compatibilities.all { it.name == EXPERIMENTAL_COMPATIBILITY_NAME })

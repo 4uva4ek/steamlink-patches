@@ -35,7 +35,7 @@ Detailed evidence: [native addresses and call paths](native-targets.md), [Java/c
 
 - Current Kotlin production source compiled against cached Morphe dependencies; all **108 JUnit tests passed**.
 - All **7 standalone patches** successfully patched the original signed APK as an input. Output audits checked expected scene bytes, stock DEX preservation or the battery-only modification, unchanged configs outside identity, and stock startup/native permission boundaries.
-- The **6-patch recommended bundle** successfully patched both the original APK and the rebuilt decoded fixture. The packaged local `.mpp` was then used as the class/resource source to patch the original APK successfully again. Outputs are unsigned audit APKs.
+- The then-current **6-patch recommended bundle** successfully patched both the original APK and the rebuilt decoded fixture. The packaged local `.mpp` was then used as the class/resource source to patch the original APK successfully again. Outputs are unsigned audit APKs.
 - Forced excluded startup dependencies on 5002363 remained inert: stock DEX/native code and startup behavior markers were preserved.
 - OLED production helpers passed **63 variants, 567 format/dither transitions and 126 checkbox cases per base** on 5001712 and 5002363. Checks covered exact diff regions, all format instructions, shader interfaces/NUL boundaries, idempotence and unchanged source hashes.
 - New native helper audit passed **4 microphone presets/16 transitions**, tongue block/idempotence/invalid-byte checks, **6 representative HMD offsets/36 transitions**, and **24 combined native patch execution orders plus reapplication**. HMD offsets include 0, 1, 60, 100, 1000 and 4000 ms.

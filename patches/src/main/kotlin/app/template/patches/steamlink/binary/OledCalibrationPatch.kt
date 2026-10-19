@@ -111,23 +111,13 @@ internal fun resolveVideoOutputPrecision(
     if (use8BitOutputWhenDithering && dither != VideoDitherMode.OFF)
         VideoOutputPrecision.SRGB8_HIGHP else selected
 
-// Existing option keys are retained. Both input declarations now select the same
-// VD-informed SDR foveal processing; input precision is negotiated by the host.
-// OFF and paddedVideoShader remain unchanged for existing calibration/blue-noise use.
+// The former 10-bit/8-bit option pair selected the same VD-informed SDR foveal
+// processing and merged into one foveaVdLike toggle; input precision is negotiated
+// by the host. OFF and paddedVideoShader remain unchanged for calibration/blue-noise use.
 internal enum class FoveaMode(val optionValue: String) {
     OFF("off"),
     INPUT_10BIT("input-10bit"),
     INPUT_8BIT("input-8bit");
-}
-
-internal fun resolveFoveaMode(input10Bit: Boolean, input8Bit: Boolean): FoveaMode = when {
-    input10Bit && input8Bit -> throw PatchException(
-        "Fovea VD-Like Input 10 bit and Fovea VD-Like Input 8 bit are mutually exclusive; " +
-            "select at most one",
-    )
-    input10Bit -> FoveaMode.INPUT_10BIT
-    input8Bit -> FoveaMode.INPUT_8BIT
-    else -> FoveaMode.OFF
 }
 
 // Defaults remain noise-free. Optional comparison dither is applied in calibrated
@@ -346,8 +336,10 @@ internal fun setProjectionSwapchainFormat(
 @Suppress("unused")
 val oledCalibrationPatch = rawResourcePatch(
     name = "OLED color calibration",
-    description = "OLED calibration with optional VD-informed SDR foveal processing and a separate foveal gamma adjustment, always with 8-bit sRGB output. The VD options bypass the calibration profile on the fovea while retaining Valve's decoder colour correction. Foveal gamma can darken that layer in any mode. Exact builds 5001712, 5001812, 5001968, 5002244, and 5002363; visible improvement requires headset verification.",
-    default = false,
+    description = "Tunes the OLED headset's color with gamma and saturation presets, plus optional " +
+        "center-of-view tweaks; visible improvement needs headset verification. " +
+        "Builds: 5001712, 5001812, 5001968, 5002244, 5002363.",
+    default = true,
 ) {
     category(PatchCategories.IMAGE_QUALITY)
     compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
@@ -356,13 +348,14 @@ val oledCalibrationPatch = rawResourcePatch(
         key = "profile",
         default = "final-balanced",
         values = mapOf(
-            "Initial tested (gamma 1.06, saturation 1.12)" to "initial",
-            "Final balanced tested (gamma 1.20, saturation 1.45)" to "final-balanced",
-            "Neutral comparison (gamma 1.00, saturation 1.00)" to "neutral",
+            "Tested early (gamma 1.06, sat 1.12)" to "initial",
+            "Tested balanced (gamma 1.20, sat 1.45)" to "final-balanced",
+            "Neutral (gamma 1.00, sat 1.00)" to "neutral",
             "Custom gamma and saturation" to "custom",
         ),
         title = "Calibration profile",
-        description = "Selects gamma and saturation for both layers when the VD options are off, or for the base layer when a VD foveal option is on.",
+        description = "Presets gamma and saturation. Applies to both layers, or only the background " +
+            "when a VD-like center option is on.",
         required = true,
     )
 
@@ -373,7 +366,7 @@ val oledCalibrationPatch = rawResourcePatch(
         default = 1.20f,
         step = 0.01f,
         title = "Gamma",
-        description = "Used by Custom profile. Allowed range: 0.50 to 2.50.",
+        description = "Used with the Custom profile. Higher darkens dark tones. Range: 0.50 to 2.50.",
         required = true,
     )
 
@@ -384,23 +377,17 @@ val oledCalibrationPatch = rawResourcePatch(
         default = 1.45f,
         step = 0.01f,
         title = "Saturation",
-        description = "Used by Custom profile. Allowed range: 0.00 to 3.00.",
+        description = "Used with the Custom profile. Higher makes colors more intense. Range: 0.00 to 3.00.",
         required = true,
     )
 
-    val foveaVdLike10Bit by booleanOption(
-        key = "foveaVdLike10Bit",
+    val foveaVdLike by booleanOption(
+        key = "foveaVdLike",
         default = false,
-        title = "Fovea VD-Like Input 10 bit",
-        description = "VD-informed SDR processing for declared 10-bit input: use highp sampling, retain Valve's decoder colour correction, bypass the calibration profile on the foveal layer, and add no shader noise. The separate foveal gamma adjustment still applies. Output is 8-bit sRGB. Does not negotiate host depth or reproduce VD's raw-YUV decoder import. Mutually exclusive with the 8-bit option and separate blue-noise patch.",
-        required = true,
-    )
-
-    val foveaVdLike8Bit by booleanOption(
-        key = "foveaVdLike8Bit",
-        default = false,
-        title = "Fovea VD-Like Input 8 bit",
-        description = "Uses the same VD-informed SDR foveal processing for declared 8-bit input, retaining Valve's decoder colour correction while bypassing the calibration profile and adding no shader noise. The separate foveal gamma adjustment still applies. Output is 8-bit sRGB. Cannot recover precision already lost in the source. Mutually exclusive with the 10-bit option and separate blue-noise patch; does not negotiate host depth.",
+        title = "VD-like center mode",
+        description = "A sharper center look (VD-style), keeping Valve's color correction and " +
+            "8-bit output. Skips the profile above in the center; the center gamma below still " +
+            "applies. Turn off when Blue-noise dithering's center option is on.",
         required = true,
     )
 
@@ -410,8 +397,10 @@ val oledCalibrationPatch = rawResourcePatch(
         max = 1.30f,
         default = 1.00f,
         step = 0.01f,
-        title = "Foveal gamma adjustment",
-        description = "Additional gamma on the foveal layer only, after its colour processing. 1.00 leaves it unchanged; higher values darken shadows and midtones. Try 1.02 first for a lighter foveal region. Works with either VD option or both off, before fade and optional blue-noise dithering. Background calibration and edge blending stay unchanged; this is manual compensation, not a verified seam fix.",
+        title = "Center gamma adjustment",
+        description = "Extra gamma for the center only. 1.00 = unchanged; higher darkens dark " +
+            "tones. Try 1.02 first for a slightly lighter center. The background keeps the " +
+            "profile above; this is a manual tweak, not a verified seam fix.",
         required = true,
     )
 
@@ -442,7 +431,7 @@ val oledCalibrationPatch = rawResourcePatch(
         // VD uses the same SDR colour path for both codec depths. Keep the calibrated
         // base program byte-identical, and change only the separately assembled foveal
         // suffix. The former common-prefix uvmask weight was not layer isolation.
-        val foveaMode = resolveFoveaMode(foveaVdLike10Bit == true, foveaVdLike8Bit == true)
+        val foveaMode = if (foveaVdLike == true) FoveaMode.INPUT_10BIT else FoveaMode.OFF
         val precision = VideoOutputPrecision.SRGB8_HIGHP
         val shaderPatched = bytes.copyOf().apply {
             paddedVideoShader(selectedGamma, selectedSaturation, precision).copyInto(this, shaderPos)

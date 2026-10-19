@@ -52,7 +52,7 @@ class ControllerPoseExtrapolationPatchTest {
     @Test
     fun `patch is opt-in and covers the legacy and native bases`() {
         assertFalse(controllerPoseExtrapolationPatch.default)
-        assertEquals("Controller pose extrapolation (experimental)", controllerPoseExtrapolationPatch.name)
+        assertEquals("Controller pose extrapolation", controllerPoseExtrapolationPatch.name)
         assertTrue(controllerPoseExtrapolationPatch.dependencies.isEmpty())
 
         val compatibilities = controllerPoseExtrapolationPatch.compatibility.orEmpty()

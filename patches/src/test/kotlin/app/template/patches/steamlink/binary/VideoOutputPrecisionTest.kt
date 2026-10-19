@@ -183,14 +183,6 @@ class VideoOutputPrecisionTest {
     }
 
     @Test
-    fun `fovea toggles are mutually exclusive and resolve to the fovea modes`() {
-        assertEquals(FoveaMode.OFF, resolveFoveaMode(false, false))
-        assertEquals(FoveaMode.INPUT_10BIT, resolveFoveaMode(true, false))
-        assertEquals(FoveaMode.INPUT_8BIT, resolveFoveaMode(false, true))
-        assertFailsWith<PatchException> { resolveFoveaMode(true, true) }
-    }
-
-    @Test
     fun `legacy shader generator retains old uvmask gate for historical comparisons`() {
         val off = paddedVideoShader(1.20f, 1.45f, VideoOutputPrecision.SRGB8_HIGHP, VideoDitherMode.OFF).ascii()
         val in10 = paddedVideoShader(1.20f, 1.45f, VideoOutputPrecision.SRGB8_HIGHP, VideoDitherMode.STANDARD, true).ascii()
@@ -352,7 +344,7 @@ class VideoOutputPrecisionTest {
 
     @Test
     fun `oled patched bytes pass the high-resolution retired hook guard on every layout`() {
-        // The recommended bundles execute xrGalaxyXrHighResolutionPatch and oledCalibrationPatch
+        // The recommended set executes xrGalaxyXrHighResolutionPatch and oledCalibrationPatch
         // together. Its only interaction with libvrlink_scene.so is this read-only guard, so the
         // OLED mutation (shader + format sites) must never trip it, in any option combination.
         val stockText = "ordinary guarded scene mutation".toByteArray()

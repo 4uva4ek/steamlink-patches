@@ -3,46 +3,41 @@ package app.template.patches.steamlink.binary
 import app.template.patches.shared.PatchCategories
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.rawResourcePatch
-import app.morphe.patcher.patch.stringOption
-import app.morphe.patcher.patch.AppTarget
-import app.morphe.patcher.patch.Compatibility
-import app.morphe.patcher.patch.SupportedAbi
-import app.template.patches.shared.Constants.EXPERIMENTAL_COMPATIBILITY_NAME
+import app.morphe.patcher.patch.booleanOption
+import app.template.patches.shared.Constants.COMPATIBILITIES_STEAM_LINK
 
-/** Separate, opt-in experiment. No dependency on or behavior changes to OLED/VD-like controls. */
+/** One selectable patch owning both blue-noise layers. The two former per-layer patches and
+ * their declared-depth option merged: 8-bit and 10-bit input share the same final 8-bit sRGB
+ * quantizer, so no runtime or declared depth exists. Recommended and default-enabled on every
+ * exact Steam Link base: the foveal layer is on by default, the background layer is opt-in,
+ * and the helper rebuilds owned configurations from the final source, order-independently. */
 @Suppress("unused")
-val fovealBlueNoisePatch = blueNoisePatch(BlueNoiseLayer.FOVEA)
-
-@Suppress("unused")
-val backgroundBlueNoisePatch = blueNoisePatch(BlueNoiseLayer.BACKGROUND)
-
-private fun blueNoisePatch(layer: BlueNoiseLayer) = rawResourcePatch(
-    name = if (layer == BlueNoiseLayer.FOVEA) "Foveal blue-noise dithering (experimental)"
-        else "Background blue-noise dithering (experimental)",
-    description = "Static blue-noise quantization after video colour processing and fade, only on the " +
-        (if (layer == BlueNoiseLayer.FOVEA) "foveal" else "background/base") +
-        " layer. Accepts 8-bit or 10-bit input and always uses 8-bit sRGB output. Select independently or together with the other layer's blue-noise patch. Separate from OLED/VD-like processing; headset validation pending. Unknown host shaders pass through unchanged.",
-    default = false,
+val blueNoisePatch = rawResourcePatch(
+    name = "Blue-noise dithering",
+    description = "Adds fine grain that hides harsh color steps, with separate on/off choices " +
+        "for the center and the background. Builds: 2.0.20/5001712, 2.0.20/5001812, " +
+        "2.0.21/5001968, 2.0.22/5002244, 2.0.23/5002363.",
+    default = true,
 ) {
-    category(PatchCategories.EXPERIMENTS)
-    compatibleWith(*BLUE_NOISE_LAYOUTS.map { layout ->
-        Compatibility(
-            name = EXPERIMENTAL_COMPATIBILITY_NAME,
-            packageName = "com.valvesoftware.steamlinkvr",
-            targets = listOf(AppTarget(
-                version = layout.version,
-                versionCodes = SupportedAbi.entries.associateWith { layout.code.toInt() },
-                description = "Exact native blue-noise adaptation ${layout.version}/${layout.code}; static validation only.",
-            )),
-        )
-    }.toTypedArray())
+    category(PatchCategories.IMAGE_QUALITY)
+    compatibleWith(*COMPATIBILITIES_STEAM_LINK.toTypedArray())
 
-    val inputDepth by stringOption(
-        key = "inputDepth",
-        title = "Declared input depth",
-        description = "Both choices apply the same final 8-bit output quantizer. This describes your stream; it does not change host negotiation or decoder precision. When combining with OLED calibration, leave both of its existing VD-like fovea toggles off.",
-        default = "10-bit",
-        values = mapOf("8-bit input" to "8-bit", "10-bit input" to "10-bit"),
+    val fovea by booleanOption(
+        key = "fovea",
+        default = true,
+        title = "Center of the view",
+        description = "Fine grain in the center of the view only. Uses the exact stock video " +
+            "shader or an OLED calibration; turn that patch's VD-like center option off when " +
+            "this is on.",
+        required = true,
+    )
+
+    val background by booleanOption(
+        key = "background",
+        default = false,
+        title = "Background",
+        description = "Fine grain over the whole background, including under the center overlay " +
+            "on top; the center's own grain choice is not touched.",
         required = true,
     )
 
@@ -50,11 +45,7 @@ private fun blueNoisePatch(layer: BlueNoiseLayer) = rawResourcePatch(
     // optional OLED calibration execute, without forcing calibration as a dependency.
     finalize {
         if (BLUE_NOISE_LAYOUTS.none { it.version == packageMetadata.versionName && it.code == packageMetadata.versionCode }) return@finalize
-        val mode = when (inputDepth) {
-            "8-bit" -> FoveaMode.INPUT_8BIT
-            "10-bit" -> FoveaMode.INPUT_10BIT
-            else -> throw PatchException("Unknown blue-noise input depth: $inputDepth")
-        }
+        if (fovea != true && background != true) return@finalize
         val file = get("lib/arm64-v8a/libvrlink_scene.so")
         val formatted = setProjectionSwapchainFormat(
             file.readBytes(), VideoOutputPrecision.SRGB8_HIGHP,
@@ -62,11 +53,24 @@ private fun blueNoisePatch(layer: BlueNoiseLayer) = rawResourcePatch(
         )
         val destination = get("lib/arm64-v8a/libgxd.so")
         val existing = if (destination.isFile) destination.readBytes() else null
-        val result = applyBlueNoiseLayer(formatted, packageMetadata.versionName, packageMetadata.versionCode,
-            mode, layer, existingHelper = existing)
-        val helper = result.helper ?: throw PatchException("Blue-noise payload was not prepared")
+        var scene = formatted
+        var helper: ByteArray? = existing
+        // Fixed fovea-then-background order; each enabled layer rebuilds the owned configuration
+        // from the final source so selection order never changes bytes.
+        for (layer in BlueNoiseLayer.entries) {
+            val mode = when {
+                layer == BlueNoiseLayer.FOVEA && fovea == true -> FoveaMode.INPUT_10BIT
+                layer == BlueNoiseLayer.BACKGROUND && background == true -> FoveaMode.INPUT_10BIT
+                else -> FoveaMode.OFF
+            }
+            val result = applyBlueNoiseLayer(scene, packageMetadata.versionName,
+                packageMetadata.versionCode, mode, layer, existingHelper = helper)
+            scene = result.scene
+            helper = result.helper
+        }
+        val prepared = helper ?: throw PatchException("Blue-noise payload was not prepared")
         destination.parentFile.mkdirs()
-        destination.writeBytes(helper)
-        file.writeBytes(result.scene)
+        destination.writeBytes(prepared)
+        file.writeBytes(scene)
     }
 }
